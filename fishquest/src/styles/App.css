@@ -456,3 +456,48 @@ input.rbt-input {
   height: auto;
   padding: 0.5rem;
 }
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 12px;
+  padding: 1rem;
+}
+
+.badge-img {
+  width: 100px;
+  height: auto;
+  background: var(--clr-surface-a10);
+  border-radius: 15px;
+}
+
+.badge-card.locked .badge-img {
+  filter: grayscale(100%) brightness(0.6);
+  opacity: 0.7;
+}
+.modal-body .badge-card {
+  justify-content: center;
+  display: flex;
+}
+
+.modal-body .badge-card img {
+  width: 250px;
+  height: auto;
+}
+.profile-container {
+  background-color: var(--clr-primary-a0);
+  border-radius: 15px;
+  padding: 1rem;
+}
+.rank-container {
+  background-color: var(--clr-primary-a0);
+  border-radius: 15px;
+  padding: 0.5rem;
+  height: 100px;
+  width: 300px;
+}
+.rank-container-text {
+  font-family: "Inter";
+  font-size: 1rem;
+  font-weight: 300;
+  text-align: center;
+}

@@ -92,15 +92,6 @@ export const BADGES = [
     icon: "/badges/BadgeBOTTOM-MASTER.png",
     requirement: { type: "bottom_count", value: TIERS.MASTER },
   },
-
-  // BOTTOM FISHING
-  {
-    id: "bottom_fishing_amateur",
-    name: "Bottom Fishing Amateur",
-    icon: "/badges/BadgeBOTTOM-FISHING-AMATEUR.png",
-    requirement: { type: "bottom_fishing_count", value: TIERS.AMATEUR },
-  },
-
   // BUDDY
   {
     id: "buddy_amateur",

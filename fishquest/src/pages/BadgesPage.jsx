@@ -1,4 +1,5 @@
-import { Navbar } from "react-bootstrap";
+import { Modal, Navbar, Button } from "react-bootstrap";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import BottomBar from "../components/BottomBar";
 import { BADGES } from "../data/badges.config";
@@ -11,7 +12,23 @@ const userStats = {
 function getProgressValue(type) {
   return userStats[type] ?? 0;
 }
+
 export default function BadgesPage() {
+  const [show, setShow] = useState(false);
+  const [selectedBadge, setSelectedBadge] = useState(null);
+  const handleClose = () => {
+    setSelectedBadge(null);
+    setShow(false);
+  };
+  const handleShow = (badge) => {
+    setSelectedBadge(badge);
+    setShow(true);
+  };
+  const current = selectedBadge
+    ? getProgressValue(selectedBadge.requirement.type)
+    : 0;
+  const needed = selectedBadge ? selectedBadge.requirement.value : 0;
+  const unlocked = selectedBadge ? current >= needed : false;
   return (
     <>
       <Navbar className="topNavbar d-flex align-items-center justify-content-between position-relative px-3 py-2">
@@ -24,22 +41,44 @@ export default function BadgesPage() {
         </h1>
       </Navbar>
       <BottomBar />
-      <div className="badge-grid">
-        {BADGES.map((badge) => {
-          const current = getProgressValue(badge.requirement.type);
-          const needed = badge.requirement.value;
-          const unlocked = current >= needed;
-
-          return (
+      <Modal show={show} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedBadge?.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedBadge && (
             <BadgeCard
-              key={badge.id}
-              badge={badge}
+              badge={selectedBadge}
               unlocked={unlocked}
               current={current}
               needed={needed}
             />
-          );
-        })}
+          )}
+          {selectedBadge && !unlocked && (
+            <div className="mt-3 d-flex justify-content-center">
+              Progress: {current}/{needed}
+            </div>
+          )}
+        </Modal.Body>
+      </Modal>
+      <div className="bottomNavbarSpacing">
+        <div className="badge-grid">
+          {BADGES.map((badge) => {
+            const current = getProgressValue(badge.requirement.type);
+            const needed = badge.requirement.value;
+            const unlocked = current >= needed;
+            return (
+              <BadgeCard
+                key={badge.id}
+                badge={badge}
+                unlocked={unlocked}
+                current={current}
+                needed={needed}
+                onClick={() => handleShow(badge)}
+              />
+            );
+          })}
+        </div>
       </div>
     </>
   );

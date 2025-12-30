@@ -4,7 +4,7 @@ import RigIcon from "../assets/img/Reels/Baitcaster.png";
 export default function TipsBox() {
   return (
     <Container className="pt-3">
-      <Link style={{ textDecoration: "none" }} to="/edit-rig">
+      <Link style={{ textDecoration: "none" }} to="/rig-preset">
         <div className="tips-box d-flex flex-row align-items-center p-2">
           <Image src={RigIcon}></Image>
           <div className="d-flex flex-column align-items-center gap-1">
