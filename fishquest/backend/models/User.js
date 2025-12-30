@@ -2,17 +2,21 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    username: { type: String, required: true, unique: true, min: 5, max: 20 },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      minLength: 5,
+      maxLength: 20,
+    },
     badgesEarned: {
       type: [String],
       default: [],
     },
     badgesShowcase: {
       type: [String],
-      validate: {
-        validator: (arr) => arr.length === 4,
-        message: "Exactly 4 badges must be showcased",
-      },
+      default: [],
+      required: true,
     },
     stats: {
       totalCatches: { type: Number, default: 0 },
@@ -22,10 +26,12 @@ const userSchema = new mongoose.Schema(
       },
 
       timeOfDay: {
+        required: true,
         day: { type: Number, default: 0 },
       },
 
       methods: {
+        required: true,
         baitcaster: { type: Number, default: 0 },
       },
     },

@@ -15,11 +15,10 @@ const catchSchema = new mongoose.Schema(
 
     speciesName: {
       type: String,
-      required: true,
     },
     timeOfDay: {
       type: String,
-      enum: ["day", "evening", "night"],
+      enum: ["day", "morning", "storm", "night"],
     },
     method: {
       type: String,

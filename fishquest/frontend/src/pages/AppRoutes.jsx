@@ -1,19 +1,19 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "../pages/Home";
+import Home from "./Home";
 import Badges from "./BadgesPage";
-import Buddies from "../pages/Buddies";
-import CreateLog from "../pages/CreateLog";
-import EditBadgeShowcase from "../pages/EditBadgeShowcase";
-import EditPole from "../pages/EditPole";
-import EditProfile from "../pages/EditProfile";
-import EditRig from "../pages/EditRig";
-import Level from "../pages/Level";
-import Logs from "../pages/Logs";
-import Notes from "../pages/Notes";
-import Profile from "../pages/Profile";
-import RigPreset from "../pages/RigPreset";
-import Shop from "../pages/Shop";
-import Tacklebox from "../pages/Tacklebox";
+import Buddies from "./Buddies";
+import CreateLog from "./CreateLog";
+import EditBadgeShowcase from "./EditBadgeShowcase";
+import EditPole from "./EditPole";
+import EditProfile from "./EditProfile";
+import EditRig from "./EditRig";
+import Level from "./Level";
+import Logs from "./Logs";
+import Notes from "./Notes";
+import Profile from "./Profile";
+import RigPreset from "./RigPreset";
+import Shop from "./Shop";
+import Tacklebox from "./Tacklebox";
 
 export default function AppRoutes() {
   return (
