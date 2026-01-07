@@ -10,7 +10,7 @@ export default function BottomBar() {
   return (
     <Navbar className="bottomNavbar" fixed="bottom">
       <Container>
-        <Link to="/">
+        <Link to="/home">
           <FishIcon></FishIcon>
         </Link>
         <Link to="/tacklebox">

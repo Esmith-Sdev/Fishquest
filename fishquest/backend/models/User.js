@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
@@ -9,6 +9,12 @@ const userSchema = new mongoose.Schema(
       minLength: 5,
       maxLength: 20,
     },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      maxLength: 50,
+    },
     badgesEarned: {
       type: [String],
       default: [],
@@ -16,7 +22,6 @@ const userSchema = new mongoose.Schema(
     badgesShowcase: {
       type: [String],
       default: [],
-      required: true,
     },
     stats: {
       totalCatches: { type: Number, default: 0 },
@@ -26,17 +31,16 @@ const userSchema = new mongoose.Schema(
       },
 
       timeOfDay: {
-        required: true,
         day: { type: Number, default: 0 },
       },
 
       methods: {
-        required: true,
         baitcaster: { type: Number, default: 0 },
       },
     },
+    passwordHash: { type: String, required: true, select: false },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema);

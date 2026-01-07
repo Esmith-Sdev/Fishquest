@@ -1,4 +1,6 @@
 import { Routes, Route } from "react-router-dom";
+import SignUp from "./SignUp";
+import Login from "./Login";
 import Home from "./Home";
 import Badges from "./BadgesPage";
 import Buddies from "./Buddies";
@@ -14,11 +16,15 @@ import Profile from "./Profile";
 import RigPreset from "./RigPreset";
 import Shop from "./Shop";
 import Tacklebox from "./Tacklebox";
-
+import { isAuthenticated } from "../auth";
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
+
+      <Route path="/" element={isAuthenticated() ? <Home /> : <Login />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/badges" element={<Badges />} />
       <Route path="/buddies" element={<Buddies />} />
       <Route path="/create-log" element={<CreateLog />} />
