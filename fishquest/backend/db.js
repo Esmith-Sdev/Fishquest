@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const uri = process.env.MONGODB_URI;
 mongoose
   .connect(uri, {})
@@ -7,4 +7,4 @@ mongoose
     console.error("Mongo Error", err);
     process.exit(1);
   });
-module.exports = mongoose;
+export default mongoose;

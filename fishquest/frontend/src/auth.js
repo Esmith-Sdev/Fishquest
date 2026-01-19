@@ -9,10 +9,10 @@ export async function login(username, password) {
 
   if (res.ok) {
     localStorage.setItem("token", data.token);
-    localStorage.setItem("role", data.role);
-    localStorage.setItem("auth", data.auth);
-    localStorage.setItem("uname", data.username2);
-    localStorage.setItem("user", JSON.stringify(data.user));
+
+    localStorage.setItem("userId", data.user.userId);
+
+    localStorage.setItem("username", data.user.username);
     return data;
   } else {
     throw new Error(data.message || "Login failed");
@@ -23,14 +23,13 @@ export function getToken() {
   return localStorage.getItem("token");
 }
 export function getAuth() {
-  return localStorage.getItem("auth");
+  return localStorage.getItem("username");
 }
 export function isAuthenticated() {
   return !!localStorage.getItem("token");
 }
 export function logout() {
   localStorage.removeItem("token");
-  localStorage.removeItem("role");
-  localStorage.removeItem("auth");
-  localStorage.removeItem("uname");
+  localStorage.removeItem("userId");
+  localStorage.removeItem("username");
 }

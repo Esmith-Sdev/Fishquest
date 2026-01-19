@@ -13,7 +13,7 @@ import Level from "./Level";
 import Logs from "./Logs";
 import Notes from "./Notes";
 import Profile from "./Profile";
-import RigPreset from "./RigPreset";
+import CreateRig from "./CreateRig";
 import Shop from "./Shop";
 import Tacklebox from "./Tacklebox";
 import { isAuthenticated } from "../auth";
@@ -36,7 +36,7 @@ export default function AppRoutes() {
       <Route path="/logs" element={<Logs />} />
       <Route path="/notes" element={<Notes />} />
       <Route path="/profile" element={<Profile />} />
-      <Route path="/rig-preset" element={<RigPreset />} />
+      <Route path="/create-rig" element={<CreateRig />} />
       <Route path="/shop" element={<Shop />} />
       <Route path="/tacklebox" element={<Tacklebox />} />
     </Routes>

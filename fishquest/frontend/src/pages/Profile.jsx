@@ -5,6 +5,7 @@ import { logout } from "../auth";
 import BottomBar from "../components/BottomBar";
 
 export default function Profile() {
+  const username = localStorage.getItem("user");
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -69,7 +70,7 @@ export default function Profile() {
         <div className="d-flex flex-row gap-2 p-2 align-items-center">
           <div className="profile-container d-flex flex-row gap-4 w-100">
             <div className="d-flex flex-column align-items-center">
-              <h2>Username002</h2>
+              <h2 className="mb-1">{username}</h2>
               <div className="rigImageContainer">
                 <Image></Image>
               </div>
@@ -78,7 +79,7 @@ export default function Profile() {
               </Link>
             </div>
             <div className="flex-column d-flex gap-3">
-              <h2 className="mb-3">Stats</h2>
+              <h2 className="mb-3 text-center">Stats</h2>
               <div className="d-flex flex-row gap-2">
                 <h4>Personal Best:</h4>
                 <h4>5.6lb</h4>

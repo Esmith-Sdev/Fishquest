@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const logsSchema = new mongoose.Schema(
   {
     userId: {
@@ -33,8 +33,9 @@ const logsSchema = new mongoose.Schema(
 
     notes: { type: String, default: "" },
     imageUrls: { type: [String], default: [] },
+    presetUsed: { type: mongoose.Schema.Types.ObjectId, ref: "Rigs" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-module.exports = mongoose.model("Catch", catchSchema);
+export default mongoose.model("Logs", logsSchema);

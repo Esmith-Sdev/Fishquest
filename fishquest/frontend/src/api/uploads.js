@@ -1,6 +1,7 @@
 const API_BASE = "http://localhost:3000";
 
 export async function uploadImages(files) {
+  console.log("test");
   const formData = new FormData();
   files.forEach((f) => formData.append("images", f));
 
@@ -9,7 +10,11 @@ export async function uploadImages(files) {
     body: formData,
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.message || "Upload Failed");
+  if (!res.ok) {
+    throw new Error(data.message || "Upload Failed");
+  } else {
+    console.log("Upload Success");
+  }
 
   return data.urls;
 }

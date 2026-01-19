@@ -1,21 +1,29 @@
-import { Navbar, Container, Form, Button } from "react-bootstrap";
-import { useState } from "react";
+import { Navbar, Container, Form, Button, Image } from "react-bootstrap";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import BottomBar from "../components/BottomBar";
 import { uploadImages } from "../api/uploads";
 import { createCatchLog } from "../api/logs";
 import { useNavigate } from "react-router-dom";
 import FishSpeciesTypeahead from "../components/FishSpeciesTypeahead";
-
+import PlusIcon from "../assets/img/Icons/add.png";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 export default function CreateLog() {
   const date = new Date();
-
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [species, setSpecies] = useState("");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
-
+  const [imageUploaded, setImageUploaded] = useState(false);
+  const isGridFull = files.length === 4;
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const onClickUpload = () => {
+    fileInputRef.current?.click();
+  };
+  const [startDate, setStartDate] = useState(new Date());
   async function handleSubmitLog(e) {
     e.preventDefault();
 
@@ -38,6 +46,17 @@ export default function CreateLog() {
       setSaving(false);
     }
   }
+  const onFilesSelected = (e) => {
+    const picked = Array.from(e.target.files || []);
+    if (picked.length === 0) return;
+    const max = 4;
+    const room = max - files.length;
+    const limited = picked.slice(0, room);
+
+    setFiles((prev) => [...prev, ...limited]);
+    setImageUploaded(true);
+    e.target.value = null;
+  };
   return (
     <>
       <Navbar className="topNavbar d-flex align-items-center justify-content-between position-relative px-3 py-2">
@@ -47,11 +66,13 @@ export default function CreateLog() {
         <h1 className="position-absolute start-50 translate-middle-x fw-bold m-0">
           Create Log
         </h1>
-        <Button className="orangeButton">Submit</Button>
+        <Button type="submit" className="orangeButton">
+          Submit
+        </Button>
       </Navbar>
       <BottomBar />
-      <Form onSubmit={handleSubmitLog}>
-        <Container className="bottomNavbarSpacing">
+      <Container className="bottomNavbarSpacing">
+        <Form onSubmit={handleSubmitLog}>
           <div className="d-flex flex-column p-2">
             <div className="d-flex flex-column gap-4 mt-4 justify-content-start">
               <div className="d-flex flex-row gap-4 align-items-center">
@@ -87,17 +108,79 @@ export default function CreateLog() {
                 </div>
               </div>
               {/*PHOTOS*/}
-              <div className="photoUploadContainer d-flex flex-column align-items-center">
-                <div className="photoUploadIconContainer d-flex flex-column align-items-center">
-                  <Button
+
+              {!imageUploaded && (
+                <div className="photoUploadContainer d-flex flex-column align-items-center">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={onFilesSelected}
+                    style={{ display: "none" }}
                     disabled={saving}
-                    style={{ background: "transparent", border: "transparent" }}
-                  >
-                    <h3>Upload Image</h3>
-                    <i className="bi bi-camera"></i>
-                  </Button>
+                  />
+                  <div className="photoUploadIconContainer d-flex flex-column align-items-center">
+                    <Button
+                      type="button"
+                      onClick={onClickUpload}
+                      disabled={saving}
+                      style={{
+                        background: "transparent",
+                        border: "transparent",
+                      }}
+                    >
+                      <h3>Upload Image</h3>
+                      <i className="bi bi-camera"></i>
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/*Image Preview */}
+              {files.length > 0 && (
+                <div className="image-grid">
+                  {Array.from(files).map((_, i) => (
+                    <div className="largeSquare" key={i}>
+                      {files[i] && (
+                        <img src={URL.createObjectURL(files[i])} alt="" />
+                      )}
+                    </div>
+                  ))}
+                  {!isGridFull && (
+                    <div className="largeSquare">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={onFilesSelected}
+                        style={{ display: "none" }}
+                        disabled={saving}
+                      />
+                      <Button
+                        type="button"
+                        onClick={onClickUpload}
+                        disabled={saving}
+                        style={{
+                          background: "transparent",
+                          border: "transparent",
+                          width: 100,
+                          height: 100,
+                        }}
+                      >
+                        <h3>Add Image</h3>
+                        <Image
+                          style={{ width: 50, height: "auto" }}
+                          src={PlusIcon}
+                          alt=""
+                        ></Image>
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/*Notes*/}
               <div className="logForm">
                 {/* Fish Species */}
@@ -118,11 +201,7 @@ export default function CreateLog() {
                 <div className="logRow">
                   <div className="logLabel">Est. Weight:</div>
                   <div className="logField logFieldInline">
-                    <Form.Control
-                      className="pillInput small"
-                      type="number"
-                      defaultValue={2}
-                    />
+                    <Form.Control className="pillInput small" type="number" />
                     <Form.Select className="pillSelect small" defaultValue="LB">
                       <option>LB</option>
                       <option>OZ</option>
@@ -133,11 +212,7 @@ export default function CreateLog() {
                 <div className="logRow">
                   <div className="logLabel">Est. Length:</div>
                   <div className="logField logFieldInline">
-                    <Form.Control
-                      className="pillInput small"
-                      type="number"
-                      defaultValue={2}
-                    />
+                    <Form.Control className="pillInput small" type="number" />
                     <Form.Select className="pillSelect small" defaultValue="CM">
                       <option>CM</option>
                       <option>IN</option>
@@ -145,25 +220,39 @@ export default function CreateLog() {
                   </div>
                 </div>
                 {/* Date/Time */}
-                <div className="logColumn">
-                  <div className="logLabel me-auto">Date/Time:</div>
+                <div className="logRow">
+                  <div className="logLabel me-auto">Date:</div>
+
                   <div className="logField logFieldInline">
-                    <Form.Control
-                      className="pillInput medium"
-                      type="text"
-                      defaultValue="02 / 08 / 2025"
+                    <DatePicker
+                      className="pillInput form-control medium"
+                      selected={selectedDate}
+                      onChange={(date) => setSelectedDate(date)}
                     />
-                    <Form.Control
-                      className="pillInput time"
-                      type="text"
-                      defaultValue={date.getHours() + ":" + date.getMinutes()}
-                    />
-                    <Form.Select className="pillSelect time" defaultValue="PM">
-                      <option>AM</option>
-                      <option>PM</option>
-                    </Form.Select>
+                  </div>
+                  <div className="logRow">
+                    <div className="logLabel me-auto">Time:</div>
+                    <div className="logRow">
+                      <Form.Control
+                        className="pillInput time medium"
+                        type="text"
+                        defaultValue={
+                          date.getHours().toString().padStart(2, "0") +
+                          ":" +
+                          date.getMinutes().toString().padStart(2, "0")
+                        }
+                      />
+                      <Form.Select
+                        className="pillSelect time"
+                        defaultValue="PM"
+                      >
+                        <option>AM</option>
+                        <option>PM</option>
+                      </Form.Select>
+                    </div>
                   </div>
                 </div>
+
                 {/* Location */}
                 <div className="logColumn">
                   <div className="logLabel me-auto">Location:</div>
@@ -172,7 +261,7 @@ export default function CreateLog() {
                     <Form.Control
                       className="pillInput"
                       type="text"
-                      defaultValue="Street Address"
+                      placeholder="Street Address"
                     />
                     {/* State + City */}
                     <div className="logFieldInline">
@@ -235,7 +324,7 @@ export default function CreateLog() {
                       <Form.Control
                         className="pillInput city"
                         type="text"
-                        defaultValue="Indianapolis"
+                        placeholder="City"
                       />
                     </div>
                     {/* Spot preset + buttons */}
@@ -270,8 +359,8 @@ export default function CreateLog() {
               </div>
             </div>
           </div>
-        </Container>
-      </Form>
+        </Form>
+      </Container>
     </>
   );
 }

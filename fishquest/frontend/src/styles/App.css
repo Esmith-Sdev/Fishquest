@@ -225,6 +225,18 @@ a {
   background: #dedede;
   border-radius: 15px;
 }
+.mediumSquare {
+  width: 75px;
+  height: 75px;
+  background: #dedede;
+  border-radius: 15px;
+}
+.largeSquare {
+  width: 100px;
+  height: 100px;
+  background: #dedede;
+  border-radius: 15px;
+}
 .noteContainer {
   height: auto;
   background: #dedede;
@@ -321,9 +333,11 @@ textarea.form-control::placeholder {
   font-weight: 600;
 }
 .pillInput,
-.pillInput:focus {
+.pillInput:focus,
+.react-datepicker__input-container input {
   border-radius: 50px;
   background-color: #dedede;
+  border: none;
 }
 input.rbt-input {
   padding: 0;
@@ -365,7 +379,7 @@ input.rbt-input {
 
 .pillInput.time,
 .pillSelect.time {
-  width: 70px;
+  width: 80px;
 }
 
 .pillSelect.state {
@@ -546,4 +560,30 @@ div.badge-card {
     opacity: 100%;
     transform: translateY(0px);
   }
+}
+.image-grid {
+  display: grid;
+  gap: 2rem;
+  width: auto;
+  justify-items: center;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+.largeSquare img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+.react-datepicker {
+  display: flex;
+  flex-direction: column;
+}
+.react-datepicker__time-container {
+  width: 100%;
+}
+.arrow-icon {
+  width: 40px;
+  height: 40px;
 }

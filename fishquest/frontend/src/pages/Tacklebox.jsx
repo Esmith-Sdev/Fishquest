@@ -11,7 +11,7 @@ export default function Tacklebox() {
         <h1 className="position-absolute start-50 translate-middle-x fw-bold m-0">
           Tacklebox
         </h1>
-        <Link to="/rig-preset">
+        <Link to="/create-rig">
           <Button className="orangeButton">New Rig</Button>
         </Link>
       </Navbar>

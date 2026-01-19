@@ -1,6 +1,7 @@
 import { Navbar, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import BottomBar from "../components/BottomBar";
+import { BAIT } from "../data/bait.config";
 export default function EditPole() {
   return (
     <>
