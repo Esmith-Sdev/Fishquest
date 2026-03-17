@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import multer from "multer";
 import "./db.js";
-import User from "./models/user.js";
+import User from "./models/User.js";
 import challengesRoute from "./routes/challenges.js";
 import rigPresetRoutes from "./routes/rigPreset.js";
 import rigStatsRoutes from "./routes/rigStats.js";
