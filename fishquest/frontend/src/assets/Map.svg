@@ -1,0 +1,168 @@
+<svg width="442" height="700" viewBox="0 0 442 700" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Map">
+<g id="Dashes">
+<path id="dash" d="M226 127.5C240.738 157.637 216.12 192.673 132.244 194M226 400.5C237.369 429.669 209.719 497.461 132.244 482.863" stroke="#D9D9D9" stroke-width="4" stroke-linecap="round" stroke-dasharray="12 12"/>
+<path id="dash_2" d="M55.4999 266.5C48.5511 292.531 85.0889 358.332 153.5 358" stroke="#D9D9D9" stroke-width="4" stroke-linecap="round" stroke-dasharray="12 12"/>
+<path id="dash_3" d="M54.3353 516.5C38.1562 604.301 66.5873 684.434 151 670.084M355 516.5C366.5 605.5 366 670.084 290 670.084" stroke="#D9D9D9" stroke-width="4" stroke-linecap="round" stroke-dasharray="12 12"/>
+<path id="dash_4" d="M384.842 265.357C389.758 285.896 402.047 381.647 293.5 357" stroke="#D9D9D9" stroke-width="4" stroke-linecap="round" stroke-dasharray="12 12"/>
+</g>
+<g id="TextBubble7">
+<path id="Union" d="M268 578C276.284 578 283 584.716 283 593V600.244C283 608.528 276.284 615.244 268 615.244H229.537L223.954 628.87L218.371 615.244H179C170.716 615.244 164 608.528 164 600.244V593C164 584.716 170.716 578 179 578H268Z" fill="#FFEF2D"/>
+<text id="LevelName" fill="black" xml:space="preserve" style="white-space: pre" font-family="Jua" font-size="12" letter-spacing="0em"><tspan x="194" y="593.1">Level Name</tspan></text>
+<text id="ChallengeProgress" fill="black" xml:space="preserve" style="white-space: pre" font-family="Dongle" font-size="12" letter-spacing="0em"><tspan x="197" y="607.012">1/5 Challenges</tspan></text>
+</g>
+<g id="TextBubble6">
+<path id="Union_2" d="M401 393C409.284 393 416 399.716 416 408V415.244C416 423.528 409.284 430.244 401 430.244H362.537L356.954 443.87L351.371 430.244H312C303.716 430.244 297 423.528 297 415.244V408C297 399.716 303.716 393 312 393H401Z" fill="#FFEF2D"/>
+<text id="LevelName_2" fill="black" xml:space="preserve" style="white-space: pre" font-family="Jua" font-size="12" letter-spacing="0em"><tspan x="327" y="408.1">Level Name</tspan></text>
+<text id="ChallengeProgress_2" fill="black" xml:space="preserve" style="white-space: pre" font-family="Dongle" font-size="12" letter-spacing="0em"><tspan x="330" y="422.012">1/5 Challenges</tspan></text>
+</g>
+<g id="TextBubble5">
+<path id="Union_3" d="M105 393C113.284 393 120 399.716 120 408V415.244C120 423.528 113.284 430.244 105 430.244H66.5371L60.9541 443.87L55.3711 430.244H16C7.71573 430.244 1 423.528 1 415.244V408C1 399.716 7.71573 393 16 393H105Z" fill="#FFEF2D"/>
+<text id="LevelName_3" fill="black" xml:space="preserve" style="white-space: pre" font-family="Jua" font-size="12" letter-spacing="0em"><tspan x="31" y="408.1">Level Name</tspan></text>
+<text id="ChallengeProgress_3" fill="black" xml:space="preserve" style="white-space: pre" font-family="Dongle" font-size="12" letter-spacing="0em"><tspan x="34" y="422.012">1/5 Challenges</tspan></text>
+</g>
+<g id="TextBubble4">
+<path id="Union_4" d="M427 142C435.284 142 442 148.716 442 157V164.244C442 172.528 435.284 179.244 427 179.244H388.537L382.954 192.87L377.371 179.244H338C329.716 179.244 323 172.528 323 164.244V157C323 148.716 329.716 142 338 142H427Z" fill="#FFEF2D"/>
+<text id="LevelName_4" fill="black" xml:space="preserve" style="white-space: pre" font-family="Jua" font-size="12" letter-spacing="0em"><tspan x="353" y="157.1">Level Name</tspan></text>
+<text id="ChallengeProgress_4" fill="black" xml:space="preserve" style="white-space: pre" font-family="Dongle" font-size="12" letter-spacing="0em"><tspan x="356" y="171.012">1/5 Challenges</tspan></text>
+</g>
+<g id="TextBubble3">
+<path id="Union_5" d="M268 265C276.284 265 283 271.716 283 280V287.244C283 295.528 276.284 302.244 268 302.244H229.537L223.954 315.87L218.371 302.244H179C170.716 302.244 164 295.528 164 287.244V280C164 271.716 170.716 265 179 265H268Z" fill="#FFEF2D"/>
+<text id="LevelName_5" fill="black" xml:space="preserve" style="white-space: pre" font-family="Jua" font-size="12" letter-spacing="0em"><tspan x="194" y="280.1">Level Name</tspan></text>
+<text id="ChallengeProgress_5" fill="black" xml:space="preserve" style="white-space: pre" font-family="Dongle" font-size="12" letter-spacing="0em"><tspan x="197" y="294.012">1/5 Challenges</tspan></text>
+</g>
+<g id="TextBubble2">
+<path id="Union_6" d="M104 142C112.284 142 119 148.716 119 157V164.244C119 172.528 112.284 179.244 104 179.244H65.5371L59.9541 192.87L54.3711 179.244H15C6.71573 179.244 0 172.528 0 164.244V157C0 148.716 6.71573 142 15 142H104Z" fill="#FFEF2D"/>
+<text id="LevelName_6" fill="black" xml:space="preserve" style="white-space: pre" font-family="Jua" font-size="12" letter-spacing="0em"><tspan x="30" y="157.1">Level Name</tspan></text>
+<text id="ChallengeProgress_6" fill="black" xml:space="preserve" style="white-space: pre" font-family="Dongle" font-size="12" letter-spacing="0em"><tspan x="33" y="171.012">1/5 Challenges</tspan></text>
+</g>
+<g id="TextBubble1">
+<path id="Union_7" d="M268 0C276.284 0 283 6.71573 283 15V22.2441C283 30.5284 276.284 37.2441 268 37.2441H229.537L223.954 50.8701L218.371 37.2441H179C170.716 37.2441 164 30.5284 164 22.2441V15C164 6.71573 170.716 4.75144e-07 179 0H268Z" fill="#00B3FF"/>
+<text id="LevelName_7" fill="black" xml:space="preserve" style="white-space: pre" font-family="Jua" font-size="12" letter-spacing="0em"><tspan x="194" y="15.1">Level Name</tspan></text>
+<text id="ChallengeProgress_7" fill="black" xml:space="preserve" style="white-space: pre" font-family="Dongle" font-size="12" letter-spacing="0em"><tspan x="203" y="29.012">COMPLETED</tspan></text>
+</g>
+<g id="PondBubble7">
+<g id="PondOval" filter="url(#filter0_d_2033_109)">
+<ellipse cx="222.568" cy="668.214" rx="58.5677" ry="23.2143" fill="#00B3FF"/>
+<path d="M222.567 646C238.647 646 253.159 648.585 263.613 652.729C268.843 654.802 273.008 657.246 275.849 659.908C278.688 662.569 280.136 665.376 280.136 668.214C280.136 671.052 278.688 673.86 275.849 676.521C273.008 679.183 268.843 681.626 263.613 683.699C253.159 687.843 238.647 690.429 222.567 690.429C206.488 690.429 191.977 687.843 181.522 683.699C176.292 681.626 172.127 679.183 169.286 676.521C166.447 673.86 165 671.052 165 668.214C165 665.376 166.447 662.569 169.286 659.908C172.127 657.246 176.292 654.802 181.522 652.729C191.977 648.585 206.488 646 222.567 646Z" stroke="#005173" stroke-width="2"/>
+</g>
+<path id="WaterWaves" d="M188.567 654.429C191.234 653.429 198.167 651.329 204.567 650.929M185.567 678.929C195.067 682.262 220.667 687.529 247.067 681.929M259.067 675.429C262.567 674.762 269.967 671.829 271.567 665.429M211.567 649.929C212.401 649.595 214.667 649.029 217.067 649.429M177.067 670.929C175.234 669.762 172.467 666.729 176.067 663.929" stroke="white" stroke-opacity="0.75" stroke-width="3" stroke-linecap="round"/>
+</g>
+<g id="PondBubble6">
+<g id="PondOval_2" filter="url(#filter1_d_2033_109)">
+<ellipse cx="356.568" cy="476.214" rx="58.5677" ry="23.2143" fill="#00B3FF"/>
+<path d="M356.567 454C372.647 454 387.159 456.585 397.613 460.729C402.843 462.802 407.008 465.246 409.849 467.908C412.688 470.569 414.136 473.376 414.136 476.214C414.136 479.052 412.688 481.86 409.849 484.521C407.008 487.183 402.843 489.626 397.613 491.699C387.159 495.843 372.647 498.429 356.567 498.429C340.488 498.429 325.977 495.843 315.522 491.699C310.292 489.626 306.127 487.183 303.286 484.521C300.447 481.86 299 479.052 299 476.214C299 473.376 300.447 470.569 303.286 467.908C306.127 465.246 310.292 462.802 315.522 460.729C325.977 456.585 340.488 454 356.567 454Z" stroke="#005173" stroke-width="2"/>
+</g>
+<path id="WaterWaves_2" d="M322.567 462.429C325.234 461.429 332.167 459.329 338.567 458.929M319.567 486.929C329.067 490.262 354.667 495.529 381.067 489.929M393.067 483.429C396.567 482.762 403.967 479.829 405.567 473.429M345.567 457.929C346.401 457.595 348.667 457.029 351.067 457.429M311.067 478.929C309.234 477.762 306.467 474.729 310.067 471.929" stroke="white" stroke-opacity="0.75" stroke-width="3" stroke-linecap="round"/>
+<rect id="Lock" x="344.217" y="453" width="63.5618" height="60.7143" fill="url(#pattern0_2033_109)"/>
+</g>
+<g id="PondBubble5">
+<g id="PondOval_3" filter="url(#filter2_d_2033_109)">
+<ellipse cx="60.5677" cy="477.214" rx="58.5677" ry="23.2143" fill="#00B3FF"/>
+<path d="M60.5674 455C76.6467 455 91.1587 457.585 101.613 461.729C106.843 463.802 111.008 466.246 113.849 468.908C116.688 471.569 118.136 474.376 118.136 477.214C118.136 480.052 116.688 482.86 113.849 485.521C111.008 488.183 106.843 490.626 101.613 492.699C91.1587 496.843 76.6467 499.429 60.5674 499.429C44.4882 499.429 29.977 496.843 19.5225 492.699C14.2924 490.626 10.127 488.183 7.28613 485.521C4.44704 482.86 3 480.052 3 477.214C3.00014 474.376 4.44722 471.569 7.28613 468.908C10.1271 466.246 14.2923 463.802 19.5225 461.729C29.977 457.585 44.4882 455 60.5674 455Z" stroke="#005173" stroke-width="2"/>
+</g>
+<path id="WaterWaves_3" d="M26.5675 463.429C29.2341 462.429 36.1675 460.329 42.5675 459.929M23.5675 487.929C33.0675 491.262 58.6675 496.529 85.0675 490.929M97.0675 484.429C100.567 483.762 107.967 480.829 109.567 474.429M49.5675 458.929C50.4008 458.595 52.6675 458.029 55.0675 458.429M15.0675 479.929C13.2341 478.762 10.4675 475.729 14.0675 472.929" stroke="white" stroke-opacity="0.75" stroke-width="3" stroke-linecap="round"/>
+</g>
+<g id="PondBubble4">
+<g id="PondOval_4" filter="url(#filter3_d_2033_109)">
+<ellipse cx="382.568" cy="228.214" rx="58.5677" ry="23.2143" fill="#00B3FF"/>
+<path d="M382.567 206C398.647 206 413.159 208.585 423.613 212.729C428.843 214.802 433.008 217.246 435.849 219.908C438.688 222.569 440.136 225.376 440.136 228.214C440.136 231.052 438.688 233.86 435.849 236.521C433.008 239.183 428.843 241.626 423.613 243.699C413.159 247.843 398.647 250.429 382.567 250.429C366.488 250.429 351.977 247.843 341.522 243.699C336.292 241.626 332.127 239.183 329.286 236.521C326.447 233.86 325 231.052 325 228.214C325 225.376 326.447 222.569 329.286 219.908C332.127 217.246 336.292 214.802 341.522 212.729C351.977 208.585 366.488 206 382.567 206Z" stroke="#005173" stroke-width="2"/>
+</g>
+<path id="WaterWaves_4" d="M348.567 214.429C351.234 213.429 358.167 211.329 364.567 210.929M345.567 238.929C355.067 242.262 380.667 247.529 407.067 241.929M419.067 235.429C422.567 234.762 429.967 231.829 431.567 225.429M371.567 209.929C372.401 209.595 374.667 209.029 377.067 209.429M337.067 230.929C335.234 229.762 332.467 226.729 336.067 223.929" stroke="white" stroke-opacity="0.75" stroke-width="3" stroke-linecap="round"/>
+<rect id="Lock_2" x="377.411" y="195.393" width="63.5618" height="60.7143" fill="url(#pattern1_2033_109)"/>
+</g>
+<g id="PondBubble3">
+<g id="PondOval_5" filter="url(#filter4_d_2033_109)">
+<ellipse cx="223.568" cy="351.214" rx="58.5677" ry="23.2143" fill="#00B3FF"/>
+<path d="M223.567 329C239.647 329 254.159 331.585 264.613 335.729C269.843 337.802 274.008 340.246 276.849 342.908C279.688 345.569 281.136 348.376 281.136 351.214C281.136 354.052 279.688 356.86 276.849 359.521C274.008 362.183 269.843 364.626 264.613 366.699C254.159 370.843 239.647 373.429 223.567 373.429C207.488 373.429 192.977 370.843 182.522 366.699C177.292 364.626 173.127 362.183 170.286 359.521C167.447 356.86 166 354.052 166 351.214C166 348.376 167.447 345.569 170.286 342.908C173.127 340.246 177.292 337.802 182.522 335.729C192.977 331.585 207.488 329 223.567 329Z" stroke="#005173" stroke-width="2"/>
+</g>
+<path id="WaterWaves_5" d="M189.567 337.429C192.234 336.429 199.167 334.329 205.567 333.929M186.567 361.929C196.067 365.262 221.667 370.529 248.067 364.929M260.067 358.429C263.567 357.762 270.967 354.829 272.567 348.429M212.567 332.929C213.401 332.595 215.667 332.029 218.067 332.429M178.067 353.929C176.234 352.762 173.467 349.729 177.067 346.929" stroke="white" stroke-opacity="0.75" stroke-width="3" stroke-linecap="round"/>
+</g>
+<g id="PondBubble2">
+<g id="PondOval_6" filter="url(#filter5_d_2033_109)">
+<ellipse cx="60.5677" cy="226.214" rx="58.5677" ry="23.2143" fill="#00B3FF"/>
+<path d="M60.5674 204C76.6467 204 91.1587 206.585 101.613 210.729C106.843 212.802 111.008 215.246 113.849 217.908C116.688 220.569 118.136 223.376 118.136 226.214C118.136 229.052 116.688 231.86 113.849 234.521C111.008 237.183 106.843 239.626 101.613 241.699C91.1587 245.843 76.6467 248.429 60.5674 248.429C44.4882 248.429 29.977 245.843 19.5225 241.699C14.2924 239.626 10.127 237.183 7.28613 234.521C4.44704 231.86 3 229.052 3 226.214C3.00014 223.376 4.44722 220.569 7.28613 217.908C10.1271 215.246 14.2923 212.802 19.5225 210.729C29.977 206.585 44.4882 204 60.5674 204Z" stroke="#005173" stroke-width="2"/>
+</g>
+<path id="WaterWaves_6" d="M26.5675 212.429C29.2341 211.429 36.1675 209.329 42.5675 208.929M23.5675 236.929C33.0675 240.262 58.6675 245.529 85.0675 239.929M97.0675 233.429C100.567 232.762 107.967 229.829 109.567 223.429M49.5675 207.929C50.4008 207.595 52.6675 207.029 55.0675 207.429M15.0675 228.929C13.2341 227.762 10.4675 224.729 14.0675 221.929" stroke="white" stroke-opacity="0.75" stroke-width="3" stroke-linecap="round"/>
+</g>
+<g id="PondBubble1">
+<g id="PondOval_7" filter="url(#filter6_d_2033_109)">
+<ellipse cx="223.5" cy="86.7857" rx="58.5677" ry="23.2143" fill="#00B3FF"/>
+<path d="M223.5 64.5714C239.579 64.5714 254.091 67.1561 264.545 71.2999C269.775 73.373 273.94 75.8174 276.781 78.4796C279.62 81.1402 281.068 83.9472 281.068 86.7853C281.068 89.6235 279.62 92.4312 276.781 95.0919C273.94 97.7541 269.775 100.198 264.545 102.271C254.091 106.414 239.579 109 223.5 109C207.42 109 192.909 106.414 182.455 102.271C177.225 100.198 173.059 97.7542 170.218 95.0919C167.379 92.4313 165.932 89.6234 165.932 86.7853C165.932 83.9473 167.379 81.1401 170.218 78.4796C173.059 75.8173 177.224 73.373 182.455 71.2999C192.909 67.1561 207.42 64.5714 223.5 64.5714Z" stroke="#005173" stroke-width="2"/>
+</g>
+<path id="WaterWaves_7" d="M189.5 73C192.166 72 199.1 69.9 205.5 69.5M186.5 97.5C196 100.833 221.6 106.1 248 100.5M260 94C263.5 93.3333 270.9 90.4 272.5 84M212.5 68.5C213.333 68.1667 215.6 67.6 218 68M178 89.5C176.166 88.3333 173.4 85.3 177 82.5" stroke="white" stroke-opacity="0.75" stroke-width="3" stroke-linecap="round"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_2033_109" x="164" y="645" width="117.135" height="54.4286" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="8"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.317647 0 0 0 0 0.45098 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2033_109"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2033_109" result="shape"/>
+</filter>
+<filter id="filter1_d_2033_109" x="298" y="453" width="117.135" height="54.4286" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="8"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.317647 0 0 0 0 0.45098 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2033_109"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2033_109" result="shape"/>
+</filter>
+<pattern id="pattern0_2033_109" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use xlink:href="#image0_2033_109" transform="matrix(0.00955201 0 0 0.01 0.0223997 0)"/>
+</pattern>
+<filter id="filter2_d_2033_109" x="2" y="454" width="117.135" height="54.4286" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="8"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.317647 0 0 0 0 0.45098 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2033_109"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2033_109" result="shape"/>
+</filter>
+<filter id="filter3_d_2033_109" x="324" y="205" width="117.135" height="54.4286" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="8"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.317647 0 0 0 0 0.45098 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2033_109"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2033_109" result="shape"/>
+</filter>
+<pattern id="pattern1_2033_109" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use xlink:href="#image0_2033_109" transform="matrix(0.00955201 0 0 0.01 0.0223997 0)"/>
+</pattern>
+<filter id="filter4_d_2033_109" x="165" y="328" width="117.135" height="54.4286" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="8"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.317647 0 0 0 0 0.45098 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2033_109"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2033_109" result="shape"/>
+</filter>
+<filter id="filter5_d_2033_109" x="2" y="203" width="117.135" height="54.4286" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="8"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.317647 0 0 0 0 0.45098 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2033_109"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2033_109" result="shape"/>
+</filter>
+<filter id="filter6_d_2033_109" x="164.932" y="63.5714" width="117.135" height="54.4286" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="8"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.317647 0 0 0 0 0.45098 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2033_109"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2033_109" result="shape"/>
+</filter>
+<image id="image0_2033_109" width="100" height="100" preserveAspectRatio="none" xlink:href="data:image/png;base64,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"/>
+</defs>
+</svg>

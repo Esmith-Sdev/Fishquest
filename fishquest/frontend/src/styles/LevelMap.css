@@ -1,0 +1,31 @@
+.level-map {
+  width: 100%;
+  height: auto;
+  padding: 2rem;
+  display: block;
+}
+
+[id^="LevelName"] tspan {
+  fill: #000000;
+  font-family: Jua;
+  font-size: 12px;
+  text-align: center;
+}
+[id^="TextBubble"] path {
+  fill: #ffef2d;
+  filter: drop-shadow(0 5px 0 #6e5800);
+}
+[id^="TextBubble"]:hover path {
+  fill: #cebf20;
+  filter: drop-shadow(0 5px 0 #6e5800);
+}
+[id^="ChallengeProgress"] tspan {
+  fill: #000000;
+  font-family: Dongle;
+  font-size: 12px;
+  text-align: center;
+}
+.levelBackground {
+  background: var(--clr-surface-a10);
+  height: 90vh;
+}
