@@ -1,6 +1,8 @@
-const API_BASE = "http://localhost:3000";
+const API_URL = import.meta.env.DEV
+  ? import.meta.env.VITE_LOCAL_API_URL
+  : import.meta.env.VITE_API_URL;
 export async function fetchRigPresets(token) {
-  const res = await fetch(`${API_BASE}/api/rig-presets`, {
+  const res = await fetch(`${API_URL}/api/rig-presets`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -10,7 +12,7 @@ export async function fetchRigPresets(token) {
 }
 
 export async function createRigPreset(rig, token) {
-  const res = await fetch(`${API_BASE}/api/rig-presets`, {
+  const res = await fetch(`${API_URL}/api/rig-presets`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -30,7 +32,7 @@ export async function createRigPreset(rig, token) {
   return data;
 }
 export async function updateRigPreset(rigId, rig, token) {
-  const res = await fetch(`${API_BASE}/api/rig-presets/${rigId}`, {
+  const res = await fetch(`${API_URL}/api/rig-presets/${rigId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

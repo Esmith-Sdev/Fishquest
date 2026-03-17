@@ -2,7 +2,9 @@ import { Carousel, Button, Image, Form, Navbar } from "react-bootstrap";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import FishQuestLogoOnly from "../assets/img/FishQuest-Logo-only.png";
-const API_BASE = "http://localhost:3000";
+const API_URL = import.meta.env.DEV
+  ? import.meta.env.VITE_LOCAL_API_URL
+  : import.meta.env.VITE_API_URL;
 const slides = [
   {
     id: 1,
@@ -22,7 +24,7 @@ function ProfileForm({ form, setForm, onNext }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${API_BASE}/api/auth/signup`, {
+      const res = await fetch(`${API_URL}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

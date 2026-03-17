@@ -1,7 +1,9 @@
-const API_BASE = "http://localhost:3000";
+const API_URL = import.meta.env.DEV
+  ? import.meta.env.VITE_LOCAL_API_URL
+  : import.meta.env.VITE_API_URL;
 
 export async function createCatchLog(payload, token) {
-  const res = await fetch(`${API_BASE}/api/logs`, {
+  const res = await fetch(`${API_URL}/api/logs`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -16,7 +18,7 @@ export async function createCatchLog(payload, token) {
 }
 
 export async function fetchLogs(token) {
-  const res = await fetch(`${API_BASE}/api/logs`, {
+  const res = await fetch(`${API_URL}/api/logs`, {
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },

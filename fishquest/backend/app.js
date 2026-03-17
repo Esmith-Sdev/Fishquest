@@ -13,7 +13,15 @@ import rigStatsRoutes from "./routes/rigStats.js";
 import uploadRoutes from "./routes/uploads.js";
 import logsRoutes from "./routes/logs.js";
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://your-frontend-name.onrender.com",
+    ],
+    credentials: true,
+  }),
+);
 app.use(bodyParser.json());
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -30,8 +38,9 @@ const upload = multer({
 });
 const PORT = process.env.PORT || 3000;
 app.use("/api/auth", router);
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});
 /* SIGN UP API */
 router.post("/signup", async (req, res) => {
   try {
