@@ -1,7 +1,7 @@
 import { Navbar, Button, Image, ProgressBar, Modal } from "react-bootstrap";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../auth";
+import { logout } from "../api/auth";
 import BottomBar from "../components/BottomBar";
 
 export default function Profile() {

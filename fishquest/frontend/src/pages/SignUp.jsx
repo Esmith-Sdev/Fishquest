@@ -1,6 +1,6 @@
-import { Carousel, Button, Image, Form } from "react-bootstrap";
+import { Carousel, Button, Image, Form, Navbar } from "react-bootstrap";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import FishQuestLogoOnly from "../assets/img/FishQuest-Logo-only.png";
 const API_BASE = "http://localhost:3000";
 const slides = [
@@ -45,6 +45,9 @@ function ProfileForm({ form, setForm, onNext }) {
   };
   return (
     <>
+      <Link to="/">
+        <i className="bi bi-arrow-left-circle-fill"></i>
+      </Link>
       <div className="d-flex justify-content-center pt-3">
         <Image src={FishQuestLogoOnly} className="w-25" />
       </div>

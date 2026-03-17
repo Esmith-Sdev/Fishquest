@@ -1,5 +1,5 @@
 import { Navbar, Button, Image, Container, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import BottomBar from "../components/BottomBar";
 import LeftArrow from "../assets/img/Icons/LeftArrow.png";
 import RightArrow from "../assets/img/Icons/RightArrow.png";
@@ -11,12 +11,16 @@ import { HOOKS } from "../data/hooks.config";
 import Bobber from "../assets/img/Bobbers/bobber.png";
 import NoBobber from "../assets/img/Bobbers/no-bobber.png";
 import { createRigPreset } from "../api/rigPresets";
+import { getToken } from "../api/auth";
+
 export default function CreateRig() {
+  const navigate = useNavigate();
   const [poleId, setPoleId] = useState(POLES[0].id);
   const [baitId, setBaitId] = useState(BAIT[0].id);
   const [hookId, setHookId] = useState(HOOKS[0].id);
   const [weightId, setWeightId] = useState(WEIGHTS[0].id);
   const [rigName, setRigName] = useState("");
+  const location = useLocation();
   //poles
   const [polesIndex, setPolesIndex] = useState(0);
   const currentPole = POLES[polesIndex];
@@ -82,6 +86,15 @@ export default function CreateRig() {
   //Handle submitting rig
   async function handleSubmitRig(e) {
     e.preventDefault();
+    const token = getToken();
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    if (!rigName.trim()) {
+      console.log("Preset Name Required");
+      return;
+    }
     const rig = {
       rigName,
       baitId,
@@ -90,8 +103,21 @@ export default function CreateRig() {
       weightId,
       bobber,
     };
-    console.log("Rig Saved!", rig);
-    await createRigPreset(rig, token);
+    try {
+      await createRigPreset(rig, token);
+      console.log("Rig Saved!", rig);
+      const returnTo = location.state?.returnTo || "/tacklebox";
+      const challenge = location.state?.challenge || null;
+
+      navigate(returnTo, {
+        state: {
+          challenge,
+          rigCreated: true,
+        },
+      });
+    } catch (err) {
+      console.error(err.message);
+    }
   }
 
   return (

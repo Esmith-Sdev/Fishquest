@@ -9,20 +9,20 @@ import EditBadgeShowcase from "./EditBadgeShowcase";
 import EditPole from "./EditPole";
 import EditProfile from "./EditProfile";
 import EditRig from "./EditRig";
-import Level from "./Level";
 import Logs from "./Logs";
 import Notes from "./Notes";
 import Profile from "./Profile";
 import CreateRig from "./CreateRig";
 import Shop from "./Shop";
 import Tacklebox from "./Tacklebox";
-import { isAuthenticated } from "../auth";
+import { isAuthenticated } from "../api/auth";
+import ChallengePage from "../pages/ChallengePage";
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
-
+      <Route path="/challenges" element={<ChallengePage />} />
       <Route path="/" element={isAuthenticated() ? <Home /> : <Login />} />
       <Route path="/home" element={<Home />} />
       <Route path="/badges" element={<Badges />} />
@@ -31,8 +31,7 @@ export default function AppRoutes() {
       <Route path="/edit-badge-showcase" element={<EditBadgeShowcase />} />
       <Route path="/edit-pole" element={<EditPole />} />
       <Route path="/edit-profile" element={<EditProfile />} />
-      <Route path="/edit-rig" element={<EditRig />} />
-      <Route path="/level" element={<Level />} />
+      <Route path="/edit-rig/:rigId" element={<EditRig />} />
       <Route path="/logs" element={<Logs />} />
       <Route path="/notes" element={<Notes />} />
       <Route path="/profile" element={<Profile />} />

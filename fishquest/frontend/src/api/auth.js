@@ -10,7 +10,7 @@ export async function login(username, password) {
   if (res.ok) {
     localStorage.setItem("token", data.token);
 
-    localStorage.setItem("userId", data.user.userId);
+    localStorage.setItem("userId", data.user.id);
 
     localStorage.setItem("username", data.user.username);
     return data;

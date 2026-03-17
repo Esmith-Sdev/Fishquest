@@ -5,12 +5,13 @@ import bodyParser from "body-parser";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import multer from "multer";
-import { v2 as cloudinary } from "cloudinary";
 import "./db.js";
-import User from "./models/User.js";
-import Logs from "./models/Logs.js";
+import User from "./models/user.js";
+import challengesRoute from "./routes/challenges.js";
 import rigPresetRoutes from "./routes/rigPreset.js";
-
+import rigStatsRoutes from "./routes/rigStats.js";
+import uploadRoutes from "./routes/uploads.js";
+import logsRoutes from "./routes/logs.js";
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -19,7 +20,10 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
 app.use(express.json());
 app.use("/api/rig-presets", rigPresetRoutes);
-
+app.use("/api/rig-stats", rigStatsRoutes);
+app.use("/api/challenges", challengesRoute);
+app.use("/api/uploads", uploadRoutes);
+app.use("/api/logs", logsRoutes);
 const upload = multer({
   storage: multer.diskStorage({}),
   limits: { fileSize: 8 * 1024 * 1024 }, // 8MB per image
@@ -47,7 +51,6 @@ router.post("/signup", async (req, res) => {
     const passwordHash = await bcrypt.hash(String(password), 12);
 
     const user = await User.create({ username, passwordHash, email });
-
     const token = jwt.sign({ sub: user._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
@@ -93,22 +96,5 @@ router.post("/login", async (req, res) => {
     return res
       .status(500)
       .json({ message: "Login failed", error: err.message });
-  }
-});
-
-/* IMAGE UPLOAD API */
-router.post("/upload", upload.array("images", 5), async (req, res) => {
-  try {
-    const uploads = await Promise.all(
-      req.files.map((file) =>
-        cloudinary.uploader.upload(file.path, {
-          folder: "fishquest/logs",
-        }),
-      ),
-    );
-
-    res.json({ urls: uploads.map((u) => u.secure_url) });
-  } catch (err) {
-    res.status(500).json({ message: "Upload failed" });
   }
 });

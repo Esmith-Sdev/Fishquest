@@ -31,10 +31,32 @@ router.post("/", requireAuth, async (req, res) => {
 //Load Rigs
 router.get("/", requireAuth, async (req, res) => {
   try {
-    const presets = await RigPreset.find({ userId }).sort({ createdAt: -1 });
+    const presets = await RigPreset.find({ userId: req.user.id }).sort({
+      createdAt: -1,
+    });
     res.json(presets);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 export default router;
+//Update Rigs
+router.put("/:id", async (req, res) => {
+  try {
+    const updatedRig = await RigPreset.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true },
+    );
+
+    if (!updatedRig) {
+      return res.status(404).json({ message: "Rig not found" });
+    }
+
+    res.json(updatedRig);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to update rig", error: error.message });
+  }
+});

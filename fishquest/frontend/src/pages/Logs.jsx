@@ -1,19 +1,32 @@
 import { Navbar, Button, Card, Row, Col, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import BottomBar from "../components/BottomBar";
-import logPhoto from "../assets/img/logPhoto.jpg";
-import logPhoto2 from "../assets/img/logPhoto2.jpg";
+import { fetchLogs } from "../api/logs";
+import { getToken } from "../api/auth";
+import skunkImage from "../assets/img/Fish/skunked.png";
 export default function Logs() {
-  const logs = [];
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const isFilled = (log) => {
-    return (
-      Boolean(log?.title?.trim()) &&
-      Boolean(log?.date?.trim()) &&
-      Boolean(log?.photo)
-    );
-  };
-  const filledLogs = logs.filter(isFilled);
+  useEffect(() => {
+    async function loadLogs() {
+      try {
+        const token = getToken();
+        const data = await fetchLogs(token);
+        setLogs(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Failed to load logs:", err);
+        setError(err.message || "Failed to load logs");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadLogs();
+  }, []);
+
   return (
     <>
       <Navbar className="topNavbar d-flex align-items-center justify-content-between position-relative px-3 py-2">
@@ -40,38 +53,51 @@ export default function Logs() {
       </div>
 
       <Container className="p-3">
-        {filledLogs.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-5">
+            <h4 className="mb-2">Loading logs...</h4>
+          </div>
+        ) : error ? (
+          <div className="text-center py-5">
+            <h4 className="mb-2 text-danger">{error}</h4>
+          </div>
+        ) : logs.length === 0 ? (
           <div className="text-center py-5">
             <h4 className="mb-2">No logs yet</h4>
             <p className="mb-3">Create your first log to see it here.</p>
           </div>
         ) : (
           <Row className="g-3">
-            {filledLogs.map((log) => (
-              <Col className="" key={log.id} xs={6} sm={6} md={4} lg={3}>
-                <Card className="text-center h-100">
-                  <Card.Body className="pb-2">
-                    <Card.Title className="mb-2">{log.title}</Card.Title>
-                  </Card.Body>
+            {logs.map((log) => {
+              const title = log.skunked
+                ? "Skunked Trip"
+                : log.speciesName || "Unknown Fish";
 
-                  <Card.Img
-                    src={log.photo}
-                    alt={log.title}
-                    style={{
-                      objectFit: "cover",
-                      height: "160px",
-                    }}
-                  />
+              const photo = log.skunked
+                ? skunkImage
+                : log.imageUrls?.[0] || null;
+              const formattedDate = log.date
+                ? new Date(log.date).toLocaleDateString()
+                : "";
 
-                  <Card.Body className="pt-2">
-                    <Card.Subtitle className="text-muted">
-                      {log.date}
-                      {log.location ? ` • ${log.location}` : ""}
-                    </Card.Subtitle>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
+              return (
+                <Col key={log._id} xs={4} sm={4} md={3} lg={2}>
+                  <Card className="text-center h-100">
+                    <Card.Body className="pb-2">
+                      <Card.Title>{title}</Card.Title>
+                    </Card.Body>
+
+                    <Card.Img src={photo || skunkImage} alt={title} />
+
+                    <Card.Body className="pt-2">
+                      <Card.Subtitle className="text-muted">
+                        {formattedDate}
+                      </Card.Subtitle>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              );
+            })}
           </Row>
         )}
       </Container>
