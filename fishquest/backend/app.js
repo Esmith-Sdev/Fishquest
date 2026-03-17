@@ -15,10 +15,7 @@ import logsRoutes from "./routes/logs.js";
 const app = express();
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://your-frontend-name.onrender.com",
-    ],
+    origin: ["http://localhost:5173", "https://fishquest.onrender.com"],
     credentials: true,
   }),
 );
