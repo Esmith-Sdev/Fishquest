@@ -44,6 +44,12 @@ app.use("/api/auth", router);
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
+app.get("/api/debug-cors", (req, res) => {
+  res.json({
+    ok: true,
+    originSeen: req.headers.origin || null,
+  });
+});
 /* SIGN UP API */
 router.post("/signup", async (req, res) => {
   try {
