@@ -15,8 +15,10 @@ import logsRoutes from "./routes/logs.js";
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://fishquest.onrender.com"],
+    origin: ["http://localhost:5173", "https://esmith-sdev.github.io"],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 app.use(bodyParser.json());
