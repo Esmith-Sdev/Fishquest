@@ -12,39 +12,62 @@ import rigPresetRoutes from "./routes/rigPreset.js";
 import rigStatsRoutes from "./routes/rigStats.js";
 import uploadRoutes from "./routes/uploads.js";
 import logsRoutes from "./routes/logs.js";
+
 const app = express();
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://esmith-sdev.github.io",
-      "https://fishquest.onrender.com",
-    ],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  }),
-);
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://esmith-sdev.github.io",
+  "https://fishquest.onrender.com",
+];
+
+const corsOptions = {
+  origin(origin, callback) {
+    console.log("CORS origin:", origin);
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+
+// explicit preflight handling
+app.options(/.*/, cors(corsOptions));
+
 app.use(bodyParser.json());
+app.use(express.json());
+
 const router = express.Router();
+
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
-app.use(express.json());
+
 app.use("/api/rig-presets", rigPresetRoutes);
 app.use("/api/rig-stats", rigStatsRoutes);
 app.use("/api/challenges", challengesRoute);
 app.use("/api/uploads", uploadRoutes);
 app.use("/api/logs", logsRoutes);
+app.use("/api/auth", router);
+
 const upload = multer({
   storage: multer.diskStorage({}),
-  limits: { fileSize: 8 * 1024 * 1024 }, // 8MB per image
+  limits: { fileSize: 8 * 1024 * 1024 },
 });
+
 const PORT = process.env.PORT || 3000;
-app.use("/api/auth", router);
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port ${PORT}`);
+
+app.get("/api/debug-cors", (req, res) => {
+  res.json({
+    ok: true,
+    method: req.method,
+    originSeen: req.headers.origin || null,
+  });
 });
-/* SIGN UP API */
+
 router.post("/signup", async (req, res) => {
   try {
     let { username, password, email } = req.body;
@@ -54,18 +77,24 @@ router.post("/signup", async (req, res) => {
 
     username = String(username).toLowerCase().trim();
     email = String(email).toLowerCase().trim();
-    const userExisted = await User.findOne({ username });
-    if (userExisted)
-      return res.status(409).json({ message: "Username is taken" });
-    const emailExisted = await User.findOne({ email });
-    if (emailExisted)
-      return res.status(409).json({ message: "E-mail is taken" });
-    const passwordHash = await bcrypt.hash(String(password), 12);
 
+    const userExisted = await User.findOne({ username });
+    if (userExisted) {
+      return res.status(409).json({ message: "Username is taken" });
+    }
+
+    const emailExisted = await User.findOne({ email });
+    if (emailExisted) {
+      return res.status(409).json({ message: "E-mail is taken" });
+    }
+
+    const passwordHash = await bcrypt.hash(String(password), 12);
     const user = await User.create({ username, passwordHash, email });
+
     const token = jwt.sign({ sub: user._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
+
     return res.status(201).json({
       token,
       user: { id: user._id, username: user.username },
@@ -77,7 +106,6 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-/* LOGIN API */
 router.post("/login", async (req, res) => {
   try {
     let { username, password } = req.body;
@@ -90,6 +118,7 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({
       username: String(username).toLowerCase().trim(),
     }).select("+passwordHash");
+
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
     const ok = await bcrypt.compare(String(password), user.passwordHash);
@@ -109,4 +138,8 @@ router.post("/login", async (req, res) => {
       .status(500)
       .json({ message: "Login failed", error: err.message });
   }
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
