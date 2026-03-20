@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import BottomBar from "../components/BottomBar";
 import { fetchLogs } from "../api/logs";
 import { getToken } from "../api/auth";
-import skunkImage from "../assets/img/Fish/skunked.png";
+import skunkImage from "/img/Fish/skunked.png";
 export default function Logs() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -1,6 +1,6 @@
 import { Container, Image, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import RigIcon from "../assets/img/Reels/baitcaster.png";
+import RigIcon from "/img/Reels/baitcaster.png";
 export default function TipsBox() {
   return (
     <Container className="pt-3">
