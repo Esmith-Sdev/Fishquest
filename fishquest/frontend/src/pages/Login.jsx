@@ -41,7 +41,7 @@ export default function Login() {
               <Form.Control
                 id="password"
                 value={password}
-                type={password}
+                type="password"
                 onChange={(e) => setP(e.target.value)}
               />
             </Form.Group>

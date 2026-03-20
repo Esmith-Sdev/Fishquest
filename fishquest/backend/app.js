@@ -15,20 +15,26 @@ import logsRoutes from "./routes/logs.js";
 
 const app = express();
 
-const allowedOrigins = [
+const allowedOrigins = new Set([
   "http://localhost:5173",
   "https://fishquest-frontend.onrender.com",
   "https://fishquest.onrender.com",
-];
+]);
 
 const corsOptions = {
   origin(origin, callback) {
-    console.log("CORS origin:", origin);
+    console.log("CORS origin raw:", JSON.stringify(origin));
+
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error(`Not allowed by CORS: ${origin}`));
+
+    const normalized = String(origin).replace(/\/$/, "").trim();
+
+    if (allowedOrigins.has(normalized)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Not allowed by CORS: ${normalized}`));
   },
-  credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
