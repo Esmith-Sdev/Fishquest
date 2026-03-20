@@ -12,7 +12,6 @@ export default defineConfig({
     }),
     svgr(),
   ],
-  base: "/Fishquest/",
   server: {
     proxy: {
       "/api": "http://localhost:3000",
