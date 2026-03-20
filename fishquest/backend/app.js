@@ -17,7 +17,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://esmith-sdev.github.io",
+  "https://fishquest-frontend.onrender.com",
   "https://fishquest.onrender.com",
 ];
 
