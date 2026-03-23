@@ -15,16 +15,35 @@ import logsRoutes from "./routes/logs.js";
 
 const app = express();
 
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  }),
-);
+const allowedOrigins = new Set([
+  "http://localhost:8081",
+  "http://localhost:19006",
+  "https://fishquest-frontend.onrender.com",
+  "https://fishquest.onrender.com",
+]);
 
-app.options("*", cors());
+const corsOptions = {
+  origin(origin, callback) {
+    console.log("CORS origin raw:", JSON.stringify(origin));
+
+    if (!origin) return callback(null, true);
+
+    const normalized = String(origin).replace(/\/$/, "").trim();
+
+    if (allowedOrigins.has(normalized)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Not allowed by CORS: ${normalized}`));
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+
+// explicit preflight handling
+app.options(/.*/, cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use(express.json());
