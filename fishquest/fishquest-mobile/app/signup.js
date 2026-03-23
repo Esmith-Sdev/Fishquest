@@ -51,7 +51,10 @@ export default function SignUp() {
       } else if (res.status === 409) {
         Alert.alert("Error", "That email is already registered");
       } else {
-        Alert.alert("Error", "Signup failed. Please try again.");
+        const data = await res.json();
+        console.log("signup error:", data);
+
+        Alert.alert("Error", data.error || data.message);
       }
     } catch (err) {
       Alert.alert("Error", err.message);

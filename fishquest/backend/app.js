@@ -107,9 +107,11 @@ router.post("/signup", async (req, res) => {
       user: { id: user._id, username: user.username },
     });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Signup failed", error: err.message });
+    console.log("SIGNUP ERROR:", err);
+    return res.status(500).json({
+      message: "Signup failed",
+      error: err.message,
+    });
   }
 });
 
