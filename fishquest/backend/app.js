@@ -15,32 +15,22 @@ import logsRoutes from "./routes/logs.js";
 
 const app = express();
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // allow no-origin (mobile apps, curl)
-      if (!origin) return callback(null, true);
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
 
-      // allow ANY localhost port
-      if (origin.startsWith("http://localhost")) {
-        return callback(null, true);
-      }
+    if (origin.startsWith("http://localhost")) {
+      return callback(null, true);
+    }
 
-      /*allow your deployed frontend if needed
-      
-      if (origin === "https://yourdomain.com") {
-        return callback(null, true);
-      }
-      */
-      callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-  }),
-);
+    callback(null, true); // temporary for debugging
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 
 app.use(cors(corsOptions));
-
-// explicit preflight handling
 app.options(/.*/, cors(corsOptions));
 
 app.use(bodyParser.json());
