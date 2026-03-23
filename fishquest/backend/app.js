@@ -15,23 +15,16 @@ import logsRoutes from "./routes/logs.js";
 
 const app = express();
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
-    if (origin.startsWith("http://localhost")) {
-      return callback(null, true);
-    }
-
-    callback(null, true); // temporary for debugging
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-
-app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions));
+app.options("*", cors());
 
 app.use(bodyParser.json());
 app.use(express.json());
