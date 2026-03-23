@@ -4,6 +4,7 @@ export const COLORS = {
   primaryDark: "#0091cf",
   secondary: "#ff733b",
   secondaryDark: "#d35929",
+  secondaryDropShadow: "#733800",
   bg: "#212529",
   surface0: "#121212",
   surface1: "#282828",

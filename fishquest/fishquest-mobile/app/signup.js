@@ -13,7 +13,7 @@ import {
 import { Link, router } from "expo-router";
 import GradientBackground from "../components/GradientBackground";
 import { COLORS, RADIUS } from "../constants/theme";
-
+import LeftArrowCircle from "@expo/vector-icons/FontAwesome5";
 const API_URL = "https://fishquest.onrender.com";
 
 export default function SignUp() {
@@ -82,7 +82,11 @@ export default function SignUp() {
           <View style={styles.formContainer}>
             <Link href="/" asChild>
               <Pressable style={styles.backButton}>
-                <Text style={styles.backText}>←</Text>
+                <LeftArrowCircle
+                  name="arrow-circle-left"
+                  size={30}
+                  color="white"
+                />
               </Pressable>
             </Link>
 
@@ -188,15 +192,19 @@ const styles = StyleSheet.create({
   orangeButton: {
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    paddingVertical: 8,
+    paddingHorizontal: 18,
     alignItems: "center",
-    minWidth: 140,
+    minWidth: 80,
+    shadowColor: COLORS.secondaryDropShadow,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
   },
   buttonText: {
     color: "#000",
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "400",
+    fontFamily: "Jua",
   },
   submitWrap: {
     alignItems: "center",
@@ -206,9 +214,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: "flex-start",
   },
-  backText: {
-    fontSize: 28,
-    color: "#fff",
+  backIcon: {
+    width: "30px",
+    height: "30px",
+    BackgroundColor: "#fff",
     fontWeight: "700",
   },
 });

@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     borderRadius: 12,
     paddingHorizontal: 25,
-    paddingVertical: 14,
+    paddingVertical: 8,
     alignItems: "center",
     marginTop: 8,
   },
