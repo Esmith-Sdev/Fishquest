@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   biggerIcon: {
-    width: 36,
-    height: 36,
+    width: 34,
+    height: 34,
     resizeMode: "contain",
   },
 });

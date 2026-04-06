@@ -8,6 +8,7 @@ export async function login(username, password) {
   const data = await res.json();
 
   if (res.ok) {
+    console.log("LOGIN TOKEN:", data.token);
     localStorage.setItem("token", data.token);
 
     localStorage.setItem("userId", data.user.id);

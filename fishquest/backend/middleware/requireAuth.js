@@ -19,6 +19,9 @@ export default function requireAuth(req, res, next) {
 
     next(); // continue to route
   } catch (err) {
+    console.log("JWT VERIFY ERROR:", err.message);
+    console.log("JWT_SECRET (middleware):", process.env.JWT_SECRET);
+    console.log("AUTH HEADER:", req.headers.authorization);
     res.status(401).json({ error: "Invalid token" });
   }
 }

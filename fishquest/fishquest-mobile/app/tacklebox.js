@@ -43,6 +43,7 @@ export default function Tacklebox() {
     async function loadRigs() {
       try {
         const token = getToken();
+        console.log("TOKEN FROM STORAGE:", token);
         if (!token) return;
 
         const data = await fetchRigPresets(token);
