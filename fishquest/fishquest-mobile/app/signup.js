@@ -14,9 +14,11 @@ import { Link, router } from "expo-router";
 import GradientBackground from "../components/GradientBackground";
 import { COLORS, RADIUS } from "../constants/theme";
 import LeftArrowCircle from "@expo/vector-icons/FontAwesome5";
+import { useAuth } from "../context/AuthContext";
 const API_URL = "https://fishquest.onrender.com";
 
 export default function SignUp() {
+  const { login } = useAuth();
   const [index, setIndex] = useState(0);
   const [form, setForm] = useState({
     username: "",
@@ -45,15 +47,18 @@ export default function SignUp() {
         }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
         Alert.alert("Success", "Account Created!");
+        login(data);
         router.replace("/login");
       } else if (res.status === 409) {
-        Alert.alert("Error", "That email is already registered");
+        Alert.alert(
+          "Error",
+          data.message || "That email is already registered",
+        );
       } else {
-        const data = await res.json();
-        console.log("signup error:", data);
-
         Alert.alert("Error", data.error || data.message);
       }
     } catch (err) {

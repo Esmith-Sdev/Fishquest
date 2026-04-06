@@ -13,12 +13,12 @@ import { Image } from "react-native";
 import { Link } from "expo-router";
 
 export default function AuthForm({
-  title,
   buttonText,
   onSubmit,
   footerText,
   footerLinkText,
   footerHref,
+  errorText,
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,6 +51,7 @@ export default function AuthForm({
         <TextInput
           style={styles.input}
           placeholder="Password"
+          autoCapitalize="none"
           secureTextEntry
           value={password}
           onChangeText={setPassword}
@@ -66,6 +67,9 @@ export default function AuthForm({
             {footerLinkText}
           </Link>
         </View>
+        {errorText && (
+          <Text style={styles.errorText}>Invalid Username or Password</Text>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
@@ -131,5 +135,8 @@ const styles = StyleSheet.create({
   link: {
     color: "#F6A623",
     fontWeight: "700",
+  },
+  errorText: {
+    color: "red",
   },
 });

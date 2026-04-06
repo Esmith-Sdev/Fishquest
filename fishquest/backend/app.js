@@ -117,6 +117,7 @@ router.post("/signup", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
+    console.log("JWT_SECRET (login):", JWT_SECRET);
     let { username, password } = req.body;
     if (!username || !password) {
       return res

@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export default function requireAuth(req, res, next) {
   const header = req.headers.authorization;
-
+  console.log("JWT_SECRET (middleware):", process.env.JWT_SECRET);
   if (!header) {
     return res.status(401).json({ error: "Missing auth token" });
   }
