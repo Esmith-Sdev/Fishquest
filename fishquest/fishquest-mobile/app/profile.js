@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, Text, StyleSheet, Pressable, Image, Modal } from "react-native";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 import BottomNavbar from "../components/BottomNavbar";
 import { logout, getAuth } from "../api/auth";
 import { COLORS, RADIUS } from "../constants/theme";
@@ -44,101 +44,86 @@ export default function Profile() {
   }
 
   return (
-    <View style={styles.screen}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()}>
-          <Ionicons name="arrow-back-circle" size={30} color="#fff" />
-        </Pressable>
-
-        <Text style={styles.headerTitle}>Profile</Text>
-
-        <Pressable style={styles.orangeButton} onPress={() => setShow(true)}>
-          <Text style={styles.buttonText}>Settings</Text>
-        </Pressable>
-      </View>
-
-      <View style={styles.content}>
-        <View style={styles.profileRow}>
-          <View style={styles.leftColumn}>
-            <Text style={styles.username}>{username || "User"}</Text>
-
-            <View style={styles.profileImageContainer}>
-              <Image />
-            </View>
-
-            <Pressable
-              style={styles.orangeButton}
-              onPress={() => router.push("/edit-profile")}
-            >
-              <Text style={styles.buttonText}>Customize</Text>
-            </Pressable>
-          </View>
-
-          <View style={styles.statsColumn}>
-            <Text style={styles.statsTitle}>Stats</Text>
-
-            <View style={styles.statRow}>
-              <Text style={styles.statLabel}>Personal Best:</Text>
-              <Text style={styles.statValue}>5.6lb</Text>
-            </View>
-
-            <View style={styles.statRow}>
-              <Text style={styles.statLabel}>Fish Caught:</Text>
-              <Text style={styles.statValue}>5</Text>
-            </View>
-
-            <View style={styles.statRow}>
-              <Text style={styles.statLabel}>Challenges Completed:</Text>
-              <Text style={styles.statValue}>5</Text>
-            </View>
-
-            <View style={styles.statRow}>
-              <Text style={styles.statLabel}>Favorite Bait:</Text>
-              <Text style={styles.statValue}>Frog</Text>
-            </View>
-          </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+      <View style={styles.screen}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()}>
+            <Ionicons name="arrow-back-circle" size={30} color="#fff" />
+          </Pressable>
+          <Text style={styles.headerTitle}>Profile</Text>
+          <Pressable style={styles.orangeButton} onPress={() => setShow(true)}>
+            <Text style={styles.buttonText}>Settings</Text>
+          </Pressable>
         </View>
-
-        <View style={styles.rankContainer}>
-          <Text style={styles.rankText}>{rankTitle}</Text>
-
-          <View style={styles.progressTrack}>
-            <View style={[styles.progressFill, { width: `${xp}%` }]} />
-            <Text style={styles.progressLabel}>XP</Text>
-          </View>
-
-          <Text style={styles.levelText}>Level {rank}</Text>
-        </View>
-      </View>
-
-      <BottomNavbar />
-
-      <Modal
-        visible={show}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShow(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Settings</Text>
-              <Pressable onPress={() => setShow(false)}>
-                <Ionicons name="close" size={24} color="#000" />
+        <View style={styles.content}>
+          <View style={styles.profileRow}>
+            <View style={styles.leftColumn}>
+              <Text style={styles.username}>{username || "User"}</Text>
+              <View style={styles.profileImageContainer}>
+                <Image />
+              </View>
+              <Pressable
+                style={styles.orangeButton}
+                onPress={() => router.push("/edit-profile")}
+              >
+                <Text style={styles.buttonText}>Customize</Text>
               </Pressable>
             </View>
-
-            <View style={styles.modalBody} />
-
-            <View style={styles.modalFooter}>
-              <Pressable style={styles.orangeButton} onPress={handleLogout}>
-                <Text style={styles.buttonText}>Logout</Text>
-              </Pressable>
+            <View style={styles.statsColumn}>
+              <Text style={styles.statsTitle}>Stats</Text>
+              <View style={styles.statRow}>
+                <Text style={styles.statLabel}>Personal Best:</Text>
+                <Text style={styles.statValue}>5.6lb</Text>
+              </View>
+              <View style={styles.statRow}>
+                <Text style={styles.statLabel}>Fish Caught:</Text>
+                <Text style={styles.statValue}>5</Text>
+              </View>
+              <View style={styles.statRow}>
+                <Text style={styles.statLabel}>Challenges Completed:</Text>
+                <Text style={styles.statValue}>5</Text>
+              </View>
+              <View style={styles.statRow}>
+                <Text style={styles.statLabel}>Favorite Bait:</Text>
+                <Text style={styles.statValue}>Frog</Text>
+              </View>
             </View>
           </View>
+          <View style={styles.rankContainer}>
+            <Text style={styles.rankText}>{rankTitle}</Text>
+            <View style={styles.progressTrack}>
+              <View style={[styles.progressFill, { width: `${xp}%` }]} />
+              <Text style={styles.progressLabel}>XP</Text>
+            </View>
+            <Text style={styles.levelText}>Level {rank}</Text>
+          </View>
         </View>
-      </Modal>
-    </View>
+        <BottomNavbar />
+        <Modal
+          visible={show}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShow(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalCard}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Settings</Text>
+                <Pressable onPress={() => setShow(false)}>
+                  <Ionicons name="close" size={24} color="#000" />
+                </Pressable>
+              </View>
+              <View style={styles.modalBody} />
+              <View style={styles.modalFooter}>
+                <Pressable style={styles.orangeButton} onPress={handleLogout}>
+                  <Text style={styles.buttonText}>Logout</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    </SafeAreaView>
   );
 }
 

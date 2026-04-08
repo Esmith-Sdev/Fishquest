@@ -2,21 +2,21 @@ export const POLES = [
   {
     id: "baitcaster",
     name: "Baitcaster",
-    image: "/img/Reels/baitcaster.png",
+    image: require("../assets/images/Reels/baitcaster.png"),
   },
   {
     id: "button",
     name: "Button",
-    image: "/img/Reels/button.png",
+    image: require("../assets/images/Reels/button.png"),
   },
   {
     id: "fly",
     name: "Fly",
-    image: "/img/Reels/fly.png",
+    image: require("../assets/images/Reels/fly.png"),
   },
   {
     id: "spinning",
     name: "Spinning",
-    image: "/img/Reels/spinning.png",
+    image: require("../assets/images/Reels/spinning.png"),
   },
 ];

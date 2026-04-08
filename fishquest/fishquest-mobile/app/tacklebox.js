@@ -21,7 +21,7 @@ import { BAIT } from "../data/bait.config";
 import { HOOKS } from "../data/hooks.config";
 import { POLES } from "../data/poles.config";
 import { WEIGHTS } from "../data/weight.config";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 export default function Tacklebox() {
   const [rigs, setRigs] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -42,7 +42,7 @@ export default function Tacklebox() {
   useEffect(() => {
     async function loadRigs() {
       try {
-        const token = getToken();
+        const token = await getToken();
         console.log("TOKEN FROM STORAGE:", token);
         if (!token) return;
 
@@ -117,166 +117,158 @@ export default function Tacklebox() {
   );
 
   return (
-    <View style={styles.screen}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()}>
-          <Ionicons name="arrow-back-circle" size={30} color="#fff" />
-        </Pressable>
-
-        <Text style={styles.headerTitle}>Tacklebox</Text>
-
-        <Pressable
-          style={styles.orangeButton}
-          onPress={() => router.push("/create-rig")}
-        >
-          <Text style={styles.buttonText}>New Rig</Text>
-        </Pressable>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+      <View style={styles.screen}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()}>
+            <Ionicons name="arrow-back-circle" size={30} color="#fff" />
+          </Pressable>
+          <Text style={styles.headerTitle}>Tacklebox</Text>
+          <Pressable
+            style={styles.orangeButton}
+            onPress={() => router.push("/create-rig")}
+          >
+            <Text style={styles.buttonText}>New Rig</Text>
+          </Pressable>
+        </View>
+        <ScrollView contentContainerStyle={styles.content}>
+          {!selectedRig ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyText}>No rigs yet.</Text>
+              <Pressable
+                style={styles.orangeButton}
+                onPress={() => router.push("/create-rig")}
+              >
+                <Text style={styles.buttonText}>Create your first rig</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <>
+              <View style={styles.rigSection}>
+                <View style={styles.previewColumn}>
+                  <View style={styles.rigTitleRow}>
+                    <Pressable onPress={prevRig}>
+                      <Text style={styles.caret}>◀</Text>
+                    </Pressable>
+                    <Text style={styles.rigName}>{selectedRig.rigName}</Text>
+                    <Pressable onPress={nextRig}>
+                      <Text style={styles.caret}>▶</Text>
+                    </Pressable>
+                  </View>
+                  <View style={styles.rigImageContainer}>
+                    {selectedRig.pole?.image ? (
+                      <Image
+                        source={selectedRig.pole.image}
+                        style={styles.rigImage}
+                        resizeMode="contain"
+                      />
+                    ) : null}
+                  </View>
+                  <Pressable
+                    style={[styles.orangeButton, styles.editButton]}
+                    onPress={() => router.push(`/edit-rig/${selectedRig._id}`)}
+                  >
+                    <Text style={styles.buttonText}>Edit</Text>
+                  </Pressable>
+                </View>
+                <View style={styles.optionsGrid}>
+                  <View style={styles.optionColumn}>
+                    <View style={styles.smallSquare}>
+                      <Image
+                        source={selectedRig.bobber ? Bobber : NoBobber}
+                        style={styles.optionImage}
+                        resizeMode="contain"
+                      />
+                    </View>
+                    <View style={styles.smallSquare}>
+                      {selectedRig.bait?.image ? (
+                        <Image
+                          source={selectedRig.bait.image}
+                          style={styles.optionImage}
+                          resizeMode="contain"
+                        />
+                      ) : null}
+                    </View>
+                  </View>
+                  <View style={styles.optionColumn}>
+                    <View style={styles.smallSquare}>
+                      {selectedRig.hook?.image ? (
+                        <Image
+                          source={selectedRig.hook.image}
+                          style={styles.optionImage}
+                          resizeMode="contain"
+                        />
+                      ) : null}
+                    </View>
+                    <View style={styles.smallSquare}>
+                      {selectedRig.weight?.image ? (
+                        <Image
+                          source={selectedRig.weight.image}
+                          style={styles.optionImage}
+                          resizeMode="contain"
+                        />
+                      ) : null}
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <Text style={styles.sectionTitle}>Rig Stats</Text>
+              <View style={styles.statsContainer}>
+                <StatRow
+                  label="Fish Caught:"
+                  value={rigStats?.fishCaught ?? 0}
+                />
+                <StatRow
+                  label="Times Skunked:"
+                  value={rigStats?.skunked ?? 0}
+                />
+                <StatRow
+                  label="Challenges Completed:"
+                  value={rigStats?.challengesCompleted ?? 0}
+                />
+                <StatRow
+                  label="Avg. Fish Weight:"
+                  value={
+                    rigStats?.avgWeight ? `${rigStats.avgWeight} LB` : "0 LB"
+                  }
+                />
+                <StatRow
+                  label="Avg. Fish Length:"
+                  value={
+                    rigStats?.avgLength ? `${rigStats.avgLength} IN` : "0 IN"
+                  }
+                />
+                <StatRow
+                  label="Morning Catches:"
+                  value={rigStats?.fishCaughtMorning ?? 0}
+                />
+                <StatRow
+                  label="Day Catches:"
+                  value={rigStats?.fishCaughtDay ?? 0}
+                />
+                <StatRow
+                  label="Night Catches:"
+                  value={rigStats?.fishCaughtNight ?? 0}
+                />
+                <View style={styles.progressBlock}>
+                  <Text style={styles.progressLabel}>Versatility</Text>
+                  <ProgressBar value={versatility} />
+                </View>
+                <View style={styles.progressBlock}>
+                  <Text style={styles.progressLabel}>Success Rate</Text>
+                  <ProgressBar value={successRate} />
+                </View>
+                <View style={styles.progressBlock}>
+                  <Text style={styles.progressLabel}>Trophy Potential</Text>
+                  <ProgressBar value={trophyRate} />
+                </View>
+              </View>
+            </>
+          )}
+        </ScrollView>
+        <BottomNavbar />
       </View>
-
-      <ScrollView contentContainerStyle={styles.content}>
-        {!selectedRig ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>No rigs yet.</Text>
-            <Pressable
-              style={styles.orangeButton}
-              onPress={() => router.push("/create-rig")}
-            >
-              <Text style={styles.buttonText}>Create your first rig</Text>
-            </Pressable>
-          </View>
-        ) : (
-          <>
-            <View style={styles.rigSection}>
-              <View style={styles.previewColumn}>
-                <View style={styles.rigTitleRow}>
-                  <Pressable onPress={prevRig}>
-                    <Text style={styles.caret}>◀</Text>
-                  </Pressable>
-
-                  <Text style={styles.rigName}>{selectedRig.rigName}</Text>
-
-                  <Pressable onPress={nextRig}>
-                    <Text style={styles.caret}>▶</Text>
-                  </Pressable>
-                </View>
-
-                <View style={styles.rigImageContainer}>
-                  {selectedRig.pole?.image ? (
-                    <Image
-                      source={{ uri: selectedRig.pole.image }}
-                      style={styles.rigImage}
-                      resizeMode="contain"
-                    />
-                  ) : null}
-                </View>
-
-                <Pressable
-                  style={[styles.orangeButton, styles.editButton]}
-                  onPress={() => router.push(`/edit-rig/${selectedRig._id}`)}
-                >
-                  <Text style={styles.buttonText}>Edit</Text>
-                </Pressable>
-              </View>
-
-              <View style={styles.optionsGrid}>
-                <View style={styles.optionColumn}>
-                  <View style={styles.smallSquare}>
-                    <Image
-                      source={selectedRig.bobber ? Bobber : NoBobber}
-                      style={styles.optionImage}
-                      resizeMode="contain"
-                    />
-                  </View>
-
-                  <View style={styles.smallSquare}>
-                    {selectedRig.bait?.image ? (
-                      <Image
-                        source={{ uri: selectedRig.bait.image }}
-                        style={styles.optionImage}
-                        resizeMode="contain"
-                      />
-                    ) : null}
-                  </View>
-                </View>
-
-                <View style={styles.optionColumn}>
-                  <View style={styles.smallSquare}>
-                    {selectedRig.hook?.image ? (
-                      <Image
-                        source={{ uri: selectedRig.hook.image }}
-                        style={styles.optionImage}
-                        resizeMode="contain"
-                      />
-                    ) : null}
-                  </View>
-
-                  <View style={styles.smallSquare}>
-                    {selectedRig.weight?.image ? (
-                      <Image
-                        source={{ uri: selectedRig.weight.image }}
-                        style={styles.optionImage}
-                        resizeMode="contain"
-                      />
-                    ) : null}
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            <Text style={styles.sectionTitle}>Rig Stats</Text>
-
-            <View style={styles.statsContainer}>
-              <StatRow label="Fish Caught:" value={rigStats?.fishCaught ?? 0} />
-              <StatRow label="Times Skunked:" value={rigStats?.skunked ?? 0} />
-              <StatRow
-                label="Challenges Completed:"
-                value={rigStats?.challengesCompleted ?? 0}
-              />
-              <StatRow
-                label="Avg. Fish Weight:"
-                value={
-                  rigStats?.avgWeight ? `${rigStats.avgWeight} LB` : "0 LB"
-                }
-              />
-              <StatRow
-                label="Avg. Fish Length:"
-                value={
-                  rigStats?.avgLength ? `${rigStats.avgLength} IN` : "0 IN"
-                }
-              />
-              <StatRow
-                label="Morning Catches:"
-                value={rigStats?.fishCaughtMorning ?? 0}
-              />
-              <StatRow
-                label="Day Catches:"
-                value={rigStats?.fishCaughtDay ?? 0}
-              />
-              <StatRow
-                label="Night Catches:"
-                value={rigStats?.fishCaughtNight ?? 0}
-              />
-
-              <View style={styles.progressBlock}>
-                <Text style={styles.progressLabel}>Versatility</Text>
-                <ProgressBar value={versatility} />
-              </View>
-
-              <View style={styles.progressBlock}>
-                <Text style={styles.progressLabel}>Success Rate</Text>
-                <ProgressBar value={successRate} />
-              </View>
-
-              <View style={styles.progressBlock}>
-                <Text style={styles.progressLabel}>Trophy Potential</Text>
-                <ProgressBar value={trophyRate} />
-              </View>
-            </View>
-          </>
-        )}
-      </ScrollView>
-      <BottomNavbar />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -298,7 +290,7 @@ const styles = StyleSheet.create({
 
   headerTitle: {
     fontSize: 24,
-    fontWeight: "700",
+    fontWeight: "400",
     fontFamily: "Jua",
     color: "#fff",
     left: 0,
@@ -309,6 +301,10 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
     paddingBottom: 100,
+  },
+  caret: {
+    color: "#fff",
+    fontSize: 20,
   },
   emptyState: {
     paddingVertical: 40,
@@ -322,8 +318,8 @@ const styles = StyleSheet.create({
   rigSection: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginTop: 16,
+    alignItems: "center",
+
     gap: 20,
   },
   previewColumn: {
@@ -334,16 +330,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
     gap: 8,
+    justifyContent: "center",
   },
 
   rigName: {
     fontSize: 20,
-    fontWeight: "700",
+    fontWeight: "400",
     flexShrink: 1,
+    fontFamily: "Jua",
+    color: "#fff",
   },
   rigImageContainer: {
     width: "100%",
-    height: 180,
+    height: 140,
     borderRadius: 12,
     backgroundColor: "#f3f3f3",
     justifyContent: "center",
@@ -364,8 +363,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   smallSquare: {
-    width: 90,
-    height: 90,
+    width: 70,
+    height: 70,
     borderRadius: 12,
     backgroundColor: "#f3f3f3",
     justifyContent: "center",
@@ -406,13 +405,16 @@ const styles = StyleSheet.create({
   sectionTitle: {
     textAlign: "center",
     fontSize: 24,
-    fontWeight: "700",
+    fontWeight: "400",
     marginTop: 28,
     marginBottom: 16,
+    fontFamily: "Jua",
+    color: "#fff",
   },
   statsContainer: {
     gap: 14,
     paddingBottom: 24,
+    paddingHorizontal: 10,
   },
   statRow: {
     flexDirection: "row",
@@ -421,12 +423,16 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 17,
-    fontWeight: "600",
+    fontWeight: "400",
     flex: 1,
+    fontFamily: "Jua",
+    color: "#fff",
   },
   statValue: {
     fontSize: 17,
-    fontWeight: "600",
+    fontWeight: "400",
+    fontFamily: "Jua",
+    color: "#fff",
   },
   progressBlock: {
     marginTop: 8,
@@ -434,7 +440,9 @@ const styles = StyleSheet.create({
   },
   progressLabel: {
     fontSize: 17,
-    fontWeight: "600",
+    fontWeight: "400",
+    fontFamily: "Jua",
+    color: "#fff",
   },
   progressTrack: {
     width: "100%",

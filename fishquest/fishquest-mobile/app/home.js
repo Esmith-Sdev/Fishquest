@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import TopNavbar from "../components/TopNavbar";
 import BottomNavbar from "../components/BottomNavbar";
 import DailyChallenges from "../components/DailyChallenges";
+import { SafeAreaView } from "react-native-safe-area-context";
 export default function HomeScreen() {
   const { user, logout } = useAuth();
 
@@ -13,11 +14,13 @@ export default function HomeScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <TopNavbar />
-      <BottomNavbar />
-      <DailyChallenges />
-    </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+      <View style={styles.container}>
+        <TopNavbar />
+        <BottomNavbar />
+        <DailyChallenges />
+      </View>
+    </SafeAreaView>
   );
 }
 

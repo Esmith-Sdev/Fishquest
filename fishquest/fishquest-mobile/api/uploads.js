@@ -1,19 +1,30 @@
-const API_URL = "https://fishquest.onrender.com";
+const API_URL =
+  process.env.EXPO_PUBLIC_API_URL || "https://fishquest.onrender.com";
 export async function uploadImages(files) {
-  console.log("test");
   const formData = new FormData();
-  files.forEach((f) => formData.append("images", f));
 
-  const res = await fetch(`${API_URL}/api/uploads/images`, {
+  files.forEach((file, index) => {
+    formData.append("images", {
+      uri: file.uri,
+      name: file.fileName || `image-${index}.jpg`,
+      type: file.mimeType || file.type || "image/jpeg",
+    });
+  });
+
+  const res = await fetch(`${API_URL}/api/uploads`, {
     method: "POST",
     body: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
-  const data = await res.json().catch(() => ({}));
+
+  const data = await res.json();
+  console.log("uploadImages response:", data);
+
   if (!res.ok) {
-    throw new Error(data.message || "Upload Failed");
-  } else {
-    console.log("Upload Success");
+    throw new Error(data.error || "Upload failed");
   }
 
-  return data.urls;
+  return data.imageUrls;
 }

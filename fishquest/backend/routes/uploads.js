@@ -21,7 +21,7 @@ router.post("/images", upload.array("images", 5), async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    alert(error.message);
+    console.log("Upload Failed", error);
     res.status(500).json({ message: "Upload failed" });
   }
 });

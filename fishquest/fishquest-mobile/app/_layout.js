@@ -1,6 +1,9 @@
 import { Stack } from "expo-router";
 import { AuthProvider } from "../context/AuthContext";
 import { useFonts } from "expo-font";
+import { View } from "react-native";
+import { ActivityIndicator } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 export default function Layout() {
   const [fontsLoaded] = useFonts({
     Jua: require("../assets/fonts/Jua-Regular.ttf"),
@@ -16,7 +19,9 @@ export default function Layout() {
 
   return (
     <AuthProvider>
-      <Stack screenOptions={{ headerShown: false }} />
+      <SafeAreaProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </SafeAreaProvider>
     </AuthProvider>
   );
 }
