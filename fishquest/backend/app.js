@@ -12,7 +12,7 @@ import rigPresetRoutes from "./routes/rigPreset.js";
 import rigStatsRoutes from "./routes/rigStats.js";
 import uploadRoutes from "./routes/uploads.js";
 import logsRoutes from "./routes/logs.js";
-import { identifyFish } from "../fishquest-mobile/api/identifyFish.js";
+import identifyFishRoutes from "./routes/identifyFish.js";
 
 const app = express();
 
@@ -154,4 +154,4 @@ router.post("/login", async (req, res) => {
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
-app.use("/api", identifyFish);
+app.use("/api", identifyFishRoutes);

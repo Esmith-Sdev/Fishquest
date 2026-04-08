@@ -11,7 +11,7 @@ export async function uploadImages(files) {
     });
   });
 
-  const res = await fetch(`${API_URL}/api/uploads`, {
+  const res = await fetch(`${API_URL}/api/uploads/images`, {
     method: "POST",
     body: formData,
     headers: {
@@ -26,5 +26,5 @@ export async function uploadImages(files) {
     throw new Error(data.error || "Upload failed");
   }
 
-  return data.imageUrls;
+  return data.urls;
 }
