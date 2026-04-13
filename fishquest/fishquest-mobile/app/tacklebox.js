@@ -22,6 +22,7 @@ import { HOOKS } from "../data/hooks.config";
 import { POLES } from "../data/poles.config";
 import { WEIGHTS } from "../data/weight.config";
 import { SafeAreaView } from "react-native-safe-area-context";
+import TopNavbarSecondary from "../components/TopNavbarSecondary";
 export default function Tacklebox() {
   const [rigs, setRigs] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -119,18 +120,13 @@ export default function Tacklebox() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
       <View style={styles.screen}>
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()}>
-            <Ionicons name="arrow-back-circle" size={30} color="#fff" />
-          </Pressable>
-          <Text style={styles.headerTitle}>Tacklebox</Text>
-          <Pressable
-            style={styles.orangeButton}
-            onPress={() => router.push("/create-rig")}
-          >
-            <Text style={styles.buttonText}>New Rig</Text>
-          </Pressable>
-        </View>
+        <TopNavbarSecondary
+          title="Tacklebox"
+          buttonText="Create Rig"
+          showButton={true}
+          buttonRoute="/create-rig"
+          backRoute="/home"
+        />
         <ScrollView contentContainerStyle={styles.content}>
           {!selectedRig ? (
             <View style={styles.emptyState}>
@@ -284,8 +280,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e5e5",
+
+    backgroundColor: COLORS.primary,
   },
 
   headerTitle: {
@@ -366,7 +362,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 12,
-    backgroundColor: "#f3f3f3",
+    backgroundColor: "#dedede",
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",

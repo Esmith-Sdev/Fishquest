@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: "100%",
+    width: "0%",
     backgroundColor: COLORS.primary,
   },
   shadowWrapper: {
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
-    paddingVertical: 8,
+    paddingVertical: 4,
     paddingHorizontal: 18,
     minWidth: 80,
     marginTop: 8,

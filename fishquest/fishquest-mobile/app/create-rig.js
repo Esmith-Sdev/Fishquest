@@ -22,7 +22,7 @@ import NoBobber from "../assets/images/Bobbers/no-bobber.png";
 import { createRigPreset } from "../api/rigPresets";
 import { getToken } from "../api/auth";
 import { COLORS, RADIUS } from "../constants/theme";
-
+import TopNavbarSecondary from "../components/TopNavbarSecondary";
 export default function CreateRig() {
   const params = useLocalSearchParams();
 
@@ -131,17 +131,13 @@ export default function CreateRig() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()}>
-          <Ionicons name="arrow-back-circle" size={30} color="#fff" />
-        </Pressable>
-
-        <Text style={styles.headerTitle}>Create Rig</Text>
-
-        <Pressable style={styles.orangeButton} onPress={handleSubmitRig}>
-          <Text style={styles.buttonText}>Save</Text>
-        </Pressable>
-      </View>
+      <TopNavbarSecondary
+        title="Create Rig"
+        buttonText="Save"
+        showButton={true}
+        onButtonPress={handleSubmitRig}
+        backRoute="/home"
+      />
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.topSection}>
@@ -268,8 +264,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e5e5",
+
+    backgroundColor: COLORS.primary,
   },
   headerTitle: {
     position: "absolute",

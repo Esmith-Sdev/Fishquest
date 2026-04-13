@@ -6,10 +6,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import BottomNavbar from "../components/BottomNavbar";
 import { logout, getAuth } from "../api/auth";
 import { COLORS, RADIUS } from "../constants/theme";
-
+import TopNavbarSecondary from "../components/TopNavbarSecondary";
+import SettingsModal from "../components/SettingsModal";
 export default function Profile() {
   const username = getAuth();
-  const [show, setShow] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const titles = [
     "Minnow Wrangler",
@@ -42,19 +43,27 @@ export default function Profile() {
     logout();
     router.replace("/login");
   }
-
+  function openModal() {
+    setShowModal(true);
+  }
+  function closeModal() {
+    setShowModal(false);
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
       <View style={styles.screen}>
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()}>
-            <Ionicons name="arrow-back-circle" size={30} color="#fff" />
-          </Pressable>
-          <Text style={styles.headerTitle}>Profile</Text>
-          <Pressable style={styles.orangeButton} onPress={() => setShow(true)}>
-            <Text style={styles.buttonText}>Settings</Text>
-          </Pressable>
-        </View>
+        <SettingsModal
+          visible={showModal}
+          onClose={closeModal}
+          onLogOut={handleLogout}
+        />
+        <TopNavbarSecondary
+          title="Profile"
+          buttonText="Settings"
+          onButtonPress={openModal}
+          showButton={true}
+          backRoute="/home"
+        />
         <View style={styles.content}>
           <View style={styles.profileRow}>
             <View style={styles.leftColumn}>
@@ -99,29 +108,6 @@ export default function Profile() {
           </View>
         </View>
         <BottomNavbar />
-        <Modal
-          visible={show}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setShow(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalCard}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Settings</Text>
-                <Pressable onPress={() => setShow(false)}>
-                  <Ionicons name="close" size={24} color="#000" />
-                </Pressable>
-              </View>
-              <View style={styles.modalBody} />
-              <View style={styles.modalFooter}>
-                <Pressable style={styles.orangeButton} onPress={handleLogout}>
-                  <Text style={styles.buttonText}>Logout</Text>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </Modal>
       </View>
     </SafeAreaView>
   );

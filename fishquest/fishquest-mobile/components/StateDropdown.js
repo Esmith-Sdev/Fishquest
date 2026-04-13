@@ -62,7 +62,9 @@ export default function StateDropdown({ value, onChange }) {
   return (
     <View style={styles.container}>
       <Pressable style={styles.input} onPress={() => setOpen((prev) => !prev)}>
-        <Text>{selected ? selected.label : "State"}</Text>
+        <Text style={styles.inputLabel}>
+          {selected ? selected.label : "State"}
+        </Text>
       </Pressable>
 
       {open && (
@@ -132,6 +134,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#dedede",
     alignItems: "center",
     justifyContent: "center",
+  },
+  inputLabel: {
+    fontFamily: "Jua",
   },
   list: {
     maxHeight: 220,

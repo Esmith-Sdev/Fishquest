@@ -1,0 +1,111 @@
+import { StyleSheet } from "react-native";
+import { View, Pressable, Text } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { RADIUS } from "../constants/theme";
+import { COLORS } from "../constants/theme";
+import { router } from "expo-router";
+export default function TopNavbarSecondary({
+  title,
+  buttonText,
+  showButton = true,
+
+  // right button
+  onButtonPress,
+  buttonRoute,
+
+  // back button
+  onBackPress,
+  backRoute = "/home",
+}) {
+  function handleRightButton() {
+    if (onButtonPress) {
+      onButtonPress();
+    } else if (buttonRoute) {
+      router.push(buttonRoute);
+    }
+  }
+
+  function handleBack() {
+    if (onBackPress) {
+      onBackPress();
+    } else if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace(backRoute);
+    }
+  }
+
+  return (
+    <View style={styles.header}>
+      <Pressable style={styles.backButton} onPress={handleBack}>
+        <Ionicons name="arrow-back-circle" size={30} color="#fff" />
+      </Pressable>
+
+      <Text style={styles.headerTitle}>{title}</Text>
+
+      {showButton ? (
+        <Pressable style={[styles.orangeButton]} onPress={handleRightButton}>
+          <Text style={styles.buttonText}>{buttonText}</Text>
+        </Pressable>
+      ) : (
+        <View style={styles.sideButton} />
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  header: {
+    paddingTop: 10,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+
+    backgroundColor: COLORS.primary,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "400",
+    fontFamily: "Jua",
+    color: "#fff",
+    left: 0,
+    right: 0,
+    position: "absolute",
+    textAlign: "center",
+  },
+  backButton: {
+    width: 40,
+    alignItems: "flex-start",
+    justifyContent: "center",
+    zIndex: 10,
+  },
+  backIcon: {
+    fontSize: 28,
+    fontWeight: "700",
+    zIndex: 10,
+  },
+
+  headerSpacer: {
+    width: 40,
+  },
+  orangeButton: {
+    backgroundColor: COLORS.secondary,
+    borderRadius: RADIUS.pill,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    shadowColor: COLORS.secondaryDropShadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 1,
+    elevation: 4,
+    zIndex: 10,
+  },
+  buttonText: {
+    color: "#000",
+    fontFamily: "Jua",
+    fontSize: 15,
+    textAlign: "center",
+  },
+});

@@ -17,6 +17,7 @@ import { fetchLogs } from "../api/logs";
 import { getToken } from "../api/auth";
 import skunkImage from "../assets/images/Fish/skunked.png";
 import { COLORS, RADIUS } from "../constants/theme";
+import TopNavbarSecondary from "../components/TopNavbarSecondary";
 
 export default function Logs() {
   const [logs, setLogs] = useState([]);
@@ -46,27 +47,19 @@ export default function Logs() {
   }, []);
 
   function getImageSource(photo) {
-    if (!photo) return skunkImage;
     return typeof photo === "string" ? { uri: photo } : photo;
   }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
       <View style={styles.screen}>
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()}>
-            <Ionicons name="arrow-back-circle" size={32} color="#fff" />
-          </Pressable>
-
-          <Text style={styles.headerTitle}>Logs</Text>
-
-          <Pressable
-            style={styles.orangeButton}
-            onPress={() => router.push("/create-log")}
-          >
-            <Text style={styles.orangeButtonText}>Create Log</Text>
-          </Pressable>
-        </View>
+        <TopNavbarSecondary
+          title="Logs"
+          buttonText="Create Log"
+          showButton={true}
+          buttonRoute="/create-log"
+          backRoute="/home"
+        />
 
         <View style={styles.sortRow}>
           <Text style={styles.sortLabel}>Sort By:</Text>
@@ -103,25 +96,36 @@ export default function Logs() {
               ? "Skunked Trip"
               : log.speciesName || "Unknown Fish";
 
-            const photo = log.skunked ? skunkImage : log.imageUrls?.[0] || null;
+            const photo = log.skunked ? skunkImage : log.imageUrls?.[0];
 
             const formattedDate = log.date
               ? new Date(log.date).toLocaleDateString()
               : "";
 
             return (
-              <Pressable style={styles.card}>
+              <Pressable
+                style={styles.card}
+                onPress={() => router.push("/edit-log")}
+              >
                 <View style={styles.cardBodyTop}>
                   <Text style={styles.cardTitle} numberOfLines={2}>
                     {title}
                   </Text>
                 </View>
 
-                <Image
-                  source={getImageSource(photo)}
-                  style={styles.cardImage}
-                  resizeMode="cover"
-                />
+                {photo ? (
+                  <Image
+                    source={getImageSource(photo)}
+                    style={styles.cardImage}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View style={styles.cardImage}>
+                    <Text style={{ textAlign: "center" }}>
+                      No Photo Available
+                    </Text>
+                  </View>
+                )}
 
                 <View style={styles.cardBodyBottom}>
                   <Text style={styles.cardSubtitle}>{formattedDate}</Text>
@@ -140,7 +144,7 @@ export default function Logs() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#212529",
+    backgroundColor: "#0D1B1E",
   },
   header: {
     paddingTop: 10,

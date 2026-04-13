@@ -18,7 +18,7 @@ import BottomNavbar from "../components/BottomNavbar";
 import FishSpeciesTypeahead from "../components/FishSpeciesTypeahead";
 import { getCurrentLocation } from "../utils/getCurrentLocation";
 import { uploadImages } from "../api/uploads";
-import { createCatchLog } from "../api/logs";
+import { fetchLogById, updateCatchLog } from "../api/logs";
 import { getToken } from "../api/auth";
 import { fetchRigPresets } from "../api/rigPresets";
 import { identifyFish } from "../api/identifyFish";
@@ -34,8 +34,9 @@ import { COLORS, RADIUS } from "../constants/theme";
 
 import StateDropdown from "../components/StateDropdown";
 
-export default function CreateLog() {
+export default function UpdateLog() {
   const params = useLocalSearchParams();
+  const { id } = useLocalSearchParams();
   const [stateValue, setStateValue] = useState("");
   const [form, setForm] = useState({
     address: "",
@@ -74,7 +75,6 @@ export default function CreateLog() {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const speciesDisabled = skunked || saving;
-  const isGridFull = files.length >= 4;
 
   useEffect(() => {
     if (skunked) setSpecies(null);
@@ -141,18 +141,18 @@ export default function CreateLog() {
     });
   }
   async function ensureUploadedImages() {
-    if (uploadedImageUrls.length) return uploadedImageUrls;
-
-    const urls = files.length ? await uploadImages(files) : [];
-    setUploadedImageUrls(urls);
-    return urls;
+    const newUrls = files.length ? await uploadImages(files) : [];
+    return [...uploadedImageUrls, ...newUrls];
   }
 
-  function handleRemoveImage(indexToRemove) {
-    setFiles((prev) => prev.filter((_, index) => index !== indexToRemove));
-    setUploadedImageUrls((prev) =>
-      prev.filter((_, index) => index !== indexToRemove),
-    );
+  function handleRemoveImage(index, isRemote) {
+    if (isRemote) {
+      setUploadedImageUrls((prev) => prev.filter((_, i) => i !== index));
+    } else {
+      const localIndex = index - uploadedImageUrls.length;
+
+      setFiles((prev) => prev.filter((_, i) => i !== localIndex));
+    }
   }
   async function handleIdentifyFish() {
     try {
@@ -240,7 +240,57 @@ export default function CreateLog() {
       setLoadingLocation(false);
     }
   }
+  useEffect(() => {
+    async function loadLog() {
+      try {
+        const token = await getToken();
+        if (!token) {
+          router.replace("/login");
+          return;
+        }
 
+        const log = await fetchLogById(id, token);
+
+        setSkunked(log.skunked || false);
+        setSpecies(
+          log.skunked
+            ? null
+            : {
+                id: log.speciesId,
+                name: log.speciesName,
+                label: log.speciesName,
+              },
+        );
+        setNotes(log.notes || "");
+        setWeight(log.weight ? String(log.weight) : "");
+        setLength(log.length ? String(log.length) : "");
+        setWeightUnit(log.weightUnit || "LB");
+        setLengthUnit(log.lengthUnit || "CM");
+        setSelectedDate(log.date ? new Date(log.date) : new Date());
+
+        setForm({
+          address: log.address || "",
+          city: log.city || "",
+          state: log.state || "",
+        });
+
+        setUploadedImageUrls(log.imageUrls || []);
+
+        if (log.rigPresetId && hydratedRigs.length) {
+          const foundIndex = hydratedRigs.findIndex(
+            (rig) => rig._id === log.rigPresetId,
+          );
+          if (foundIndex !== -1) setSelectedIndex(foundIndex);
+        }
+      } catch (err) {
+        Alert.alert("Error", err.message || "Failed to load log");
+      }
+    }
+
+    if (id && !rigsLoading) {
+      loadLog();
+    }
+  }, [id, rigsLoading, hydratedRigs]);
   async function pickImages() {
     if (isGridFull) return;
 
@@ -316,11 +366,11 @@ export default function CreateLog() {
             }),
       };
 
-      await createCatchLog(payload, token);
+      await updateCatchLog(id, payload, token);
       router.replace("/logs");
     } catch (err) {
-      console.error("Create log failed:", err);
-      Alert.alert("Error", err.message || "Create log failed");
+      console.error("Update log failed:", err);
+      Alert.alert("Error", err.message || "Update log failed");
     } finally {
       setSaving(false);
     }
@@ -330,7 +380,7 @@ export default function CreateLog() {
     return (
       <View style={styles.screen}>
         <TopNavbarSecondary
-          title="Create Log"
+          title="Edit Log"
           buttonText="Save"
           showButton={true}
           onPress={handleSubmitLog}
@@ -345,12 +395,16 @@ export default function CreateLog() {
       </View>
     );
   }
-
+  const allImages = [
+    ...uploadedImageUrls.map((url) => ({ uri: url, isRemote: true })),
+    ...files.map((file) => ({ ...file, isRemote: false })),
+  ];
+  const isGridFull = allImages.length >= 4;
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
       <View style={styles.screen}>
         <TopNavbarSecondary
-          title="Create Log"
+          title="Edit Log"
           buttonText="Save"
           showButton={true}
           onButtonPress={handleSubmitLog}
@@ -448,7 +502,7 @@ export default function CreateLog() {
             )}
           </View>
 
-          {files.length === 0 ? (
+          {allImages.length === 0 ? (
             <Pressable style={styles.uploadImageContainer} onPress={pickImages}>
               <Ionicons name="camera" size={25} color="#000" />
               <Text style={styles.uploadText}>Select Image to Upload</Text>
@@ -458,16 +512,13 @@ export default function CreateLog() {
             </Pressable>
           ) : (
             <View style={styles.imageGrid}>
-              {files.map((file, i) => (
+              {allImages.map((img, i) => (
                 <View style={styles.imageTile} key={i}>
-                  <Image
-                    source={getImageSource(file)}
-                    style={styles.gridImage}
-                  />
+                  <Image source={{ uri: img.uri }} style={styles.gridImage} />
 
                   <Pressable
                     style={styles.removeImageBtn}
-                    onPress={() => handleRemoveImage(i)}
+                    onPress={() => handleRemoveImage(i, img.isRemote)}
                   >
                     <Ionicons name="close" size={16} color="#fff" />
                   </Pressable>
@@ -489,7 +540,7 @@ export default function CreateLog() {
           <Pressable
             style={[styles.orangeButton, aiLoading && styles.disabledButton]}
             onPress={handleIdentifyFish}
-            disabled={aiLoading || files.length === 0}
+            disabled={aiLoading || allImages.length === 0}
           >
             <Text style={styles.buttonText}>
               {aiLoading ? "Identifying..." : "Identify Fish with AI"}

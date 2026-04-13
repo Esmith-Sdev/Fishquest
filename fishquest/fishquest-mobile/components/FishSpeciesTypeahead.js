@@ -121,7 +121,8 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     position: "relative",
-    zIndex: 10,
+    zIndex: 9999,
+    elevation: 30,
   },
   input: {
     borderWidth: 1,
@@ -131,22 +132,27 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     backgroundColor: "#fff",
     fontSize: 16,
+    fontFamily: "Jua",
+    color: "#000",
   },
+
   disabledInput: {
     backgroundColor: "#f2f2f2",
     opacity: 0.7,
   },
   dropdown: {
-    marginTop: 6,
+    position: "absolute",
+    top: 42,
+    left: 0,
+    right: 0,
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 10,
     backgroundColor: "#fff",
     maxHeight: 220,
     overflow: "hidden",
-    position: "absolute",
-    top: 35,
     zIndex: 10000,
+    elevation: 40,
   },
   item: {
     paddingHorizontal: 14,
