@@ -74,7 +74,7 @@ export default function Tacklebox() {
   useEffect(() => {
     async function loadRigStats() {
       try {
-        const token = getToken();
+        const token = await getToken();
 
         if (!token || !selectedRig?._id) {
           setRigStats(null);

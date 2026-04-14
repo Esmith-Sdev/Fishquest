@@ -166,7 +166,15 @@ export default function CreateRig() {
             {renderArrow(nextPole, "right")}
           </View>
 
-          <Pressable style={styles.orangeButton}>
+          <Pressable
+            style={styles.orangeButton}
+            onPress={() =>
+              Alert.alert(
+                "Feature Unavailable",
+                "This is not available in beta yet.",
+              )
+            }
+          >
             <Text style={styles.buttonText}>Customize</Text>
           </Pressable>
         </View>
@@ -242,7 +250,15 @@ export default function CreateRig() {
           </View>
         </View>
 
-        <Pressable style={[styles.orangeButton, styles.bottomCustomize]}>
+        <Pressable
+          style={[styles.orangeButton, styles.bottomCustomize]}
+          onPress={() =>
+            Alert.alert(
+              "Feature Unavailable",
+              "This is not available in beta yet.",
+            )
+          }
+        >
           <Text style={styles.buttonText}>Customize</Text>
         </Pressable>
       </ScrollView>

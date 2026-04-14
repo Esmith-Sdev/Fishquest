@@ -10,13 +10,16 @@ router.get("/:rigId", async (req, res) => {
     if (!stats) {
       return res.json({
         fishCaught: 0,
+        skunked: 0,
         challengesCompleted: 0,
         avgWeight: 0,
-        strikeRate: 0,
+        avgLength: 0,
+        timesUsed: 0,
+        bigFishCaught: 0,
+        speciesCaught: 0,
         fishCaughtMorning: 0,
         fishCaughtDay: 0,
         fishCaughtNight: 0,
-        versatility: 0,
       });
     }
 

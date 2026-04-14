@@ -1,21 +1,28 @@
 import { Pressable, Image, StyleSheet, View } from "react-native";
-
+import { LinearGradient } from "expo-linear-gradient";
 export default function BadgeCard({ badge, unlocked, onClick, preview }) {
   return (
     <Pressable
       onPress={onClick}
-      style={[
-        unlocked ? styles.unlockedCard : styles.lockedCard,
-        preview ? styles.previewCard : styles.card,
-      ]}
+      style={[preview ? styles.previewCard : styles.card]}
     >
-      <View style={styles.imageWrapper}>
-        <Image
-          source={badge.icon}
-          style={[styles.image, !unlocked && styles.lockedImage]}
-          resizeMode="contain"
-        />
-      </View>
+      <LinearGradient
+        colors={unlocked ? ["#ffffff", "#c7c7c7"] : ["#000", "#111111"]}
+        style={[
+          styles.gradient,
+          unlocked ? styles.unlockedCard : styles.lockedCard,
+        ]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <View style={styles.imageWrapper}>
+          <Image
+            source={badge.icon}
+            style={[styles.image, !unlocked && styles.lockedImage]}
+            resizeMode="contain"
+          />
+        </View>
+      </LinearGradient>
     </Pressable>
   );
 }
@@ -30,11 +37,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 10,
   },
-  unlockedCard: {
-    backgroundColor: "#dedede",
-  },
-  lockedCard: {
-    backgroundColor: "#0f0f0f",
+
+  gradient: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
   },
   previewCard: {
     width: "75%",

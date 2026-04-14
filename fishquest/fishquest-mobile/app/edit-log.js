@@ -37,6 +37,7 @@ import StateDropdown from "../components/StateDropdown";
 export default function UpdateLog() {
   const params = useLocalSearchParams();
   const { id } = useLocalSearchParams();
+  console.log("EDIT PAGE ID:", id);
   const [stateValue, setStateValue] = useState("");
   const [form, setForm] = useState({
     address: "",

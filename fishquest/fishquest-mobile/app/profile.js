@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, Pressable, Image, Modal } from "react-native";
+import { View, Text, StyleSheet, Pressable, Image, Alert } from "react-native";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,6 +7,7 @@ import BottomNavbar from "../components/BottomNavbar";
 import { logout, getAuth } from "../api/auth";
 import { COLORS, RADIUS } from "../constants/theme";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
+
 import SettingsModal from "../components/SettingsModal";
 export default function Profile() {
   const username = getAuth();
@@ -69,11 +70,19 @@ export default function Profile() {
             <View style={styles.leftColumn}>
               <Text style={styles.username}>{username || "User"}</Text>
               <View style={styles.profileImageContainer}>
-                <Image />
+                <Image
+                  style={styles.profileImage}
+                  source={require("../assets/characters/Male Basic/Male-Character-template-1.png")}
+                />
               </View>
               <Pressable
                 style={styles.orangeButton}
-                onPress={() => router.push("/edit-profile")}
+                onPress={() =>
+                  Alert.alert(
+                    "Feature Unavailable",
+                    "This is not available in beta yet.",
+                  )
+                }
               >
                 <Text style={styles.buttonText}>Customize</Text>
               </Pressable>
@@ -163,11 +172,15 @@ const styles = StyleSheet.create({
     width: 130,
     height: 130,
     borderRadius: 16,
-    backgroundColor: "#f3f3f3",
+    backgroundColor: COLORS.primary,
     marginBottom: 12,
     overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",
+  },
+  profileImage: {
+    width: "125%",
+    height: "125%",
   },
   statsColumn: {
     flex: 1.2,

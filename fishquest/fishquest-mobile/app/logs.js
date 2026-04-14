@@ -105,7 +105,12 @@ export default function Logs() {
             return (
               <Pressable
                 style={styles.card}
-                onPress={() => router.push("/edit-log")}
+                onPress={() =>
+                  router.push({
+                    pathname: "/edit-log",
+                    params: { id: log._id },
+                  })
+                }
               >
                 <View style={styles.cardBodyTop}>
                   <Text style={styles.cardTitle} numberOfLines={2}>

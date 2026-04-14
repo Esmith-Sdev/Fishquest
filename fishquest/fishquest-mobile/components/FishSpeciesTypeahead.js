@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { AllSpecies } from "../data/species.config";
-
+import { useEffect } from "react";
 export function getSpeciesById(speciesId) {
   return AllSpecies.find((fish) => fish.id === speciesId) || null;
 }
@@ -21,7 +21,6 @@ export default function FishSpeciesTypeahead({
 }) {
   const [query, setQuery] = useState(value?.name || "");
   const [showResults, setShowResults] = useState(false);
-
   const normalizedSpecies = useMemo(() => {
     return (AllSpecies || [])
       .map((fish) => ({
@@ -71,7 +70,11 @@ export default function FishSpeciesTypeahead({
     onPick(item);
     setShowResults(false);
   };
-
+  useEffect(() => {
+    if (value) {
+      setQuery(value.name || value.label);
+    }
+  }, [value]);
   return (
     <View style={styles.container}>
       <TextInput
