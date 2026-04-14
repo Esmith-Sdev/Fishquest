@@ -52,7 +52,7 @@ const rigStatsSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    versatility: {
+    speciesCaught: {
       type: Number,
       default: 0,
     },

@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, Image } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { router } from "expo-router";
 import TopNavbar from "../components/TopNavbar";
@@ -19,6 +19,15 @@ export default function HomeScreen() {
         <TopNavbar />
         <BottomNavbar />
         <DailyChallenges />
+        <Pressable
+          style={styles.horizontalCard}
+          onPress={() => router.push("/versus")}
+        >
+          <Image
+            style={styles.horizontalCardImage}
+            source={require("../assets/images/VersusImage.png")}
+          ></Image>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
@@ -51,5 +60,18 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFFFFF",
     fontWeight: "700",
+  },
+
+  horizontalCard: {
+    width: "90%",
+    height: 100,
+
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  horizontalCardImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 15,
   },
 });
