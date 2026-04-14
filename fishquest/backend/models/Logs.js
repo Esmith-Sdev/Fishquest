@@ -21,6 +21,10 @@ const logsSchema = new mongoose.Schema(
       type: String,
       enum: ["clear", "stormy", "windy", "cloudy"],
     },
+    timeOfDay: {
+      type: String,
+      enum: ["morning", "day", "night"],
+    },
     date: {
       type: Date,
       required: true,

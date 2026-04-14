@@ -2,7 +2,9 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import Logs from "../models/Logs.js";
 import RigStats from "../models/RigStats.js";
+import getTimeOfDay from "../utils/getTimeOfDay.js";
 const router = express.Router();
+
 async function recalculateRigStats(userId, rigId) {
   if (!rigId) return;
 
@@ -35,11 +37,9 @@ async function recalculateRigStats(userId, rigId) {
   let fishCaughtNight = 0;
 
   for (const log of fishLogs) {
-    const hour = new Date(log.date).getHours();
-
-    if (hour < 12) fishCaughtMorning++;
-    else if (hour < 18) fishCaughtDay++;
-    else fishCaughtNight++;
+    if (log.timeOfDay === "morning") fishCaughtMorning++;
+    else if (log.timeOfDay === "day") fishCaughtDay++;
+    else if (log.timeOfDay === "night") fishCaughtNight++;
   }
 
   const speciesCaught = new Set(
@@ -84,19 +84,24 @@ router.post("/", async (req, res) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const catchLog = await Logs.create({
+    const logDate = req.body.date || new Date();
+
+    const newLog = new Logs({
       ...req.body,
       userId: decoded.sub,
+      date: logDate,
+      timeOfDay: getTimeOfDay(logDate),
     });
 
-    await recalculateRigStats(decoded.sub, catchLog.rigPresetId);
+    await newLog.save();
 
-    res.status(201).json(catchLog);
+    if (newLog.rigPresetId) {
+      await recalculateRigStats(decoded.sub, newLog.rigPresetId);
+    }
 
-    res.status(201).json(catchLog);
+    res.status(201).json(newLog);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to create log" });
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -169,7 +174,9 @@ router.put("/:id", async (req, res) => {
     }
 
     const oldRigId = existingLog.rigPresetId?.toString();
-
+    if (req.body.date) {
+      req.body.timeOfDay = getTimeOfDay(req.body.date);
+    }
     const updatedLog = await Logs.findOneAndUpdate(
       { _id: req.params.id, userId: decoded.sub },
       req.body,
