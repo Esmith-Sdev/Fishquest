@@ -9,10 +9,12 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  FlatList,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomNavbar from "../components/BottomNavbar";
 import FishSpeciesTypeahead from "../components/FishSpeciesTypeahead";
@@ -31,9 +33,11 @@ import { POLES } from "../data/poles.config";
 import { WEIGHTS } from "../data/weight.config";
 import { STATE_ABBREVIATIONS } from "../data/states";
 import { COLORS, RADIUS } from "../constants/theme";
-
+import DateTimePicker from "@react-native-community/datetimepicker";
 import StateDropdown from "../components/StateDropdown";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import SelectDropdown from "react-native-select-dropdown";
 export default function CreateLog() {
   const params = useLocalSearchParams();
   const [stateValue, setStateValue] = useState("");
@@ -59,6 +63,8 @@ export default function CreateLog() {
   const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
   const [weightUnit, setWeightUnit] = useState("LB");
   const [lengthUnit, setLengthUnit] = useState("CM");
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [timeValue, setTimeValue] = useState(() => {
     const d = new Date();
     const h24 = d.getHours();
@@ -69,7 +75,13 @@ export default function CreateLog() {
   const [period, setPeriod] = useState(() =>
     new Date().getHours() >= 12 ? "PM" : "AM",
   );
-
+  const weatherOptions = [
+    { id: "sunny", label: "Sunny", icon: "weather-sunny" },
+    { id: "cloudy", label: "Cloudy", icon: "weather-cloudy" },
+    { id: "windy", label: "Windy", icon: "weather-windy" },
+    { id: "stormy", label: "Stormy", icon: "weather-lightning-rainy" },
+  ];
+  const [selectedWeather, setSelectedWeather] = useState();
   const [rigs, setRigs] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -156,18 +168,14 @@ export default function CreateLog() {
   }
   async function handleIdentifyFish() {
     try {
-      console.log("1. handleIdentifyFish started");
-
       if (!files.length) {
         Alert.alert("No image", "Please upload or take a fish photo first.");
         return;
       }
 
       setAiLoading(true);
-      console.log("2. passed file check");
 
       const token = await getToken();
-      console.log("3. token loaded?", !!token);
 
       if (!token) {
         router.replace("/login");
@@ -175,20 +183,15 @@ export default function CreateLog() {
       }
 
       const urls = await ensureUploadedImages();
-      console.log("4. uploaded urls:", urls);
-      console.log("uploaded urls raw:", JSON.stringify(urls, null, 2));
+
       const imageUrl = urls[0];
-      console.log("5. first imageUrl:", imageUrl);
 
       if (!imageUrl) {
         throw new Error("Image upload failed");
       }
 
-      console.log("6. about to call identifyFish");
-
       const result = await identifyFish(imageUrl, form.state, token);
 
-      console.log("7. identifyFish returned");
       console.log("AI raw result:", JSON.stringify(result, null, 2));
 
       setAiResult(result);
@@ -212,7 +215,6 @@ export default function CreateLog() {
       console.error("AI identify failed:", err);
       Alert.alert("AI Error", err.message || "Failed to identify fish");
     } finally {
-      console.log("8. finally block reached");
       setAiLoading(false);
     }
   }
@@ -356,339 +358,449 @@ export default function CreateLog() {
           onButtonPress={handleSubmitLog}
           backRoute="/home"
         />
-
-        <ScrollView contentContainerStyle={styles.content}>
-          <View style={styles.topArea}>
-            {selectedRig ? (
-              <>
-                <View style={styles.rigSection}>
-                  <View style={styles.previewColumn}>
-                    <View style={styles.rigTitleRow}>
-                      <Pressable onPress={prevRig}>
-                        <Text style={styles.caret}>◀</Text>
-                      </Pressable>
-                      <Text style={styles.rigName}>{selectedRig.rigName}</Text>
-                      <Pressable onPress={nextRig}>
-                        <Text style={styles.caret}>▶</Text>
-                      </Pressable>
+        <BottomNavbar />
+        <KeyboardAwareScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.content}
+          enableOnAndroid
+          extraScrollHeight={200}
+        >
+          <View style={styles.content}>
+            <View style={styles.topArea}>
+              {selectedRig ? (
+                <>
+                  <View style={styles.rigSection}>
+                    <View style={styles.previewColumn}>
+                      <View style={styles.rigTitleRow}>
+                        <Pressable onPress={prevRig}>
+                          <Text style={styles.caret}>◀</Text>
+                        </Pressable>
+                        <Text style={styles.rigName}>
+                          {selectedRig.rigName}
+                        </Text>
+                        <Pressable onPress={nextRig}>
+                          <Text style={styles.caret}>▶</Text>
+                        </Pressable>
+                      </View>
+                      <View style={styles.rigImageContainer}>
+                        {selectedRig.pole?.image ? (
+                          <Image
+                            source={selectedRig.pole.image}
+                            style={styles.rigImage}
+                            resizeMode="contain"
+                          />
+                        ) : null}
+                      </View>
                     </View>
-                    <View style={styles.rigImageContainer}>
-                      {selectedRig.pole?.image ? (
-                        <Image
-                          source={selectedRig.pole.image}
-                          style={styles.rigImage}
-                          resizeMode="contain"
-                        />
-                      ) : null}
+                    <View style={styles.optionsGrid}>
+                      <View style={styles.optionColumn}>
+                        <View style={styles.smallSquare}>
+                          <Image
+                            source={selectedRig.bobber ? Bobber : NoBobber}
+                            style={styles.optionImage}
+                            resizeMode="contain"
+                          />
+                        </View>
+                        <View style={styles.smallSquare}>
+                          {selectedRig.bait?.image ? (
+                            <Image
+                              source={selectedRig.bait.image}
+                              style={styles.optionImage}
+                              resizeMode="contain"
+                            />
+                          ) : null}
+                        </View>
+                      </View>
+                      <View style={styles.optionColumn}>
+                        <View style={styles.smallSquare}>
+                          {selectedRig.hook?.image ? (
+                            <Image
+                              source={selectedRig.hook.image}
+                              style={styles.optionImage}
+                              resizeMode="contain"
+                            />
+                          ) : null}
+                        </View>
+                        <View style={styles.smallSquare}>
+                          {selectedRig.weight?.image ? (
+                            <Image
+                              source={selectedRig.weight.image}
+                              style={styles.optionImage}
+                              resizeMode="contain"
+                            />
+                          ) : null}
+                        </View>
+                      </View>
                     </View>
-                    <Pressable
-                      style={[styles.orangeButton, styles.editButton]}
-                      onPress={() =>
-                        router.push(`/edit-rig/${selectedRig._id}`)
-                      }
-                    >
-                      <Text style={styles.buttonText}>Edit</Text>
-                    </Pressable>
                   </View>
-                  <View style={styles.optionsGrid}>
-                    <View style={styles.optionColumn}>
-                      <View style={styles.smallSquare}>
-                        <Image
-                          source={selectedRig.bobber ? Bobber : NoBobber}
-                          style={styles.optionImage}
-                          resizeMode="contain"
-                        />
-                      </View>
-                      <View style={styles.smallSquare}>
-                        {selectedRig.bait?.image ? (
-                          <Image
-                            source={selectedRig.bait.image}
-                            style={styles.optionImage}
-                            resizeMode="contain"
-                          />
-                        ) : null}
-                      </View>
-                    </View>
-                    <View style={styles.optionColumn}>
-                      <View style={styles.smallSquare}>
-                        {selectedRig.hook?.image ? (
-                          <Image
-                            source={selectedRig.hook.image}
-                            style={styles.optionImage}
-                            resizeMode="contain"
-                          />
-                        ) : null}
-                      </View>
-                      <View style={styles.smallSquare}>
-                        {selectedRig.weight?.image ? (
-                          <Image
-                            source={selectedRig.weight.image}
-                            style={styles.optionImage}
-                            resizeMode="contain"
-                          />
-                        ) : null}
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </>
-            ) : (
-              <View style={styles.noRigBox}>
-                <Text style={styles.noRigText}>No rig preset selected</Text>
-                <Text style={styles.noRigText}>
-                  No rigs found. Create one before logging.
-                </Text>
-                <Pressable
-                  style={styles.orangeButton}
-                  onPress={handleCreateRig}
-                >
-                  <Text style={styles.buttonText}>Create Rig</Text>
-                </Pressable>
-              </View>
-            )}
-          </View>
-
-          {files.length === 0 ? (
-            <Pressable style={styles.uploadImageContainer} onPress={pickImages}>
-              <Ionicons name="camera" size={25} color="#000" />
-              <Text style={styles.uploadText}>Select Image to Upload</Text>
-              <Pressable style={styles.blueButton} onPress={pickImages}>
-                <Text style={styles.uploadText}>Select Image</Text>
-              </Pressable>
-            </Pressable>
-          ) : (
-            <View style={styles.imageGrid}>
-              {files.map((file, i) => (
-                <View style={styles.imageTile} key={i}>
-                  <Image
-                    source={getImageSource(file)}
-                    style={styles.gridImage}
-                  />
-
+                </>
+              ) : (
+                <View style={styles.noRigBox}>
+                  <Text style={styles.noRigText}>No rig preset selected</Text>
+                  <Text style={styles.noRigText}>
+                    No rigs found. Create one before logging.
+                  </Text>
                   <Pressable
-                    style={styles.removeImageBtn}
-                    onPress={() => handleRemoveImage(i)}
+                    style={styles.orangeButton}
+                    onPress={handleCreateRig}
                   >
-                    <Ionicons name="close" size={16} color="#fff" />
+                    <Text style={styles.buttonText}>Create Rig</Text>
                   </Pressable>
                 </View>
-              ))}
-
-              {!isGridFull && (
-                <Pressable style={styles.largeSquare} onPress={pickImages}>
-                  <Text style={styles.addImageText}>Add Image</Text>
-                  <Ionicons
-                    name="add-circle"
-                    size={46}
-                    color={COLORS.primary}
-                  />
-                </Pressable>
               )}
             </View>
-          )}
-          <Pressable
-            style={[styles.orangeButton, aiLoading && styles.disabledButton]}
-            onPress={handleIdentifyFish}
-            disabled={aiLoading || files.length === 0}
-          >
-            <Text style={styles.buttonText}>
-              {aiLoading ? "Identifying..." : "Identify Fish with AI"}
-            </Text>
-          </Pressable>
-          {aiResult?.speciesName ? (
-            <View style={{ marginTop: 8 }}>
-              <Text style={styles.logLabel}>
-                AI Suggestion: {aiResult.speciesName} (
-                {Math.round(aiResult.confidence * 100)}%)
-              </Text>
 
-              {aiResult.alternatives?.length > 0 ? (
-                <Text style={styles.challengeText}>
-                  Also possible:{" "}
-                  {aiResult.alternatives.map((a) => a.speciesName).join(", ")}
-                </Text>
-              ) : null}
-            </View>
-          ) : null}
-          <View style={styles.logForm}>
-            <Pressable
-              style={styles.checkboxRow}
-              onPress={() => setSkunked((prev) => !prev)}
-            >
-              <Text style={styles.checkboxLabel}>Skunked (No fish caught)</Text>
-              <View
-                style={[styles.checkboxBox, skunked && styles.checkboxChecked]}
+            {files.length === 0 ? (
+              <Pressable
+                style={styles.uploadImageContainer}
+                onPress={pickImages}
               >
-                {skunked ? (
-                  <Ionicons name="checkmark" size={16} color="#000" />
+                <Ionicons name="camera" size={25} color="#000" />
+                <Text style={styles.uploadText}>Select Image to Upload</Text>
+                <Pressable style={styles.blueButton} onPress={pickImages}>
+                  <Text style={styles.buttonText}>Select Image</Text>
+                </Pressable>
+              </Pressable>
+            ) : (
+              <View style={styles.imageGrid}>
+                {files.map((file, i) => (
+                  <View style={styles.imageTile} key={i}>
+                    <Image
+                      source={getImageSource(file)}
+                      style={styles.gridImage}
+                    />
+
+                    <Pressable
+                      style={styles.removeImageBtn}
+                      onPress={() => handleRemoveImage(i)}
+                    >
+                      <Ionicons name="close" size={16} color="#fff" />
+                    </Pressable>
+                  </View>
+                ))}
+
+                {!isGridFull && (
+                  <Pressable style={styles.largeSquare} onPress={pickImages}>
+                    <Text style={styles.addImageText}>Add Image</Text>
+                    <Ionicons
+                      name="add-circle"
+                      size={46}
+                      color={COLORS.primary}
+                    />
+                  </Pressable>
+                )}
+              </View>
+            )}
+            <Pressable
+              style={[styles.orangeButton, aiLoading && styles.disabledButton]}
+              onPress={handleIdentifyFish}
+              disabled={aiLoading || files.length === 0}
+            >
+              <Text style={styles.buttonText}>
+                {aiLoading ? "Identifying..." : "Identify Fish with AI"}
+              </Text>
+            </Pressable>
+            {aiResult?.speciesName ? (
+              <View style={{ marginTop: 8 }}>
+                <Text style={styles.logLabel}>
+                  AI Suggestion: {aiResult.speciesName} (
+                  {Math.round(aiResult.confidence * 100)}%)
+                </Text>
+
+                {aiResult.alternatives?.length > 0 ? (
+                  <Text style={styles.challengeText}>
+                    Also possible:{" "}
+                    {aiResult.alternatives.map((a) => a.speciesName).join(", ")}
+                  </Text>
                 ) : null}
               </View>
-            </Pressable>
+            ) : null}
+            <View style={styles.logForm}>
+              <Pressable
+                style={styles.checkboxRow}
+                onPress={() => setSkunked((prev) => !prev)}
+              >
+                <Text style={styles.checkboxLabel}>
+                  Skunked (No fish caught)
+                </Text>
+                <View
+                  style={[
+                    styles.checkboxBox,
+                    skunked && styles.checkboxChecked,
+                  ]}
+                >
+                  {skunked ? (
+                    <Ionicons name="checkmark" size={20} color="#000" />
+                  ) : null}
+                </View>
+              </Pressable>
 
-            <View style={styles.speciesRow}>
-              <Text style={styles.logLabel}>Fish Species:</Text>
-              <View style={styles.fieldFlex}>
-                <View style={styles.speciesFieldWrap}>
-                  <FishSpeciesTypeahead
-                    disabled={speciesDisabled}
-                    value={species}
-                    onPick={setSpecies}
+              <View style={styles.speciesRow}>
+                <Text style={styles.logLabel}>Fish Species:</Text>
+                <View style={styles.fieldFlex}>
+                  <View style={styles.speciesFieldWrap}>
+                    <FishSpeciesTypeahead
+                      disabled={speciesDisabled}
+                      value={species}
+                      onPick={setSpecies}
+                    />
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.logRow}>
+                <Text style={styles.logLabel}>Est. Weight:</Text>
+                <View style={styles.inlineField}>
+                  <TextInput
+                    editable={!skunked}
+                    style={[
+                      styles.pillInputSmall,
+                      skunked && styles.disabledField,
+                    ]}
+                    keyboardType="numeric"
+                    value={weight}
+                    onChangeText={(text) =>
+                      setWeight(text.replace(/\D/g, "").slice(0, 2))
+                    }
+                  />
+
+                  <SelectDropdown
+                    statusBarTranslucent={true}
+                    data={["LB", "OZ"]}
+                    defaultValue={weightUnit}
+                    disabled={skunked}
+                    dropdownOverlayColor="transparent"
+                    onSelect={(selectedItem) => setWeightUnit(selectedItem)}
+                    renderButton={(selectedItem, isOpened) => (
+                      <View
+                        style={[
+                          styles.pillSelectSmall,
+                          skunked && styles.disabledButton,
+                        ]}
+                      >
+                        <View style={styles.logRow}>
+                          <Text style={styles.selectText}>
+                            {selectedItem || "LB"}
+                          </Text>
+                          {!isOpened ? (
+                            <FontAwesome6
+                              name="caret-down"
+                              size={20}
+                              color="black"
+                            />
+                          ) : (
+                            <FontAwesome6
+                              name="caret-up"
+                              size={20}
+                              color="black"
+                            />
+                          )}
+                        </View>
+                      </View>
+                    )}
+                    renderItem={(item, index, isSelected) => (
+                      <View
+                        style={[
+                          styles.dropdownItem,
+                          isSelected && styles.dropdownItemSelected,
+                        ]}
+                      >
+                        <Text style={styles.selectText}>{item}</Text>
+                      </View>
+                    )}
                   />
                 </View>
               </View>
-            </View>
 
-            <View style={styles.logRow}>
-              <Text style={styles.logLabel}>Est. Weight:</Text>
-              <View style={styles.inlineField}>
+              <View style={styles.logRow}>
+                <Text style={styles.logLabel}>Est. Length:</Text>
+                <View style={styles.inlineField}>
+                  <TextInput
+                    editable={!skunked}
+                    style={[
+                      styles.pillInputSmall,
+                      skunked && styles.disabledField,
+                    ]}
+                    keyboardType="numeric"
+                    value={length}
+                    onChangeText={(text) =>
+                      setLength(text.replace(/\D/g, "").slice(0, 2))
+                    }
+                  />
+                  <SelectDropdown
+                    statusBarTranslucent={true}
+                    data={["IN", "CM"]}
+                    defaultValue={lengthUnit}
+                    disabled={skunked}
+                    dropdownOverlayColor="transparent"
+                    onSelect={(selectedItem) => setLengthUnit(selectedItem)}
+                    renderButton={(selectedItem, isOpened) => (
+                      <View
+                        style={[
+                          styles.pillSelectSmall,
+                          skunked && styles.disabledButton,
+                        ]}
+                      >
+                        <View style={styles.logRow}>
+                          <Text style={styles.selectText}>
+                            {selectedItem || "IN"}
+                          </Text>
+                          {!isOpened ? (
+                            <FontAwesome6
+                              name="caret-down"
+                              size={20}
+                              color="black"
+                            />
+                          ) : (
+                            <FontAwesome6
+                              name="caret-up"
+                              size={20}
+                              color="black"
+                            />
+                          )}
+                        </View>
+                      </View>
+                    )}
+                    renderItem={(item, index, isSelected) => (
+                      <View
+                        style={[
+                          styles.dropdownItem,
+                          isSelected && styles.dropdownItemSelected,
+                        ]}
+                      >
+                        <Text style={styles.selectText}>{item}</Text>
+                      </View>
+                    )}
+                  />
+                </View>
+              </View>
+
+              <View style={styles.logRow}>
+                <Text style={styles.logLabel}>Date:</Text>
+                <View style={styles.fieldFlex}>
+                  <Pressable
+                    style={styles.dateButton}
+                    onPress={() => setShowDatePicker(true)}
+                  >
+                    <Text style={styles.dateButtonText}>
+                      {selectedDate.toLocaleDateString()}
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+
+              <View style={styles.logRow}>
+                <Text style={styles.logLabel}>Time:</Text>
+                <View style={styles.inlineField}>
+                  <Pressable
+                    style={styles.pillInputTime}
+                    onPress={() => setShowTimePicker(true)}
+                  >
+                    <Text
+                      style={styles.dateButtonText}
+                    >{`${timeValue} ${period}`}</Text>
+                  </Pressable>
+                </View>
+              </View>
+              <View style={styles.logRow}>
+                <Text style={styles.logLabel}>Weather:</Text>
+                <View style={styles.inlineField}>
+                  <FlatList
+                    data={weatherOptions}
+                    horizontal
+                    keyExtractor={(item) => item.id}
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 8 }}
+                    renderItem={({ item }) => {
+                      const isSelected = selectedWeather === item.id;
+
+                      return (
+                        <Pressable
+                          onPress={() => setSelectedWeather(item.id)}
+                          style={[
+                            styles.weatherOption,
+                            isSelected && styles.weatherOptionSelected,
+                          ]}
+                        >
+                          <MaterialCommunityIcons
+                            name={item.icon}
+                            size={20}
+                            color={isSelected ? "#fff" : "#333"}
+                          />
+                          <Text
+                            style={[
+                              styles.weatherText,
+                              isSelected && styles.weatherTextSelected,
+                            ]}
+                          >
+                            {item.label}
+                          </Text>
+                        </Pressable>
+                      );
+                    }}
+                  />
+                </View>
+              </View>
+              <View style={styles.logColumn}>
+                <Text style={styles.logLabel}>Location:</Text>
+
                 <TextInput
-                  editable={!skunked}
-                  style={[
-                    styles.pillInputSmall,
-                    skunked && styles.disabledField,
-                  ]}
-                  keyboardType="numeric"
-                  value={weight}
+                  style={styles.pillInputFull}
+                  placeholder="Street Address"
+                  placeholderTextColor="#000"
+                  maxLength={35}
+                  value={form.address}
                   onChangeText={(text) =>
-                    setWeight(text.replace(/\D/g, "").slice(0, 2))
+                    setForm((p) => ({ ...p, address: text }))
                   }
                 />
-                <Pressable
-                  style={[
-                    styles.pillSelectSmall,
-                    skunked && styles.disabledField,
-                  ]}
-                  onPress={() =>
-                    setWeightUnit((prev) => (prev === "LB" ? "OZ" : "LB"))
-                  }
-                  disabled={skunked}
-                >
-                  <Text style={styles.selectText}>{weightUnit}</Text>
-                </Pressable>
-              </View>
-            </View>
 
-            <View style={styles.logRow}>
-              <Text style={styles.logLabel}>Est. Length:</Text>
-              <View style={styles.inlineField}>
-                <TextInput
-                  editable={!skunked}
-                  style={[
-                    styles.pillInputSmall,
-                    skunked && styles.disabledField,
-                  ]}
-                  keyboardType="numeric"
-                  value={length}
-                  onChangeText={(text) =>
-                    setLength(text.replace(/\D/g, "").slice(0, 2))
-                  }
-                />
-                <Pressable
-                  style={[
-                    styles.pillSelectSmall,
-                    skunked && styles.disabledField,
-                  ]}
-                  onPress={() =>
-                    setLengthUnit((prev) => (prev === "CM" ? "IN" : "CM"))
-                  }
-                  disabled={skunked}
-                >
-                  <Text style={styles.selectText}>{lengthUnit}</Text>
-                </Pressable>
-              </View>
-            </View>
+                <View style={styles.locationRow}>
+                  <View style={styles.stateDropdownWrap}>
+                    <StateDropdown
+                      value={form.state}
+                      onChange={(value) =>
+                        setForm((p) => ({ ...p, state: value }))
+                      }
+                    />
+                  </View>
 
-            <View style={styles.logRow}>
-              <Text style={styles.logLabel}>Date:</Text>
-              <View style={styles.fieldFlex}>
-                <TextInput
-                  style={styles.pillInputMedium}
-                  value={selectedDate.toLocaleDateString()}
-                  editable={false}
-                />
-              </View>
-            </View>
-
-            <View style={styles.logRow}>
-              <Text style={styles.logLabel}>Time:</Text>
-              <View style={styles.inlineField}>
-                <TextInput
-                  style={styles.pillInputTime}
-                  value={timeValue}
-                  onChangeText={setTimeValue}
-                />
-                <Pressable
-                  style={styles.pillSelectTime}
-                  onPress={() =>
-                    setPeriod((prev) => (prev === "AM" ? "PM" : "AM"))
-                  }
-                >
-                  <Text style={styles.selectText}>{period}</Text>
-                </Pressable>
-              </View>
-            </View>
-
-            <View style={styles.logColumn}>
-              <Text style={styles.logLabel}>Location:</Text>
-
-              <TextInput
-                style={styles.pillInputFull}
-                placeholder="Street Address"
-                placeholderTextColor="#000"
-                maxLength={35}
-                value={form.address}
-                onChangeText={(text) =>
-                  setForm((p) => ({ ...p, address: text }))
-                }
-              />
-
-              <View style={styles.locationRow}>
-                <View style={styles.stateDropdownWrap}>
-                  <StateDropdown
-                    value={form.state}
-                    onChange={(value) =>
-                      setForm((p) => ({ ...p, state: value }))
+                  <TextInput
+                    style={styles.pillInputCity}
+                    placeholder="City"
+                    placeholderTextColor="#000"
+                    maxLength={35}
+                    value={form.city}
+                    onChangeText={(text) =>
+                      setForm((p) => ({ ...p, city: text }))
                     }
                   />
                 </View>
 
-                <TextInput
-                  style={styles.pillInputCity}
-                  placeholder="City"
-                  placeholderTextColor="#000"
-                  maxLength={35}
-                  value={form.city}
-                  onChangeText={(text) =>
-                    setForm((p) => ({ ...p, city: text }))
-                  }
-                />
+                <Pressable
+                  style={styles.orangeButton}
+                  disabled={loadingLocation}
+                  onPress={handleGetLocation}
+                >
+                  <Text style={styles.buttonText}>
+                    {loadingLocation
+                      ? "Getting Location..."
+                      : "Use Current Location"}
+                  </Text>
+                </Pressable>
+
+                {geoError ? (
+                  <Text style={styles.geoError}>{geoError}</Text>
+                ) : null}
               </View>
 
-              <Pressable
-                style={styles.orangeButton}
-                disabled={loadingLocation}
-                onPress={handleGetLocation}
-              >
-                <Text style={styles.buttonText}>
-                  {loadingLocation
-                    ? "Getting Location..."
-                    : "Use Current Location"}
+              <View style={styles.logRow}>
+                <Text style={styles.logLabel}>Challenge:</Text>
+                <Text style={styles.challengeText}>
+                  {params.challenge || "No Challenge"}
                 </Text>
-              </Pressable>
+              </View>
 
-              {geoError ? (
-                <Text style={styles.geoError}>{geoError}</Text>
-              ) : null}
-            </View>
-
-            <View style={styles.logRow}>
-              <Text style={styles.logLabel}>Challenge:</Text>
-              <Text style={styles.challengeText}>
-                {params.challenge || "Catch a fish in 10min"}
-              </Text>
-            </View>
-
-            <View style={styles.notesBlock}>
               <TextInput
                 multiline
                 numberOfLines={4}
@@ -699,12 +811,62 @@ export default function CreateLog() {
                 onChangeText={setNotes}
               />
             </View>
+
+            {rigsError ? (
+              <Text style={styles.rigsError}>{rigsError}</Text>
+            ) : null}
           </View>
+        </KeyboardAwareScrollView>
+        {showDatePicker && (
+          <DateTimePicker
+            value={selectedDate}
+            mode="date"
+            display="default"
+            onChange={(event, pickedDate) => {
+              setShowDatePicker(false);
 
-          {rigsError ? <Text style={styles.rigsError}>{rigsError}</Text> : null}
-        </ScrollView>
+              if (!event || event.type !== "set" || !pickedDate) return;
 
-        <BottomNavbar />
+              const nextDate = new Date(selectedDate);
+              nextDate.setFullYear(
+                pickedDate.getFullYear(),
+                pickedDate.getMonth(),
+                pickedDate.getDate(),
+              );
+
+              setSelectedDate(nextDate);
+              setShowTimePicker(true);
+            }}
+          />
+        )}
+
+        {showTimePicker && (
+          <DateTimePicker
+            value={selectedDate}
+            defaul
+            mode="time"
+            display="default"
+            onChange={(event, pickedDate) => {
+              setShowTimePicker(false);
+
+              if (!event || event.type !== "set" || !pickedDate) return;
+
+              const nextDate = new Date(selectedDate);
+              nextDate.setHours(pickedDate.getHours(), pickedDate.getMinutes());
+
+              setSelectedDate(nextDate);
+
+              const h24 = nextDate.getHours();
+              const mins = nextDate.getMinutes();
+              const h12 = h24 % 12 || 12;
+
+              setTimeValue(
+                `${String(h12).padStart(2, "0")}:${String(mins).padStart(2, "0")}`,
+              );
+              setPeriod(h24 >= 12 ? "PM" : "AM");
+            }}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -736,7 +898,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    paddingBottom: 110,
+    paddingBottom: 50,
     gap: 18,
   },
   centerState: {
@@ -764,7 +926,7 @@ const styles = StyleSheet.create({
   blueButton: {
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.pill,
-    paddingVertical: 4,
+    paddingVertical: 6,
     paddingHorizontal: 12,
     shadowColor: COLORS.primaryDropShadow,
     shadowOffset: { width: 0, height: 4 },
@@ -807,6 +969,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
 
     gap: 20,
+  },
+  dropdownItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    backgroundColor: "#dedede",
+  },
+
+  dropdownItemSelected: {
+    backgroundColor: COLORS.secondary,
   },
   previewColumn: {
     width: "42%",
@@ -896,14 +1067,26 @@ const styles = StyleSheet.create({
     flex: 1,
     zIndex: 10000,
     elevation: 40,
+    minWidth: 200,
+  },
+  dateButton: {
+    backgroundColor: "#dedede",
+    borderRadius: 50,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    minWidth: 140,
   },
 
+  dateButtonText: {
+    color: "#000",
+    fontFamily: "Jua",
+    textAlign: "center",
+  },
   speciesRow: {
     gap: 8,
     flexDirection: "row",
     alignItems: "center",
     zIndex: 9999,
-    elevation: 30,
   },
   uploadText: {
     color: "#000",
@@ -969,7 +1152,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "Jua",
     fontSize: 16,
-    flex: 1,
+
     marginRight: 12,
   },
   checkboxBox: {
@@ -994,6 +1177,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "Jua",
     fontSize: 16,
+    width: 100,
   },
   fieldFlex: {
     minWidth: 0,
@@ -1119,14 +1303,35 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     fontWeight: "600",
   },
-  notesBlock: {
-    marginTop: 6,
-  },
+
   notesBox: {
     backgroundColor: "#dedede",
-    padding: 5,
-    fontSize: 15,
+    paddingHorizontal: 5,
+    textAlignVertical: "top",
+    fontSize: 14,
+    lineHeight: 20,
     fontFamily: "Jua",
     borderRadius: 15,
+    width: "100%",
+    height: 150,
+  },
+  weatherOption: {
+    backgroundColor: "#dedede",
+    borderRadius: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  weatherOptionSelected: {
+    backgroundColor: COLORS.secondary,
+  },
+  weatherText: {
+    color: "#000",
+    fontSize: 8,
+    fontFamily: "Jua",
+  },
+  weatherTextSelected: {
+    color: "#fff",
   },
 });

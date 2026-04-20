@@ -21,7 +21,7 @@ import { uploadImages } from "../api/uploads";
 import { fetchLogById, updateCatchLog } from "../api/logs";
 import { getToken } from "../api/auth";
 import { fetchRigPresets } from "../api/rigPresets";
-import { identifyFish } from "../api/identifyFish";
+
 import Bobber from "../assets/images/Bobbers/bobber.png";
 import NoBobber from "../assets/images/Bobbers/no-bobber.png";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
@@ -31,11 +31,9 @@ import { POLES } from "../data/poles.config";
 import { WEIGHTS } from "../data/weight.config";
 import { STATE_ABBREVIATIONS } from "../data/states";
 import { COLORS, RADIUS } from "../constants/theme";
-import DateTimePicker from "@react-native-community/datetimepicker";
+
 import StateDropdown from "../components/StateDropdown";
-import SelectDropdown from "react-native-select-dropdown";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { FontAwesome6 } from "@expo/vector-icons";
+
 export default function UpdateLog() {
   const params = useLocalSearchParams();
   const { id } = useLocalSearchParams();
@@ -63,31 +61,8 @@ export default function UpdateLog() {
   const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
   const [weightUnit, setWeightUnit] = useState("LB");
   const [lengthUnit, setLengthUnit] = useState("CM");
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [timeValue, setTimeValue] = useState(() => {
-    const d = new Date();
-    const h24 = d.getHours();
-    const mins = d.getMinutes();
-    const h12 = h24 % 12 || 12;
-    return `${String(h12).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
-  });
-  const [period, setPeriod] = useState(() =>
-    new Date().getHours() >= 12 ? "PM" : "AM",
-  );
-  function handleConfirmDate(date) {
-    setShowDatePicker(false);
-    setSelectedDate(date);
-
-    const h24 = date.getHours();
-    const mins = date.getMinutes();
-    const h12 = h24 % 12 || 12;
-
-    setTimeValue(
-      `${String(h12).padStart(2, "0")}:${String(mins).padStart(2, "0")}`,
-    );
-    setPeriod(h24 >= 12 ? "PM" : "AM");
-  }
+  const [timeValue, setTimeValue] = useState();
+  const [period, setPeriod] = useState("AM");
   const [rigs, setRigs] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -136,18 +111,6 @@ export default function UpdateLog() {
   const selectedRig = hydratedRigs[selectedIndex];
   const rigPresetId = selectedRig?._id;
 
-  const prevRig = () => {
-    if (!hydratedRigs.length) return;
-    setSelectedIndex(
-      (i) => (i - 1 + hydratedRigs.length) % hydratedRigs.length,
-    );
-  };
-
-  const nextRig = () => {
-    if (!hydratedRigs.length) return;
-    setSelectedIndex((i) => (i + 1) % hydratedRigs.length);
-  };
-
   function handleCreateRig() {
     router.push({
       pathname: "/create-rig",
@@ -157,106 +120,7 @@ export default function UpdateLog() {
       },
     });
   }
-  async function ensureUploadedImages() {
-    const newUrls = files.length ? await uploadImages(files) : [];
-    return [...uploadedImageUrls, ...newUrls];
-  }
 
-  function handleRemoveImage(index, isRemote) {
-    if (isRemote) {
-      setUploadedImageUrls((prev) => prev.filter((_, i) => i !== index));
-    } else {
-      const localIndex = index - uploadedImageUrls.length;
-
-      setFiles((prev) => prev.filter((_, i) => i !== localIndex));
-    }
-  }
-  async function handleIdentifyFish() {
-    try {
-      console.log("1. handleIdentifyFish started");
-
-      if (!files.length) {
-        Alert.alert("No image", "Please upload or take a fish photo first.");
-        return;
-      }
-
-      setAiLoading(true);
-      console.log("2. passed file check");
-
-      const token = await getToken();
-      console.log("3. token loaded?", !!token);
-
-      if (!token) {
-        router.replace("/login");
-        return;
-      }
-
-      const urls = await ensureUploadedImages();
-      console.log("4. uploaded urls:", urls);
-      console.log("uploaded urls raw:", JSON.stringify(urls, null, 2));
-      const imageUrl = urls[0];
-      console.log("5. first imageUrl:", imageUrl);
-
-      if (!imageUrl) {
-        throw new Error("Image upload failed");
-      }
-
-      console.log("6. about to call identifyFish");
-
-      const result = await identifyFish(imageUrl, form.state, token);
-
-      console.log("7. identifyFish returned");
-      console.log("AI raw result:", JSON.stringify(result, null, 2));
-
-      setAiResult(result);
-
-      if (!result?.isFishVisible) {
-        Alert.alert(
-          "No clear fish found",
-          "The photo did not clearly show a fish. You can still choose the species manually.",
-        );
-        return;
-      }
-
-      if (result?.speciesId) {
-        setSpecies({
-          id: result.speciesId,
-          name: result.speciesName,
-          label: result.speciesName,
-        });
-      }
-    } catch (err) {
-      console.error("AI identify failed:", err);
-      Alert.alert("AI Error", err.message || "Failed to identify fish");
-    } finally {
-      console.log("8. finally block reached");
-      setAiLoading(false);
-    }
-  }
-
-  async function handleGetLocation() {
-    setLoadingLocation(true);
-    setGeoError("");
-
-    try {
-      const location = await getCurrentLocation();
-      const abbr =
-        typeof location.state === "string" && location.state.length === 2
-          ? location.state.toUpperCase()
-          : STATE_ABBREVIATIONS[location.state] || "";
-
-      setForm((prev) => ({
-        ...prev,
-        address: location.streetAddress || "",
-        city: location.city || "",
-        state: abbr,
-      }));
-    } catch (err) {
-      setGeoError(err.message || "Location failed");
-    } finally {
-      setLoadingLocation(false);
-    }
-  }
   useEffect(() => {
     async function loadLog() {
       try {
@@ -320,22 +184,6 @@ export default function UpdateLog() {
       loadLog();
     }
   }, [id, rigsLoading, hydratedRigs]);
-  async function pickImages() {
-    if (isGridFull) return;
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsMultipleSelection: true,
-      quality: 0.8,
-      selectionLimit: 4 - files.length,
-    });
-
-    if (result.canceled) return;
-
-    const picked = result.assets || [];
-    const room = 4 - files.length;
-    setFiles((prev) => [...prev, ...picked.slice(0, room)]);
-  }
 
   function getImageSource(file) {
     if (!file) return null;
@@ -343,76 +191,20 @@ export default function UpdateLog() {
     return file;
   }
 
-  async function handleSubmitLog() {
-    if (!rigPresetId) {
-      Alert.alert("Missing rig", "Please select a rig preset first.");
-      return;
-    }
-
-    if (!skunked && !species) {
-      Alert.alert(
-        "Missing species",
-        "Please choose a fish species or mark the trip as skunked.",
-      );
-      return;
-    }
-
-    setSaving(true);
-
-    try {
-      const token = await getToken();
-      if (!token) {
-        router.replace("/login");
-        return;
-      }
-
-      const urls = await ensureUploadedImages();
-
-      const selectedSpecies = skunked
-        ? null
-        : {
-            speciesId: species?.id ?? null,
-            speciesName: species?.name || species?.label || "",
-          };
-
-      const payload = {
-        rigPresetId,
-        date: selectedDate.toISOString(),
-        notes,
-        imageUrls: urls,
-        skunked,
-        address: form.address,
-        city: form.city,
-        state: form.state,
-        ...(skunked
-          ? {}
-          : {
-              ...selectedSpecies,
-              weight,
-              length,
-              weightUnit,
-              lengthUnit,
-            }),
-      };
-
-      await updateCatchLog(id, payload, token);
-      router.replace("/logs");
-    } catch (err) {
-      console.error("Update log failed:", err);
-      Alert.alert("Error", err.message || "Update log failed");
-    } finally {
-      setSaving(false);
-    }
-  }
-
   if (rigsLoading) {
     return (
       <View style={styles.screen}>
         <TopNavbarSecondary
-          title="Edit Log"
-          buttonText="Save"
+          title="View Log"
+          buttonText="Edit"
+          onButtonPress={() =>
+            router.push({
+              pathname: "/edit-log",
+              params: { id },
+            })
+          }
           showButton={true}
-          onPress={handleSubmitLog}
+          backRoute="/logs"
         />
 
         <View style={styles.centerState}>
@@ -433,32 +225,26 @@ export default function UpdateLog() {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
       <View style={styles.screen}>
         <TopNavbarSecondary
-          title="Edit Log"
-          buttonText="Save"
+          title="View Log"
+          buttonText="Edit"
+          onButtonPress={() =>
+            router.push({
+              pathname: "/edit-log",
+              params: { id },
+            })
+          }
           showButton={true}
-          onButtonPress={handleSubmitLog}
-          backRoute="/home"
+          backRoute="/logs"
         />
 
-        <KeyboardAwareScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={styles.content}
-          enableOnAndroid
-          extraScrollHeight={200}
-        >
+        <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.topArea}>
             {selectedRig ? (
               <>
                 <View style={styles.rigSection}>
                   <View style={styles.previewColumn}>
                     <View style={styles.rigTitleRow}>
-                      <Pressable onPress={prevRig}>
-                        <Text style={styles.caret}>◀</Text>
-                      </Pressable>
                       <Text style={styles.rigName}>{selectedRig.rigName}</Text>
-                      <Pressable onPress={nextRig}>
-                        <Text style={styles.caret}>▶</Text>
-                      </Pressable>
                     </View>
                     <View style={styles.rigImageContainer}>
                       {selectedRig.pole?.image ? (
@@ -529,49 +315,19 @@ export default function UpdateLog() {
           </View>
 
           {allImages.length === 0 ? (
-            <Pressable style={styles.uploadImageContainer} onPress={pickImages}>
-              <Ionicons name="camera" size={25} color="#000" />
-              <Text style={styles.uploadText}>Select Image to Upload</Text>
-              <Pressable style={styles.blueButton} onPress={pickImages}>
-                <Text style={styles.uploadText}>Select Image</Text>
-              </Pressable>
-            </Pressable>
+            <View style={styles.noPhotoTile}>
+              <Text style={styles.noPhotoText}>No Photo Uploaded</Text>
+            </View>
           ) : (
             <View style={styles.imageGrid}>
               {allImages.map((img, i) => (
                 <View style={styles.imageTile} key={i}>
                   <Image source={{ uri: img.uri }} style={styles.gridImage} />
-
-                  <Pressable
-                    style={styles.removeImageBtn}
-                    onPress={() => handleRemoveImage(i, img.isRemote)}
-                  >
-                    <Ionicons name="close" size={16} color="#fff" />
-                  </Pressable>
                 </View>
               ))}
-
-              {!isGridFull && (
-                <Pressable style={styles.largeSquare} onPress={pickImages}>
-                  <Text style={styles.addImageText}>Add Image</Text>
-                  <Ionicons
-                    name="add-circle"
-                    size={46}
-                    color={COLORS.primary}
-                  />
-                </Pressable>
-              )}
             </View>
           )}
-          <Pressable
-            style={[styles.orangeButton, aiLoading && styles.disabledButton]}
-            onPress={handleIdentifyFish}
-            disabled={aiLoading || allImages.length === 0}
-          >
-            <Text style={styles.buttonText}>
-              {aiLoading ? "Identifying..." : "Identify Fish with AI"}
-            </Text>
-          </Pressable>
+
           {aiResult?.speciesName ? (
             <View style={{ marginTop: 8 }}>
               <Text style={styles.logLabel}>
@@ -588,244 +344,84 @@ export default function UpdateLog() {
             </View>
           ) : null}
           <View style={styles.logForm}>
-            <Pressable
-              style={styles.checkboxRow}
-              onPress={() => setSkunked((prev) => !prev)}
-            >
+            <View style={styles.checkboxRow}>
               <Text style={styles.checkboxLabel}>Skunked (No fish caught)</Text>
               <View
                 style={[styles.checkboxBox, skunked && styles.checkboxChecked]}
               >
                 {skunked ? (
-                  <Ionicons name="checkmark" size={20} color="#000" />
+                  <Ionicons name="checkmark" size={16} color="#000" />
                 ) : null}
               </View>
-            </Pressable>
+            </View>
 
-            <View style={styles.speciesRow}>
+            <View style={styles.logRow}>
               <Text style={styles.logLabel}>Fish Species:</Text>
-              <View style={styles.fieldFlex}>
-                <View style={styles.speciesFieldWrap}>
-                  <FishSpeciesTypeahead
-                    disabled={speciesDisabled}
-                    value={species}
-                    onPick={setSpecies}
-                  />
-                </View>
+              <View style={styles.pillDisplay}>
+                <Text style={styles.displayText}>
+                  {skunked ? "None" : species?.label || "Unknown"}
+                </Text>
               </View>
             </View>
 
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Est. Weight:</Text>
-              <View style={styles.inlineField}>
-                <TextInput
-                  editable={!skunked}
-                  style={[
-                    styles.pillInputSmall,
-                    skunked && styles.disabledField,
-                  ]}
-                  keyboardType="numeric"
-                  value={weight}
-                  onChangeText={(text) =>
-                    setWeight(text.replace(/\D/g, "").slice(0, 2))
-                  }
-                />
-                <SelectDropdown
-                  statusBarTranslucent={true}
-                  data={["LB", "OZ"]}
-                  defaultValue={weightUnit}
-                  disabled={skunked}
-                  dropdownOverlayColor="transparent"
-                  onSelect={(selectedItem) => setWeightUnit(selectedItem)}
-                  renderButton={(selectedItem, isOpened) => (
-                    <View
-                      style={[
-                        styles.pillSelectSmall,
-                        skunked && styles.disabledButton,
-                      ]}
-                    >
-                      <View style={styles.logRow}>
-                        <Text style={styles.selectText}>
-                          {selectedItem || "LB"}
-                        </Text>
-                        {!isOpened ? (
-                          <FontAwesome6
-                            name="caret-down"
-                            size={20}
-                            color="black"
-                          />
-                        ) : (
-                          <FontAwesome6
-                            name="caret-up"
-                            size={20}
-                            color="black"
-                          />
-                        )}
-                      </View>
-                    </View>
-                  )}
-                  renderItem={(item, index, isSelected) => (
-                    <View
-                      style={[
-                        styles.dropdownItem,
-                        isSelected && styles.dropdownItemSelected,
-                      ]}
-                    >
-                      <Text style={styles.selectText}>{item}</Text>
-                    </View>
-                  )}
-                />
+              <View style={styles.pillDisplay}>
+                <Text style={styles.displayText}>
+                  {skunked ? "N/A" : weight ? `${weight} ${weightUnit}` : "N/A"}
+                </Text>
               </View>
             </View>
 
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Est. Length:</Text>
-              <View style={styles.inlineField}>
-                <TextInput
-                  editable={!skunked}
-                  style={[
-                    styles.pillInputSmall,
-                    skunked && styles.disabledField,
-                  ]}
-                  keyboardType="numeric"
-                  value={length}
-                  onChangeText={(text) =>
-                    setLength(text.replace(/\D/g, "").slice(0, 2))
-                  }
-                />
-                <SelectDropdown
-                  statusBarTranslucent={true}
-                  data={["IN", "CM"]}
-                  defaultValue={lengthUnit}
-                  disabled={skunked}
-                  dropdownOverlayColor="transparent"
-                  onSelect={(selectedItem) => setLengthUnit(selectedItem)}
-                  renderButton={(selectedItem, isOpened) => (
-                    <View
-                      style={[
-                        styles.pillSelectSmall,
-                        skunked && styles.disabledButton,
-                      ]}
-                    >
-                      <View style={styles.logRow}>
-                        <Text style={styles.selectText}>
-                          {selectedItem || "IN"}
-                        </Text>
-                        {!isOpened ? (
-                          <FontAwesome6
-                            name="caret-down"
-                            size={20}
-                            color="black"
-                          />
-                        ) : (
-                          <FontAwesome6
-                            name="caret-up"
-                            size={20}
-                            color="black"
-                          />
-                        )}
-                      </View>
-                    </View>
-                  )}
-                  renderItem={(item, index, isSelected) => (
-                    <View
-                      style={[
-                        styles.dropdownItem,
-                        isSelected && styles.dropdownItemSelected,
-                      ]}
-                    >
-                      <Text style={styles.selectText}>{item}</Text>
-                    </View>
-                  )}
-                />
+              <View style={styles.pillDisplay}>
+                <Text style={styles.displayText}>
+                  {skunked ? "N/A" : length ? `${length} ${lengthUnit}` : "N/A"}
+                </Text>
               </View>
             </View>
 
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Date:</Text>
               <View style={styles.fieldFlex}>
-                <Pressable
-                  style={styles.pillInputMedium}
-                  onPress={() => setShowDatePicker(true)}
-                >
-                  <Text style={styles.selectText}>
+                <View style={styles.pillDisplay}>
+                  <Text style={styles.displayText}>
                     {selectedDate.toLocaleDateString()}
                   </Text>
-                </Pressable>
+                </View>
               </View>
             </View>
 
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Time:</Text>
-              <View style={styles.inlineField}>
-                <Pressable
-                  style={styles.pillInputMedium}
-                  onPress={() => setShowTimePicker(true)}
-                >
-                  <Text style={styles.selectText}>{timeValue}</Text>
-                </Pressable>
-                <Pressable
-                  style={styles.pillSelectTime}
-                  onPress={() =>
-                    setPeriod((prev) => (prev === "AM" ? "PM" : "AM"))
-                  }
-                >
-                  <Text style={styles.selectText}>{period}</Text>
-                </Pressable>
+              <View style={styles.pillDisplay}>
+                <Text
+                  style={styles.displayText}
+                >{`${timeValue} ${period}`}</Text>
               </View>
             </View>
 
             <View style={styles.logColumn}>
               <Text style={styles.logLabel}>Location:</Text>
 
-              <TextInput
-                style={styles.pillInputFull}
-                placeholder="Street Address"
-                placeholderTextColor="#000"
-                maxLength={35}
-                value={form.address}
-                onChangeText={(text) =>
-                  setForm((p) => ({ ...p, address: text }))
-                }
-              />
-
-              <View style={styles.locationRow}>
-                <View style={styles.stateDropdownWrap}>
-                  <StateDropdown
-                    value={form.state}
-                    onChange={(value) =>
-                      setForm((p) => ({ ...p, state: value }))
-                    }
-                  />
+              <View style={styles.logRow}>
+                <View style={styles.pillDisplayLarge}>
+                  <Text style={styles.displayText}>
+                    {form.address || "No address"}
+                  </Text>
                 </View>
-
-                <TextInput
-                  style={styles.pillInputCity}
-                  placeholder="City"
-                  placeholderTextColor="#000"
-                  maxLength={35}
-                  value={form.city}
-                  onChangeText={(text) =>
-                    setForm((p) => ({ ...p, city: text }))
-                  }
-                />
+                <View style={styles.locationRow}>
+                  <View style={styles.pillInputSmall}>
+                    <Text style={styles.displayText}>{form.state || "--"}</Text>
+                  </View>
+                  <View style={styles.pillDisplay}>
+                    <Text style={styles.displayText}>
+                      {form.city || "No city"}
+                    </Text>
+                  </View>
+                </View>
               </View>
-
-              <Pressable
-                style={styles.orangeButton}
-                disabled={loadingLocation}
-                onPress={handleGetLocation}
-              >
-                <Text style={styles.buttonText}>
-                  {loadingLocation
-                    ? "Getting Location..."
-                    : "Use Current Location"}
-                </Text>
-              </Pressable>
-
-              {geoError ? (
-                <Text style={styles.geoError}>{geoError}</Text>
-              ) : null}
             </View>
 
             <View style={styles.logRow}>
@@ -835,71 +431,14 @@ export default function UpdateLog() {
               </Text>
             </View>
 
-            <View style={styles.notesBlock}>
-              <TextInput
-                multiline
-                numberOfLines={4}
-                style={styles.notesBox}
-                placeholder="Other Notes..."
-                placeholderTextColor="#111"
-                value={notes}
-                onChangeText={setNotes}
-              />
+            <View style={styles.notesBox}>
+              <Text style={styles.displayText}>{notes || "No notes"}</Text>
             </View>
           </View>
 
           {rigsError ? <Text style={styles.rigsError}>{rigsError}</Text> : null}
-        </KeyboardAwareScrollView>
-        {showDatePicker && (
-          <DateTimePicker
-            value={selectedDate}
-            mode="date"
-            display="default"
-            onChange={(event, pickedDate) => {
-              setShowDatePicker(false);
+        </ScrollView>
 
-              if (!event || event.type !== "set" || !pickedDate) return;
-
-              const nextDate = new Date(selectedDate);
-              nextDate.setFullYear(
-                pickedDate.getFullYear(),
-                pickedDate.getMonth(),
-                pickedDate.getDate(),
-              );
-
-              setSelectedDate(nextDate);
-              setShowTimePicker(true);
-            }}
-          />
-        )}
-
-        {showTimePicker && (
-          <DateTimePicker
-            value={selectedDate}
-            defaul
-            mode="time"
-            display="default"
-            onChange={(event, pickedDate) => {
-              setShowTimePicker(false);
-
-              if (!event || event.type !== "set" || !pickedDate) return;
-
-              const nextDate = new Date(selectedDate);
-              nextDate.setHours(pickedDate.getHours(), pickedDate.getMinutes());
-
-              setSelectedDate(nextDate);
-
-              const h24 = nextDate.getHours();
-              const mins = nextDate.getMinutes();
-              const h12 = h24 % 12 || 12;
-
-              setTimeValue(
-                `${String(h12).padStart(2, "0")}:${String(mins).padStart(2, "0")}`,
-              );
-              setPeriod(h24 >= 12 ? "PM" : "AM");
-            }}
-          />
-        )}
         <BottomNavbar />
       </View>
     </SafeAreaView>
@@ -1121,6 +660,21 @@ const styles = StyleSheet.create({
     position: "relative",
     overflow: "hidden",
   },
+  noPhotoTile: {
+    width: 100,
+    height: 100,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+    backgroundColor: "#dedede",
+    padding: 5,
+  },
+  noPhotoText: {
+    fontFamily: "Jua",
+    fontSize: 12,
+    textAlign: "center",
+  },
   removeImageBtn: {
     position: "absolute",
     top: 6,
@@ -1200,12 +754,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
-  pillInputSmall: {
-    width: 70,
+  pillDisplay: {
+    width: 100,
     backgroundColor: "#dedede",
     borderRadius: 50,
     paddingVertical: 8,
     paddingHorizontal: 12,
+  },
+  pillDisplayLarge: {
+    width: 125,
+    backgroundColor: "#dedede",
+    borderRadius: 50,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  displayText: {
     color: "#000",
     fontFamily: "Jua",
     textAlign: "center",
@@ -1217,6 +780,16 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     alignItems: "center",
+  },
+  pillInputSmall: {
+    width: 60,
+    backgroundColor: "#dedede",
+    borderRadius: 50,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    color: "#000",
+    fontFamily: "Jua",
+    textAlign: "center",
   },
   pillInputMedium: {
     width: 140,
@@ -1259,7 +832,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#dedede",
     borderRadius: 50,
     paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     color: "#000",
     fontFamily: "Jua",
   },
@@ -1275,19 +848,10 @@ const styles = StyleSheet.create({
     zIndex: 9999,
     elevation: 20,
   },
-  dropdownItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    backgroundColor: "#dedede",
-  },
-
-  dropdownItemSelected: {
-    backgroundColor: COLORS.secondary,
-  },
   locationRow: {
     marginVertical: 4,
     flexDirection: "row",
-
+    alignItems: "flex-start",
     gap: 15,
     zIndex: 999,
   },
@@ -1330,13 +894,9 @@ const styles = StyleSheet.create({
   },
   notesBox: {
     backgroundColor: "#dedede",
-    paddingHorizontal: 5,
-    textAlignVertical: "top",
-    fontSize: 14,
-    lineHeight: 20,
+    padding: 5,
+    fontSize: 15,
     fontFamily: "Jua",
     borderRadius: 15,
-    width: "100%",
-    height: 150,
   },
 });

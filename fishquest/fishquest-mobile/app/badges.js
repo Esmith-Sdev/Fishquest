@@ -49,72 +49,73 @@ export default function BadgesPage() {
   const unlocked = selectedBadge ? current >= needed : false;
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TopNavbarSecondary title="Badges" showButton={false} backRoute="/home" />
-
-      <FlatList
-        data={BADGES}
-        keyExtractor={(item) => item.id}
-        numColumns={3}
-        contentContainerStyle={styles.grid}
-        columnWrapperStyle={styles.row}
-        renderItem={({ item }) => {
-          const currentValue = getProgressValue(item.requirement.type);
-          const neededValue = item.requirement.value;
-          const isUnlocked = currentValue >= neededValue;
-
-          return (
-            <BadgeCard
-              badge={item}
-              unlocked={isUnlocked}
-              current={currentValue}
-              needed={neededValue}
-              onClick={() => handleShow(item)}
-            />
-          );
-        }}
-      />
-
-      <Modal
-        visible={show}
-        transparent
-        animationType="fade"
-        onRequestClose={handleClose}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{selectedBadge?.name}</Text>
-              <Pressable onPress={handleClose} style={styles.closeButton}>
-                <Text style={styles.closeText}>✕</Text>
-              </Pressable>
-            </View>
-
-            {selectedBadge && (
-              <View
-                style={{
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <BadgeCard
-                  badge={selectedBadge}
-                  unlocked={unlocked}
-                  current={current}
-                  needed={needed}
-                  preview={show}
-                />
-                <Text style={styles.progressText}>
-                  Progress: {current}/{needed}
-                </Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+      <View style={styles.container}>
+        <TopNavbarSecondary
+          title="Badges"
+          showButton={false}
+          backRoute="/home"
+        />
+        <FlatList
+          data={BADGES}
+          keyExtractor={(item) => item.id}
+          numColumns={3}
+          contentContainerStyle={styles.grid}
+          columnWrapperStyle={styles.row}
+          renderItem={({ item }) => {
+            const currentValue = getProgressValue(item.requirement.type);
+            const neededValue = item.requirement.value;
+            const isUnlocked = currentValue >= neededValue;
+            return (
+              <BadgeCard
+                badge={item}
+                unlocked={isUnlocked}
+                current={currentValue}
+                needed={neededValue}
+                onClick={() => handleShow(item)}
+              />
+            );
+          }}
+        />
+        <Modal
+          visible={show}
+          transparent
+          animationType="fade"
+          onRequestClose={handleClose}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalCard}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>{selectedBadge?.name}</Text>
+                <Pressable onPress={handleClose} style={styles.closeButton}>
+                  <Text style={styles.closeText}>✕</Text>
+                </Pressable>
               </View>
-            )}
+              {selectedBadge && (
+                <View
+                  style={{
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <BadgeCard
+                    badge={selectedBadge}
+                    unlocked={unlocked}
+                    current={current}
+                    needed={needed}
+                    preview={show}
+                  />
+                  <Text style={styles.progressText}>
+                    Progress: {current}/{needed}
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
-        </View>
-      </Modal>
-
-      <BottomBar />
+        </Modal>
+        <BottomBar />
+      </View>
     </SafeAreaView>
   );
 }

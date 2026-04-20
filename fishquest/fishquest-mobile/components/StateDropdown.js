@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { View, Text, Pressable, FlatList, StyleSheet } from "react-native";
-
+import { FontAwesome6 } from "@expo/vector-icons";
+import SelectDropdown from "react-native-select-dropdown";
+import { COLORS } from "../constants/theme";
 const STATES = [
   { label: "AL", value: "AL" },
   { label: "AK", value: "AK" },
@@ -56,89 +58,94 @@ const STATES = [
 
 export default function StateDropdown({ value, onChange }) {
   const [open, setOpen] = useState(false);
-
-  const selected = STATES.find((s) => s.value === value);
+  const [selectedState, setSelectedState] = useState("");
 
   return (
     <View style={styles.container}>
-      <Pressable style={styles.input} onPress={() => setOpen((prev) => !prev)}>
-        <Text style={styles.inputLabel}>
-          {selected ? selected.label : "State"}
-        </Text>
-      </Pressable>
-
-      {open && (
-        <View style={styles.dropdown}>
-          <FlatList
-            data={STATES}
-            keyExtractor={(item) => item.value}
-            style={styles.list}
-            nestedScrollEnabled
-            keyboardShouldPersistTaps="handled"
-            renderItem={({ item }) => (
-              <Pressable
-                style={styles.item}
-                onPress={() => {
-                  onChange(item.value);
-                  setOpen(false);
-                }}
-              >
-                <Text style={styles.itemText}>{item.label}</Text>
-              </Pressable>
-            )}
-          />
-        </View>
-      )}
+      <SelectDropdown
+        statusBarTranslucent={true}
+        data={STATES}
+        dropdownStyle={{
+          height: 250,
+        }}
+        onSelect={(item) => onChange(item.value)}
+        dropdownOverlayColor="transparent"
+        renderButton={(selectedItem, isOpened) => (
+          <View style={styles.pillSelectSmall}>
+            <View style={styles.logRow}>
+              <Text style={styles.selectText}>
+                {selectedItem?.label || "State"}
+              </Text>
+              <FontAwesome6
+                name={isOpened ? "caret-up" : "caret-down"}
+                size={20}
+                color="black"
+              />
+            </View>
+          </View>
+        )}
+        renderItem={(item, index, isSelected) => (
+          <View
+            style={[
+              styles.dropdownItem,
+              isSelected && styles.dropdownItemSelected,
+            ]}
+          >
+            <Text style={styles.selectText}>{item.label}</Text>
+          </View>
+        )}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: 90,
+    width: 70,
     position: "relative",
     zIndex: 9999,
   },
   dropdown: {
     position: "absolute",
-    top: 40,
+    top: 10,
     left: 0,
     width: 90,
     backgroundColor: "#dedede",
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 10,
-    maxHeight: 220,
+
+    maxHeight: 100,
     zIndex: 10000,
     elevation: 30,
   },
-  item: {
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-    alignItems: "center",
-  },
-  itemText: {
-    color: "#000",
-    fontFamily: "Jua",
-    textAlign: "center",
-    flexWrap: "nowrap",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
+  pillSelectSmall: {
+    width: 80,
+    backgroundColor: "#dedede",
     borderRadius: 50,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: "#dedede",
     alignItems: "center",
-    justifyContent: "center",
   },
-  inputLabel: {
+
+  selectText: {
     fontFamily: "Jua",
+    textAlign: "center",
   },
-  list: {
-    maxHeight: 220,
+
+  logRow: {
+    gap: 8,
+    flexDirection: "row",
+
+    alignItems: "center",
+  },
+  dropdownItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    backgroundColor: "#dedede",
+  },
+
+  dropdownItemSelected: {
+    backgroundColor: COLORS.secondary,
   },
 });

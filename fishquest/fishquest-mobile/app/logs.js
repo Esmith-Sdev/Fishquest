@@ -18,7 +18,7 @@ import { getToken } from "../api/auth";
 import skunkImage from "../assets/images/Fish/skunked.png";
 import { COLORS, RADIUS } from "../constants/theme";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
-
+import Entypo from "@expo/vector-icons/Entypo";
 export default function Logs() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -107,7 +107,7 @@ export default function Logs() {
                 style={styles.card}
                 onPress={() =>
                   router.push({
-                    pathname: "/edit-log",
+                    pathname: "/view-log",
                     params: { id: log._id },
                   })
                 }
@@ -126,7 +126,8 @@ export default function Logs() {
                   />
                 ) : (
                   <View style={styles.cardImage}>
-                    <Text style={{ textAlign: "center" }}>
+                    <Entypo name="camera" size={24} color="black" />
+                    <Text style={{ textAlign: "center", fontSize: 10 }}>
                       No Photo Available
                     </Text>
                   </View>
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
   cardSubtitle: {
     fontSize: 10,
     fontWeight: "600",
-    color: "#555",
+    color: "#000",
     textAlign: "center",
   },
   cardImage: {
@@ -259,6 +260,8 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: 15,
     marginVertical: 4,
+
+    alignItems: "center",
   },
   orangeButton: {
     backgroundColor: COLORS.secondary,

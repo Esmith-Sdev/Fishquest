@@ -29,49 +29,44 @@ export default function AuthForm({
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.page}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <View style={styles.card}>
-        <Image
-          source={require("../assets/images/FishQuest-Logo-only.png")}
-          style={{ width: 120, height: 120, resizeMode: "contain" }}
-        />
+    <View style={styles.card}>
+      <Image
+        source={require("../assets/images/FishQuest-Logo-only.png")}
+        style={{ width: 120, height: 120, resizeMode: "contain" }}
+      />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          autoCapitalize="none"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        autoCapitalize="none"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
+      />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          autoCapitalize="none"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        autoCapitalize="none"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
 
-        <Pressable style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>{buttonText}</Text>
-        </Pressable>
+      <Pressable style={styles.button} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>{buttonText}</Text>
+      </Pressable>
 
-        <View style={styles.footerRow}>
-          <Text style={styles.footerText}>{footerText} </Text>
-          <Link href={footerHref} style={styles.link}>
-            {footerLinkText}
-          </Link>
-        </View>
-        {errorText && (
-          <Text style={styles.errorText}>Invalid Username or Password</Text>
-        )}
+      <View style={styles.footerRow}>
+        <Text style={styles.footerText}>{footerText} </Text>
+        <Link href={footerHref} style={styles.link}>
+          {footerLinkText}
+        </Link>
       </View>
-    </KeyboardAvoidingView>
+      {errorText && (
+        <Text style={styles.errorText}>Invalid Username or Password</Text>
+      )}
+    </View>
   );
 }
 
@@ -79,12 +74,12 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
     justifyContent: "center",
-    padding: 24,
   },
   card: {
     borderRadius: 20,
     padding: 24,
     alignItems: "center",
+    width: "100%",
   },
   logo: {
     fontSize: 28,

@@ -5,6 +5,8 @@ import TopNavbar from "../components/TopNavbar";
 import BottomNavbar from "../components/BottomNavbar";
 import DailyChallenges from "../components/DailyChallenges";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import { ScrollView } from "react-native";
 export default function HomeScreen() {
   const { user, logout } = useAuth();
 
@@ -15,30 +17,33 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
-      <View style={styles.container}>
+      <View style={styles.screen}>
         <TopNavbar />
+        <ScrollView contentContainerStyle={styles.content}>
+          <DailyChallenges />
+          <Pressable
+            onPress={() => router.push("/versus")}
+            style={styles.horizontalCard}
+          >
+            <Image
+              style={styles.horizontalCardImage}
+              source={require("../assets/images/vs.png")}
+            ></Image>
+          </Pressable>
+        </ScrollView>
         <BottomNavbar />
-        <DailyChallenges />
-        <Pressable
-          style={styles.horizontalCard}
-          onPress={() => router.push("/versus")}
-        >
-          <Image
-            style={styles.horizontalCardImage}
-            source={require("../assets/images/VersusImage.png")}
-          ></Image>
-        </Pressable>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
     backgroundColor: "#0D1B1E",
-
-    alignItems: "center",
+  },
+  content: {
+    paddingBottom: 100,
   },
   title: {
     fontSize: 30,
@@ -62,12 +67,17 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
-  horizontalCard: {
+  cardPressable: {
     width: "90%",
+  },
+  horizontalCard: {
+    width: "100%",
     height: 100,
-
+    borderRadius: 15,
+    overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 20,
   },
   horizontalCardImage: {
     width: "100%",

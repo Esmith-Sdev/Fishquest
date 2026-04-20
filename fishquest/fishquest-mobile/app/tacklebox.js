@@ -160,12 +160,6 @@ export default function Tacklebox() {
                       />
                     ) : null}
                   </View>
-                  <Pressable
-                    style={[styles.orangeButton, styles.editButton]}
-                    onPress={() => router.push(`/edit-rig/${selectedRig._id}`)}
-                  >
-                    <Text style={styles.buttonText}>Edit</Text>
-                  </Pressable>
                 </View>
                 <View style={styles.optionsGrid}>
                   <View style={styles.optionColumn}>
@@ -225,13 +219,17 @@ export default function Tacklebox() {
                 <StatRow
                   label="Avg. Fish Weight:"
                   value={
-                    rigStats?.avgWeight ? `${rigStats.avgWeight} LB` : "0 LB"
+                    rigStats?.avgWeight
+                      ? `${rigStats.avgWeight.toFixed(2)} LB`
+                      : "0 LB"
                   }
                 />
                 <StatRow
                   label="Avg. Fish Length:"
                   value={
-                    rigStats?.avgLength ? `${rigStats.avgLength} IN` : "0 IN"
+                    rigStats?.avgLength
+                      ? `${rigStats.avgLength.toFixed(2)} IN`
+                      : "0 IN"
                   }
                 />
                 <StatRow

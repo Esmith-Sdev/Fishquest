@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#000",
-    marginVertical: 8,
+    marginVertical: 2,
     fontSize: 13,
     fontWeight: "400",
     fontFamily: "Jua",
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   shadowWrapper: {
-    marginTop: 8,
+    marginTop: 2,
     alignSelf: "center",
   },
 
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 18,
     minWidth: 80,
-    marginTop: 8,
+    marginTop: 4,
     shadowColor: COLORS.secondaryDropShadow,
     shadowOffset: {
       width: 0,

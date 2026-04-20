@@ -2,7 +2,9 @@ import { router } from "expo-router";
 import AuthForm from "../components/AuthForm";
 import { useAuth } from "../context/AuthContext";
 import GradientBackground from "../components/GradientBackground";
-import { Alert, ActivityIndicator, StyleSheet } from "react-native";
+import { Alert, ActivityIndicator, StyleSheet, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { COLORS } from "../constants/theme";
 const API_URL = "https://fishquest.onrender.com";
@@ -48,14 +50,23 @@ export default function LoginScreen() {
         />
       )}
       {!loading && (
-        <AuthForm
-          buttonText="Log In"
-          onSubmit={handleLogin}
-          footerText="Don't have an account?"
-          footerLinkText="Sign up"
-          footerHref="/signup"
-          errorText={error}
-        />
+        <SafeAreaView style={{ flex: 1 }}>
+          <KeyboardAwareScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={styles.content}
+            enableOnAndroid
+            extraScrollHeight={10}
+          >
+            <AuthForm
+              buttonText="Log In"
+              onSubmit={handleLogin}
+              footerText="Don't have an account?"
+              footerLinkText="Sign up"
+              footerHref="/signup"
+              errorText={error}
+            />
+          </KeyboardAwareScrollView>
+        </SafeAreaView>
       )}
     </GradientBackground>
   );
@@ -65,5 +76,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: "50%",
     left: "50%",
+  },
+
+  content: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

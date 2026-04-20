@@ -1,50 +1,54 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
+import { useState, useEffect, useMemo } from "react";
 import { router } from "expo-router";
 import { COLORS, RADIUS } from "../constants/theme";
-
-export default function ChallengeCard({ challenge }) {
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+export default function DisabledChallengeCard({ challenge }) {
   const progress = challenge?.progress ?? 0;
   const goal = challenge?.goal ?? 1;
   const percent = goal ? (progress / goal) * 100 : 0;
 
-  return (
-    <View style={styles.card}>
-      <Text style={styles.xp}>+{challenge?.rewardXp}XP</Text>
+  const [now, setNow] = useState(Date.now());
 
-      <Text style={styles.title}>{challenge?.title ?? "Challenge"}</Text>
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const availableText = useMemo(() => {
+    if (!challenge?.cooldownEndsAt) return "Unavailable";
+
+    const end = new Date(challenge.cooldownEndsAt).getTime();
+    const diff = Math.max(end - now, 0);
+
+    if (diff <= 0) return "Available now";
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    return `Available in ${hours}h ${minutes}m ${seconds}s`;
+  }, [challenge?.cooldownEndsAt, now]);
+
+  return (
+    <View style={styles.disabledCard}>
+      <FontAwesome6 name="clock" size={24} color="black" />
+
+      <Text style={styles.title}>{availableText}</Text>
 
       <View style={styles.progressTrack}>
         <View style={[styles.progressFill, { width: `${percent}%` }]} />
       </View>
-
-      <Pressable
-        style={styles.button}
-        onPress={() =>
-          router.push({
-            pathname: "/create-log",
-            params: {
-              challenge: challenge.title,
-            },
-          })
-        }
-      >
-        <Text style={styles.buttonText}>LOG</Text>
-      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#B2B2B2",
-    padding: 16,
-    borderRadius: RADIUS.md,
-    alignItems: "center",
-    width: "100%",
-    position: "relative",
-  },
   disabledCard: {
-    backgroundColor: "#212529",
+    backgroundColor: COLORS.primaryDark,
     padding: 16,
     borderRadius: RADIUS.md,
     alignItems: "center",

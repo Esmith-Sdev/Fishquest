@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     left: 0,
+    zIndex: 10,
   },
   iconsContainer: {
     flexDirection: "row",

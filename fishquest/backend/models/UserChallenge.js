@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-
 const userChallengeSchema = new mongoose.Schema(
   {
     userId: {
@@ -24,6 +22,16 @@ const userChallengeSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    availableAgainAt: {
+      type: Date,
+      default: null,
+    },
+    lastCompletedDate: {
+      type: String, // "YYYY-MM-DD"
+      default: null,
+    },
+
     assignedAt: {
       type: Date,
       default: Date.now,
@@ -39,5 +47,3 @@ const userChallengeSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-
-export default mongoose.model("UserChallenge", userChallengeSchema);

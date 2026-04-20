@@ -6,8 +6,12 @@ import {
   FlatList,
   Pressable,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { AllSpecies } from "../data/species.config";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { KeyboardAvoidingView, ScrollView } from "react-native";
+
 import { useEffect } from "react";
 export function getSpeciesById(speciesId) {
   return AllSpecies.find((fish) => fish.id === speciesId) || null;
@@ -128,30 +132,29 @@ const styles = StyleSheet.create({
     elevation: 30,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
+    width: 180,
+    backgroundColor: "#dedede",
     borderRadius: 50,
-    paddingHorizontal: 14,
     paddingVertical: 8,
-    backgroundColor: "#fff",
-    fontSize: 16,
-    fontFamily: "Jua",
+    paddingHorizontal: 12,
     color: "#000",
+    fontFamily: "Jua",
   },
 
   disabledInput: {
     backgroundColor: "#f2f2f2",
-    opacity: 0.7,
+    opacity: 0.6,
   },
   dropdown: {
     position: "absolute",
     top: 42,
     left: 0,
     right: 0,
+    width: "100%",
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 10,
-    backgroundColor: "#fff",
+    backgroundColor: "#dedede",
     maxHeight: 220,
     overflow: "hidden",
     zIndex: 10000,

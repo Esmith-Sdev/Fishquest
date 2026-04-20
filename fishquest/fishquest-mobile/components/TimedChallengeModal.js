@@ -1,11 +1,36 @@
 import { useEffect, useState } from "react";
 import { Modal, View, Text, StyleSheet, Pressable } from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
-
+import { getToken } from "../api/auth";
 export default function TimedChallengeModal({ show, onHide, challenge }) {
   const [timeLeft, setTimeLeft] = useState(challenge?.timeLimit ?? 0);
   const [start, setStart] = useState(false);
+  async function startChallenge() {
+    try {
+      await startChallengeCooldown(challenge._id);
+      setStart(true);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  async function startChallengeCooldown(userChallengeId) {
+    const token = await getToken();
 
+    const res = await fetch(
+      `${API_URL}/api/challenges/${userChallengeId}/start`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    if (!res.ok) throw new Error("Failed to start challenge");
+
+    return res.json();
+  }
   useEffect(() => {
     setTimeLeft(challenge?.timeLimit ?? 0);
     setStart(false);
@@ -58,12 +83,12 @@ export default function TimedChallengeModal({ show, onHide, challenge }) {
           </Text>
 
           {!start ? (
-            <Pressable style={styles.button} onPress={() => setStart(true)}>
+            <Pressable style={styles.button} onPress={() => startChallenge()}>
               <Text style={styles.buttonText}>Start</Text>
             </Pressable>
           ) : (
             <Pressable style={styles.closeButton} onPress={onHide}>
-              <Text style={styles.buttonText}>Close</Text>
+              <Text style={styles.buttonText}>Forfit</Text>
             </Pressable>
           )}
         </View>

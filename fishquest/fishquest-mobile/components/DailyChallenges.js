@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { router } from "expo-router";
 import ChallengeCard from "./ChallengeCard";
 import TimedChallengeCard from "./TimedChallengeCard";
+import DisabledChallengeCard from "../components/DisabledChallengeCard";
 import { COLORS, RADIUS } from "../constants/theme";
 import { filterByDaily, limitChallenges } from "../utils/getFilteredCategories";
 import { useAuth } from "../context/AuthContext";
@@ -30,13 +31,23 @@ export default function DailyChallenges() {
       <View style={styles.card}>
         <Text style={styles.title}>DAILY CHALLENGES</Text>
 
-        {dailyChallenges.map((challenge) =>
-          challenge.type === "timed" ? (
-            <TimedChallengeCard key={challenge.id} challenge={challenge} />
-          ) : (
-            <ChallengeCard key={challenge.id} challenge={challenge} />
-          ),
-        )}
+        {dailyChallenges.map((challenge) => {
+          const isDisabled = challenge.isOnCooldown;
+
+          if (!isDisabled) {
+            return (
+              <DisabledChallengeCard key={challenge.id} challenge={challenge} />
+            );
+          }
+
+          if (challenge.type === "timed") {
+            return (
+              <TimedChallengeCard key={challenge.id} challenge={challenge} />
+            );
+          }
+
+          return <ChallengeCard key={challenge.id} challenge={challenge} />;
+        })}
 
         <View style={styles.shadowWrapper}>
           <Pressable
@@ -69,14 +80,17 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textDecorationLine: "underline",
   },
-
+  shadowWrapper: {
+    marginTop: 2,
+    alignSelf: "center",
+  },
   button: {
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
-    paddingVertical: 8,
+    paddingVertical: 4,
     paddingHorizontal: 18,
     minWidth: 80,
-    marginTop: 8,
+    marginTop: 2,
     shadowColor: COLORS.secondaryDropShadow,
     shadowOffset: {
       width: 0,

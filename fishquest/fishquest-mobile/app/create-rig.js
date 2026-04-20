@@ -22,6 +22,7 @@ import NoBobber from "../assets/images/Bobbers/no-bobber.png";
 import { createRigPreset } from "../api/rigPresets";
 import { getToken } from "../api/auth";
 import { COLORS, RADIUS } from "../constants/theme";
+import { SafeAreaView } from "react-native-safe-area-context";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 export default function CreateRig() {
   const params = useLocalSearchParams();
@@ -130,44 +131,129 @@ export default function CreateRig() {
   );
 
   return (
-    <View style={styles.screen}>
-      <TopNavbarSecondary
-        title="Create Rig"
-        buttonText="Save"
-        showButton={true}
-        onButtonPress={handleSubmitRig}
-        backRoute="/home"
-      />
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+      <View style={styles.screen}>
+        <TopNavbarSecondary
+          title="Create Rig"
+          buttonText="Save"
+          showButton={true}
+          onButtonPress={handleSubmitRig}
+          backRoute="/home"
+        />
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.topSection}>
-          <View style={styles.inputWrap}>
-            <TextInput
-              style={styles.input}
-              placeholder="Preset Name"
-              placeholderTextColor="#666"
-              value={rigName}
-              onChangeText={setRigName}
-            />
+        <ScrollView contentContainerStyle={styles.content}>
+          <View style={styles.topSection}>
+            <View style={styles.inputWrap}>
+              <TextInput
+                style={styles.input}
+                placeholder="Preset Name"
+                placeholderTextColor="#666"
+                value={rigName}
+                onChangeText={setRigName}
+              />
+            </View>
+
+            <View style={styles.poleRow}>
+              {renderArrow(prevPole, "left")}
+              <View style={styles.optioncolumn}>
+                <View style={styles.rigImageContainer}>
+                  <Image
+                    source={currentPole.image}
+                    style={styles.rigImage}
+                    resizeMode="contain"
+                  />
+                </View>
+                <Text style={styles.itemLabel}>{currentPole.name}</Text>
+              </View>
+              {renderArrow(nextPole, "right")}
+            </View>
+
+            <Pressable
+              style={styles.orangeButton}
+              onPress={() =>
+                Alert.alert(
+                  "Feature Unavailable",
+                  "This is not available in beta yet.",
+                )
+              }
+            >
+              <Text style={styles.buttonText}>Customize</Text>
+            </Pressable>
           </View>
 
-          <View style={styles.poleRow}>
-            {renderArrow(prevPole, "left")}
-            <View style={styles.optioncolumn}>
-              <View style={styles.rigImageContainer}>
-                <Image
-                  source={currentPole.image}
-                  style={styles.rigImage}
-                  resizeMode="contain"
-                />
+          <View style={styles.optionsSection}>
+            <View style={styles.column}>
+              <View style={styles.optionRow}>
+                {renderArrow(toggleBobber, "left")}
+                <View style={styles.optioncolumn}>
+                  <View style={styles.mediumSquare}>
+                    <Image
+                      source={bobber ? Bobber : NoBobber}
+                      style={styles.optionImage}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <Text style={styles.itemLabel}>
+                    {bobber ? "Bobber" : "No Bobber"}
+                  </Text>
+                </View>
+
+                {renderArrow(toggleBobber, "right")}
               </View>
-              <Text style={styles.itemLabel}>{currentPole.name}</Text>
+
+              <View style={styles.optionRow}>
+                {renderArrow(prevHook, "left")}
+                <View style={styles.optioncolumn}>
+                  <View style={styles.mediumSquare}>
+                    <Image
+                      source={currentHook.image}
+                      style={styles.optionImage}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <Text style={styles.itemLabel}>{currentHook.name}</Text>
+                </View>
+
+                {renderArrow(nextHook, "right")}
+              </View>
             </View>
-            {renderArrow(nextPole, "right")}
+
+            <View style={styles.column}>
+              <View style={styles.optionRow}>
+                {renderArrow(prevBait, "left")}
+                <View style={styles.optioncolumn}>
+                  <View style={styles.mediumSquare}>
+                    <Image
+                      source={currentBait.image}
+                      style={styles.optionImage}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <Text style={styles.itemLabel}>{currentBait.name}</Text>
+                </View>
+                {renderArrow(nextBait, "right")}
+              </View>
+
+              <View style={styles.optionRow}>
+                {renderArrow(prevWeight, "left")}
+                <View style={styles.optioncolumn}>
+                  <View style={styles.mediumSquare}>
+                    <Image
+                      source={currentWeight.image}
+                      style={styles.optionImage}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <Text style={styles.itemLabel}>{currentWeight.name}</Text>
+                </View>
+
+                {renderArrow(nextWeight, "right")}
+              </View>
+            </View>
           </View>
 
           <Pressable
-            style={styles.orangeButton}
+            style={[styles.orangeButton, styles.bottomCustomize]}
             onPress={() =>
               Alert.alert(
                 "Feature Unavailable",
@@ -177,94 +263,11 @@ export default function CreateRig() {
           >
             <Text style={styles.buttonText}>Customize</Text>
           </Pressable>
-        </View>
+        </ScrollView>
 
-        <View style={styles.optionsSection}>
-          <View style={styles.column}>
-            <View style={styles.optionRow}>
-              {renderArrow(toggleBobber, "left")}
-              <View style={styles.optioncolumn}>
-                <View style={styles.mediumSquare}>
-                  <Image
-                    source={bobber ? Bobber : NoBobber}
-                    style={styles.optionImage}
-                    resizeMode="contain"
-                  />
-                </View>
-                <Text style={styles.itemLabel}>
-                  {bobber ? "Bobber" : "No Bobber"}
-                </Text>
-              </View>
-
-              {renderArrow(toggleBobber, "right")}
-            </View>
-
-            <View style={styles.optionRow}>
-              {renderArrow(prevHook, "left")}
-              <View style={styles.optioncolumn}>
-                <View style={styles.mediumSquare}>
-                  <Image
-                    source={currentHook.image}
-                    style={styles.optionImage}
-                    resizeMode="contain"
-                  />
-                </View>
-                <Text style={styles.itemLabel}>{currentHook.name}</Text>
-              </View>
-
-              {renderArrow(nextHook, "right")}
-            </View>
-          </View>
-
-          <View style={styles.column}>
-            <View style={styles.optionRow}>
-              {renderArrow(prevBait, "left")}
-              <View style={styles.optioncolumn}>
-                <View style={styles.mediumSquare}>
-                  <Image
-                    source={currentBait.image}
-                    style={styles.optionImage}
-                    resizeMode="contain"
-                  />
-                </View>
-                <Text style={styles.itemLabel}>{currentBait.name}</Text>
-              </View>
-              {renderArrow(nextBait, "right")}
-            </View>
-
-            <View style={styles.optionRow}>
-              {renderArrow(prevWeight, "left")}
-              <View style={styles.optioncolumn}>
-                <View style={styles.mediumSquare}>
-                  <Image
-                    source={currentWeight.image}
-                    style={styles.optionImage}
-                    resizeMode="contain"
-                  />
-                </View>
-                <Text style={styles.itemLabel}>{currentWeight.name}</Text>
-              </View>
-
-              {renderArrow(nextWeight, "right")}
-            </View>
-          </View>
-        </View>
-
-        <Pressable
-          style={[styles.orangeButton, styles.bottomCustomize]}
-          onPress={() =>
-            Alert.alert(
-              "Feature Unavailable",
-              "This is not available in beta yet.",
-            )
-          }
-        >
-          <Text style={styles.buttonText}>Customize</Text>
-        </Pressable>
-      </ScrollView>
-
-      <BottomNavbar />
-    </View>
+        <BottomNavbar />
+      </View>
+    </SafeAreaView>
   );
 }
 

@@ -1,6 +1,6 @@
 const API_URL =
   process.env.EXPO_PUBLIC_API_URL || "https://fishquest.onrender.com";
-export async function uploadImages(files) {
+export async function uploadImages(files, token) {
   const formData = new FormData();
 
   files.forEach((file, index) => {
@@ -13,10 +13,10 @@ export async function uploadImages(files) {
 
   const res = await fetch(`${API_URL}/api/uploads/images`, {
     method: "POST",
-    body: formData,
     headers: {
-      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
     },
+    body: formData,
   });
 
   const data = await res.json();

@@ -29,4 +29,9 @@ export const WEIGHTS = [
     name: "Splitshot",
     image: require("../assets/images/Weights/splitshot.png"),
   },
+  {
+    id: "bullet",
+    name: "Bullet",
+    image: require("../assets/images/Weights/bullet.png"),
+  },
 ];

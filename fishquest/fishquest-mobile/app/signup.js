@@ -7,9 +7,10 @@ import {
   Pressable,
   StyleSheet,
   Alert,
-  KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 import GradientBackground from "../components/GradientBackground";
 import { COLORS, RADIUS } from "../constants/theme";
@@ -68,83 +69,84 @@ export default function SignUp() {
 
   return (
     <GradientBackground>
-      <KeyboardAvoidingView
-        style={styles.screen}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
-        {index === 0 ? (
-          <View style={styles.welcomeContainer}>
-            <Image
-              source={require("../assets/images/FishQuest-Logo-only.png")}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <Text style={styles.header}>Welcome To Fish Quest!</Text>
-            <Text style={styles.subHeader}>Lets get to know you better.</Text>
-
-            <Pressable style={styles.orangeButton} onPress={handleButtonClick}>
-              <Text style={styles.buttonText}>Get Started</Text>
-            </Pressable>
-          </View>
-        ) : (
-          <View style={styles.formContainer}>
-            <Link href="/" asChild>
-              <Pressable style={styles.backButton}>
-                <LeftArrowCircle
-                  name="arrow-circle-left"
-                  size={30}
-                  color="white"
-                />
-              </Pressable>
-            </Link>
-
-            <View style={styles.logoWrap}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAwareScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.content}
+          enableOnAndroid
+          extraScrollHeight={50}
+        >
+          {index === 0 ? (
+            <View style={styles.welcomeContainer}>
               <Image
                 source={require("../assets/images/FishQuest-Logo-only.png")}
                 style={styles.logo}
                 resizeMode="contain"
               />
-            </View>
-
-            <Text style={styles.label}>Username</Text>
-            <TextInput
-              style={styles.input}
-              value={form.username}
-              onChangeText={(text) => handleChange("username", text)}
-              placeholder="Username"
-              placeholderTextColor="#666"
-              autoCapitalize="none"
-            />
-
-            <Text style={styles.label}>Email address</Text>
-            <TextInput
-              style={styles.input}
-              value={form.email}
-              onChangeText={(text) => handleChange("email", text)}
-              placeholder="Enter email"
-              placeholderTextColor="#666"
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={styles.input}
-              value={form.password}
-              onChangeText={(text) => handleChange("password", text)}
-              placeholder="Password"
-              placeholderTextColor="#666"
-              secureTextEntry
-            />
-
-            <View style={styles.submitWrap}>
-              <Pressable style={styles.orangeButton} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>Submit</Text>
+              <Text style={styles.header}>Welcome To Fish Quest!</Text>
+              <Text style={styles.subHeader}>Lets get to know you better.</Text>
+              <Pressable
+                style={styles.orangeButton}
+                onPress={handleButtonClick}
+              >
+                <Text style={styles.buttonText}>Get Started</Text>
               </Pressable>
             </View>
-          </View>
-        )}
-      </KeyboardAvoidingView>
+          ) : (
+            <View style={styles.formContainer}>
+              <Link href="/" asChild>
+                <Pressable style={styles.backButton}>
+                  <LeftArrowCircle
+                    name="arrow-circle-left"
+                    size={30}
+                    color="white"
+                  />
+                </Pressable>
+              </Link>
+              <View style={styles.logoWrap}>
+                <Image
+                  source={require("../assets/images/FishQuest-Logo-only.png")}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+              </View>
+              <Text style={styles.label}>Username</Text>
+              <TextInput
+                style={styles.input}
+                value={form.username}
+                onChangeText={(text) => handleChange("username", text)}
+                placeholder="Username"
+                placeholderTextColor="#666"
+                autoCapitalize="none"
+              />
+              <Text style={styles.label}>Email address</Text>
+              <TextInput
+                style={styles.input}
+                value={form.email}
+                onChangeText={(text) => handleChange("email", text)}
+                placeholder="Enter email"
+                placeholderTextColor="#666"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              <Text style={styles.label}>Password</Text>
+              <TextInput
+                style={styles.input}
+                value={form.password}
+                onChangeText={(text) => handleChange("password", text)}
+                placeholder="Password"
+                placeholderTextColor="#666"
+                secureTextEntry
+              />
+              <View style={styles.submitWrap}>
+                <Pressable style={styles.orangeButton} onPress={handleSubmit}>
+                  <Text style={styles.buttonText}>Submit</Text>
+                </Pressable>
+              </View>
+            </View>
+          )}
+        </KeyboardAwareScrollView>
+      </SafeAreaView>
     </GradientBackground>
   );
 }
@@ -152,18 +154,27 @@ export default function SignUp() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    padding: 20,
+
     justifyContent: "center",
+  },
+  content: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   welcomeContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 16,
+
+    padding: 24,
+    width: "100%",
   },
   formContainer: {
     flex: 1,
     justifyContent: "center",
+    width: "100%",
+    padding: 24,
   },
   logoWrap: {
     alignItems: "center",
@@ -178,16 +189,18 @@ const styles = StyleSheet.create({
     fontSize: 28,
     textAlign: "center",
     fontWeight: "700",
+    marginBottom: 20,
   },
   subHeader: {
     color: "#fff",
     fontSize: 18,
     textAlign: "center",
+    marginBottom: 20,
   },
   label: {
     color: "#fff",
     marginBottom: 6,
-    marginTop: 10,
+
     fontSize: 16,
     fontWeight: "600",
   },
@@ -196,6 +209,7 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.pill,
     paddingHorizontal: 16,
     paddingVertical: 12,
+    marginBottom: 20,
   },
   orangeButton: {
     backgroundColor: COLORS.secondary,
