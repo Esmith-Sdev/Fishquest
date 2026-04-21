@@ -9,6 +9,7 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  FlatList,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -21,7 +22,7 @@ import { uploadImages } from "../api/uploads";
 import { fetchLogById, updateCatchLog } from "../api/logs";
 import { getToken } from "../api/auth";
 import { fetchRigPresets } from "../api/rigPresets";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Bobber from "../assets/images/Bobbers/bobber.png";
 import NoBobber from "../assets/images/Bobbers/no-bobber.png";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
@@ -65,9 +66,14 @@ export default function UpdateLog() {
   const [period, setPeriod] = useState("AM");
   const [rigs, setRigs] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-
+  const [selectedWeather, setSelectedWeather] = useState(false);
   const speciesDisabled = skunked || saving;
-
+  const weatherOptions = [
+    { id: "sunny", label: "Sunny", icon: "weather-sunny" },
+    { id: "cloudy", label: "Cloudy", icon: "weather-cloudy" },
+    { id: "windy", label: "Windy", icon: "weather-windy" },
+    { id: "stormy", label: "Stormy", icon: "weather-lightning-rainy" },
+  ];
   useEffect(() => {
     if (skunked) setSpecies(null);
   }, [skunked]);
@@ -160,7 +166,7 @@ export default function UpdateLog() {
         setWeightUnit(log.weightUnit || "LB");
         setLengthUnit(log.lengthUnit || "CM");
         setSelectedDate(log.date ? new Date(log.date) : new Date());
-
+        setSelectedWeather(log.weather || "Sunny");
         setForm({
           address: log.address || "",
           city: log.city || "",
@@ -401,7 +407,45 @@ export default function UpdateLog() {
                 >{`${timeValue} ${period}`}</Text>
               </View>
             </View>
+            <View style={styles.logRow}>
+              <Text style={styles.logLabel}>Weather:</Text>
+              <View style={styles.inlineField}>
+                <FlatList
+                  data={weatherOptions}
+                  horizontal
+                  keyExtractor={(item) => item.id}
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ gap: 8 }}
+                  renderItem={({ item }) => {
+                    const isSelected = selectedWeather === item.id;
 
+                    return (
+                      <View
+                        onPress={() => setSelectedWeather(item.id)}
+                        style={[
+                          styles.weatherOption,
+                          isSelected && styles.weatherOptionSelected,
+                        ]}
+                      >
+                        <MaterialCommunityIcons
+                          name={item.icon}
+                          size={20}
+                          color={isSelected ? "#fff" : "#333"}
+                        />
+                        <Text
+                          style={[
+                            styles.weatherText,
+                            isSelected && styles.weatherTextSelected,
+                          ]}
+                        >
+                          {item.label}
+                        </Text>
+                      </View>
+                    );
+                  }}
+                />
+              </View>
+            </View>
             <View style={styles.logColumn}>
               <Text style={styles.logLabel}>Location:</Text>
 

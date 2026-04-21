@@ -25,7 +25,11 @@ export default function DailyChallenges() {
       .then((data) => setChallenges(data))
       .catch((err) => console.log("fetch error:", err));
   }, [userId]);
-
+  async function fetchChallenges() {
+    const res = await fetch(`${API_URL}/api/challenges/${userId}`);
+    const data = await res.json();
+    setChallenges(data);
+  }
   return (
     <View style={styles.wrapper}>
       <View style={styles.card}>
@@ -42,7 +46,11 @@ export default function DailyChallenges() {
 
           if (challenge.type === "timed") {
             return (
-              <TimedChallengeCard key={challenge.id} challenge={challenge} />
+              <TimedChallengeCard
+                key={challenge.id}
+                challenge={challenge}
+                onRefresh={fetchChallenges}
+              />
             );
           }
 

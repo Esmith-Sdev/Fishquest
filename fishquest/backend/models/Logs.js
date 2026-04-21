@@ -19,7 +19,7 @@ const logsSchema = new mongoose.Schema(
     },
     weather: {
       type: String,
-      enum: ["clear", "stormy", "windy", "cloudy"],
+      enum: ["sunny", "stormy", "windy", "cloudy"],
     },
     timeOfDay: {
       type: String,

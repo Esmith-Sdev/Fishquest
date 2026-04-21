@@ -2,13 +2,20 @@ import { useEffect, useState } from "react";
 import { Modal, View, Text, StyleSheet, Pressable } from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
 import { getToken } from "../api/auth";
-export default function TimedChallengeModal({ show, onHide, challenge }) {
+export default function TimedChallengeModal({
+  show,
+  onHide,
+  challenge,
+  onRefresh,
+}) {
   const [timeLeft, setTimeLeft] = useState(challenge?.timeLimit ?? 0);
   const [start, setStart] = useState(false);
+  const API_URL = "https://fishquest.onrender.com";
   async function startChallenge() {
     try {
       await startChallengeCooldown(challenge.userChallengeId);
       setStart(true);
+      await onRefresh();
     } catch (err) {
       console.error(err);
     }
@@ -31,10 +38,21 @@ export default function TimedChallengeModal({ show, onHide, challenge }) {
 
     return res.json();
   }
+  async function forfeitChallenge() {
+    try {
+      await startChallengeCooldown(challenge.userChallengeId);
+      onHide();
+      await onRefresh();
+    } catch (err) {
+      console.error("Failed to forfeit challenge:", err);
+    }
+  }
   useEffect(() => {
+    if (!show) return;
+
     setTimeLeft(challenge?.timeLimit ?? 0);
     setStart(false);
-  }, [challenge]);
+  }, [show, challenge?.userChallengeId]);
 
   useEffect(() => {
     if (!start || !challenge?.timeLimit) return;
@@ -83,12 +101,15 @@ export default function TimedChallengeModal({ show, onHide, challenge }) {
           </Text>
 
           {!start ? (
-            <Pressable style={styles.button} onPress={() => startChallenge()}>
+            <Pressable
+              style={styles.startButton}
+              onPress={() => startChallenge()}
+            >
               <Text style={styles.buttonText}>Start</Text>
             </Pressable>
           ) : (
-            <Pressable style={styles.closeButton} onPress={onHide}>
-              <Text style={styles.buttonText}>Forfit</Text>
+            <Pressable style={styles.closeButton} onPress={forfeitChallenge}>
+              <Text style={styles.buttonText}>Forfeit Challenge</Text>
             </Pressable>
           )}
         </View>
@@ -145,9 +166,16 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 20,
   },
-  closeButton: {
+  startButton: {
     alignSelf: "center",
     backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.pill,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+  },
+  closeButton: {
+    alignSelf: "center",
+    backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 8,
     paddingHorizontal: 20,

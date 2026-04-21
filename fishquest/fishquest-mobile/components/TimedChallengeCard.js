@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
 import TimedChallengeModal from "./TimedChallengeModal";
 
-export default function TimedChallengeCard({ challenge }) {
+export default function TimedChallengeCard({ challenge, onRefresh }) {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -26,6 +26,7 @@ export default function TimedChallengeCard({ challenge }) {
         show={showModal}
         onHide={() => setShowModal(false)}
         challenge={challenge}
+        onRefresh={onRefresh}
       />
     </View>
   );

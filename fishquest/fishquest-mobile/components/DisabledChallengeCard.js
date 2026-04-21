@@ -34,24 +34,46 @@ export default function DisabledChallengeCard({ challenge }) {
   }, [challenge?.availableAgainAt, now]);
 
   return (
-    <View style={styles.disabledCard}>
-      <FontAwesome6 name="clock" size={24} color="black" />
+    <View style={styles.card}>
+      <View style={styles.card}>
+        <Text style={styles.xp}>+{challenge.rewardXp}XP</Text>
+        <Text style={styles.title}>{challenge.title}</Text>
+        <View style={styles.progressTrack}>
+          <View style={styles.progressFill} />
+        </View>
+      </View>
 
-      <Text style={styles.title}>{availableText}</Text>
-
-      <View style={styles.progressTrack}>
-        <View style={[styles.progressFill, { width: `${percent}%` }]} />
+      <View style={styles.overlay}></View>
+      <View style={styles.overlayContent}>
+        <View style={styles.column}>
+          <FontAwesome6 name="clock" size={24} color="white" />
+          <Text style={styles.title}>{availableText}</Text>
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  disabledCard: {
-    backgroundColor: COLORS.primaryDark,
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.9)",
+    borderRadius: 12,
+  },
+  overlayContent: {
+    position: "absolute",
+  },
+  column: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  card: {
+    backgroundColor: "#B2B2B2",
     padding: 16,
     borderRadius: RADIUS.md,
     alignItems: "center",
+    justifyContent: "center",
     width: "100%",
     position: "relative",
   },
@@ -65,7 +87,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   title: {
-    color: "#000",
+    color: "#dedede",
     marginVertical: 2,
     fontSize: 13,
     fontWeight: "400",

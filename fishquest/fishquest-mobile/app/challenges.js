@@ -27,18 +27,6 @@ export default function ChallengePage() {
   const [visibleCount, setVisibleCount] = useState(3);
   const { user } = useAuth();
   const userId = user?.id;
-  useEffect(() => {
-    async function loadUserId() {
-      const storedUserId = await AsyncStorage.getItem("userId");
-      if (!storedUserId) {
-        console.log("No userId found");
-        return;
-      }
-      setUserId(storedUserId);
-    }
-
-    loadUserId();
-  }, []);
 
   useEffect(() => {
     if (!userId) return;
@@ -52,7 +40,11 @@ export default function ChallengePage() {
       })
       .catch((error) => console.error("fetch error:", error));
   }, [userId]);
-
+  async function fetchChallenges() {
+    const res = await fetch(`${API_URL}/api/challenges/${userId}`);
+    const data = await res.json();
+    setChallenges(data);
+  }
   function getFilteredChallenges() {
     const baseChallenges = challenges;
 
@@ -119,7 +111,11 @@ export default function ChallengePage() {
 
             {slicedChallenges.map((challenge) =>
               challenge.type === "timed" ? (
-                <TimedChallengeCard key={challenge.id} challenge={challenge} />
+                <TimedChallengeCard
+                  key={challenge.id}
+                  challenge={challenge}
+                  onRefresh={fetchChallenges}
+                />
               ) : (
                 <ChallengeCard key={challenge.id} challenge={challenge} />
               ),
