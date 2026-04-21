@@ -77,6 +77,7 @@ export async function initializeChallengesForUser(userId) {
   const challenges = await UserChallenge.find({ userId }).populate(
     "templateId",
   );
+
   console.log("USER CHALLENGES:", challenges);
 
   return challenges.map((c) => ({
@@ -92,5 +93,7 @@ export async function initializeChallengesForUser(userId) {
     isFinished: c.isFinished,
     assignedAt: c.assignedAt,
     expiresAt: c.expiresAt,
+    availableAgainAt: c.availableAgainAt,
+    lastCompletedDate: c.lastCompletedDate,
   }));
 }

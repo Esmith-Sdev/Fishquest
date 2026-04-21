@@ -19,9 +19,9 @@ export default function DisabledChallengeCard({ challenge }) {
   }, []);
 
   const availableText = useMemo(() => {
-    if (!challenge?.cooldownEndsAt) return "Unavailable";
+    if (!challenge?.availableAgainAt) return "Unavailable";
 
-    const end = new Date(challenge.cooldownEndsAt).getTime();
+    const end = new Date(challenge.availableAgainAt).getTime();
     const diff = Math.max(end - now, 0);
 
     if (diff <= 0) return "Available now";
@@ -31,7 +31,7 @@ export default function DisabledChallengeCard({ challenge }) {
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
     return `Available in ${hours}h ${minutes}m ${seconds}s`;
-  }, [challenge?.cooldownEndsAt, now]);
+  }, [challenge?.availableAgainAt, now]);
 
   return (
     <View style={styles.disabledCard}>
