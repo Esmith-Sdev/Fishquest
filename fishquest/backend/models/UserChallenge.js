@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 const userChallengeSchema = new mongoose.Schema(
   {
     userId: {
@@ -47,3 +48,4 @@ const userChallengeSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+export default mongoose.model("UserChallenge", userChallengeSchema);
