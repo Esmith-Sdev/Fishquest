@@ -34,7 +34,7 @@ export default function DailyChallenges() {
         {dailyChallenges.map((challenge) => {
           const isDisabled = challenge.isOnCooldown;
 
-          if (!isDisabled) {
+          if (isDisabled) {
             return (
               <DisabledChallengeCard key={challenge.id} challenge={challenge} />
             );

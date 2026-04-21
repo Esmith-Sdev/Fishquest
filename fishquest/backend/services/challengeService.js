@@ -82,6 +82,7 @@ export async function initializeChallengesForUser(userId) {
 
   return challenges.map((c) => ({
     id: c.templateId.id,
+    userChallengeId: c._id,
     title: c.templateId.title,
     type: c.templateId.type,
     scheduleType: c.templateId.scheduleType,

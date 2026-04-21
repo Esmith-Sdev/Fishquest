@@ -7,7 +7,7 @@ export default function TimedChallengeModal({ show, onHide, challenge }) {
   const [start, setStart] = useState(false);
   async function startChallenge() {
     try {
-      await startChallengeCooldown(challenge._id);
+      await startChallengeCooldown(challenge.userChallengeId);
       setStart(true);
     } catch (err) {
       console.error(err);
