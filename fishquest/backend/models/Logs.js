@@ -45,7 +45,23 @@ const logsSchema = new mongoose.Schema(
     state: { type: String, default: "" },
     weightUnit: { type: String, default: "LB" },
     lengthUnit: { type: String, default: "CM" },
+    challenge: {
+      userChallengeId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "UserChallenge",
+        default: null,
+      },
+      templateKey: {
+        type: String,
+        default: null,
+      },
+      title: {
+        type: String,
+        default: null,
+      },
+    },
   },
+
   { timestamps: true },
 );
 logsSchema.pre("validate", function () {

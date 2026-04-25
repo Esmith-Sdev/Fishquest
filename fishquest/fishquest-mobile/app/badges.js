@@ -6,6 +6,7 @@ import {
   Pressable,
   StyleSheet,
   FlatList,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -15,6 +16,7 @@ import { BADGES } from "../data/badges.config";
 import BadgeCard from "../components/BadgeCard";
 import { COLORS } from "../constants/theme";
 import { RADIUS } from "../constants/theme";
+import Feather from "@expo/vector-icons/Feather";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 const userStats = {
   total_catches: 7,
@@ -33,7 +35,6 @@ export default function BadgesPage() {
   function handleClose() {
     setSelectedBadge(null);
     setShow(false);
-    set;
   }
 
   function handleShow(badge) {
@@ -62,6 +63,7 @@ export default function BadgesPage() {
           numColumns={3}
           contentContainerStyle={styles.grid}
           columnWrapperStyle={styles.row}
+          removeClippedSubviews={false}
           renderItem={({ item }) => {
             const currentValue = getProgressValue(item.requirement.type);
             const neededValue = item.requirement.value;
@@ -83,14 +85,19 @@ export default function BadgesPage() {
           animationType="fade"
           onRequestClose={handleClose}
         >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalCard}>
+          <Pressable style={styles.modalOverlay} onPress={handleClose}>
+            <Pressable
+              style={styles.modalCard}
+              onPress={(e) => e.stopPropagation()}
+            >
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>{selectedBadge?.name}</Text>
+
                 <Pressable onPress={handleClose} style={styles.closeButton}>
-                  <Text style={styles.closeText}>✕</Text>
+                  <Feather name="x" size={35} color="black" />
                 </Pressable>
               </View>
+
               {selectedBadge && (
                 <View
                   style={{
@@ -106,13 +113,14 @@ export default function BadgesPage() {
                     needed={needed}
                     preview={show}
                   />
+
                   <Text style={styles.progressText}>
                     Progress: {current}/{needed}
                   </Text>
                 </View>
               )}
-            </View>
-          </View>
+            </Pressable>
+          </Pressable>
         </Modal>
         <BottomBar />
       </View>
@@ -160,7 +168,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   row: {
-    justifyContent: "space-between",
+    gap: 12,
   },
   modalOverlay: {
     flex: 1,

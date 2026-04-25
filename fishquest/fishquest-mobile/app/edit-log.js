@@ -9,6 +9,7 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  FlatList,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -34,6 +35,7 @@ import { COLORS, RADIUS } from "../constants/theme";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import StateDropdown from "../components/StateDropdown";
 import SelectDropdown from "react-native-select-dropdown";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { FontAwesome6 } from "@expo/vector-icons";
 export default function UpdateLog() {
@@ -46,6 +48,12 @@ export default function UpdateLog() {
     city: "",
     state: "",
   });
+  const weatherOptions = [
+    { id: "sunny", label: "Sunny", icon: "weather-sunny" },
+    { id: "cloudy", label: "Cloudy", icon: "weather-cloudy" },
+    { id: "windy", label: "Windy", icon: "weather-windy" },
+    { id: "stormy", label: "Stormy", icon: "weather-lightning-rainy" },
+  ];
   const [aiLoading, setAiLoading] = useState(false);
   const [aiResult, setAiResult] = useState(null);
   const [files, setFiles] = useState([]);
@@ -64,6 +72,7 @@ export default function UpdateLog() {
   const [weightUnit, setWeightUnit] = useState("LB");
   const [lengthUnit, setLengthUnit] = useState("CM");
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedWeather, setSelectedWeather] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [timeValue, setTimeValue] = useState(() => {
     const d = new Date();
@@ -296,7 +305,7 @@ export default function UpdateLog() {
         setWeightUnit(log.weightUnit || "LB");
         setLengthUnit(log.lengthUnit || "CM");
         setSelectedDate(log.date ? new Date(log.date) : new Date());
-
+        setSelectedWeather((log.weather || "sunny").toLowerCase());
         setForm({
           address: log.address || "",
           city: log.city || "",
@@ -774,7 +783,45 @@ export default function UpdateLog() {
                 </Pressable>
               </View>
             </View>
+            <View style={styles.logRow}>
+              <View style={styles.logColumn}>
+                <Text style={styles.logLabel}>Weather:</Text>
 
+                <FlatList
+                  data={weatherOptions}
+                  horizontal
+                  keyExtractor={(item) => item.id}
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ gap: 8 }}
+                  renderItem={({ item }) => {
+                    const isSelected = selectedWeather === item.id;
+                    return (
+                      <View
+                        onPress={() => setSelectedWeather(item.id)}
+                        style={[
+                          styles.weatherOption,
+                          isSelected && styles.weatherOptionSelected,
+                        ]}
+                      >
+                        <MaterialCommunityIcons
+                          name={item.icon}
+                          size={20}
+                          color={isSelected ? "#fff" : "#333"}
+                        />
+                        <Text
+                          style={[
+                            styles.weatherText,
+                            isSelected && styles.weatherTextSelected,
+                          ]}
+                        >
+                          {item.label}
+                        </Text>
+                      </View>
+                    );
+                  }}
+                />
+              </View>
+            </View>
             <View style={styles.logColumn}>
               <Text style={styles.logLabel}>Location:</Text>
 
@@ -1330,7 +1377,8 @@ const styles = StyleSheet.create({
   },
   notesBox: {
     backgroundColor: "#dedede",
-    paddingHorizontal: 5,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
     textAlignVertical: "top",
     fontSize: 14,
     lineHeight: 20,
@@ -1338,5 +1386,24 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     width: "100%",
     height: 150,
+  },
+  weatherOption: {
+    backgroundColor: "#dedede",
+    borderRadius: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  weatherOptionSelected: {
+    backgroundColor: COLORS.secondary,
+  },
+  weatherText: {
+    color: "#000",
+    fontSize: 8,
+    fontFamily: "Jua",
+  },
+  weatherTextSelected: {
+    color: "#fff",
   },
 });

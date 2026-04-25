@@ -65,6 +65,7 @@ export default function StateDropdown({ value, onChange }) {
       <SelectDropdown
         statusBarTranslucent={true}
         data={STATES}
+        defaultValue={STATES.find((s) => s.value === value)}
         dropdownStyle={{
           height: 250,
         }}
@@ -73,9 +74,7 @@ export default function StateDropdown({ value, onChange }) {
         renderButton={(selectedItem, isOpened) => (
           <View style={styles.pillSelectSmall}>
             <View style={styles.logRow}>
-              <Text style={styles.selectText}>
-                {selectedItem?.label || "State"}
-              </Text>
+              <Text style={styles.selectText}>{value || "State"}</Text>
               <FontAwesome6
                 name={isOpened ? "caret-up" : "caret-down"}
                 size={20}

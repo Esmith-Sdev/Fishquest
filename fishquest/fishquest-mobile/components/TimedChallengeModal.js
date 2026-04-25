@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Modal, View, Text, StyleSheet, Pressable } from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
+import { router } from "expo-router";
 import { getToken } from "../api/auth";
 export default function TimedChallengeModal({
   show,
@@ -8,9 +9,10 @@ export default function TimedChallengeModal({
   challenge,
   onRefresh,
 }) {
+  const API_URL = "https://fishquest.onrender.com";
   const [timeLeft, setTimeLeft] = useState(challenge?.timeLimit ?? 0);
   const [start, setStart] = useState(false);
-  const API_URL = "https://fishquest.onrender.com";
+
   async function startChallenge() {
     try {
       await startChallengeCooldown(challenge.userChallengeId);
@@ -20,6 +22,7 @@ export default function TimedChallengeModal({
       console.error(err);
     }
   }
+
   async function startChallengeCooldown(userChallengeId) {
     const token = await getToken();
 
@@ -108,9 +111,24 @@ export default function TimedChallengeModal({
               <Text style={styles.buttonText}>Start</Text>
             </Pressable>
           ) : (
-            <Pressable style={styles.closeButton} onPress={forfeitChallenge}>
-              <Text style={styles.buttonText}>Forfeit Challenge</Text>
-            </Pressable>
+            <View style={styles.row}>
+              <Pressable
+                style={styles.startButton}
+                onPress={() =>
+                  router.push({
+                    pathname: "/create-log",
+                    params: {
+                      challenge: challenge.title,
+                    },
+                  })
+                }
+              >
+                <Text style={styles.buttonText}>Log Challenge</Text>
+              </Pressable>
+              <Pressable style={styles.closeButton} onPress={forfeitChallenge}>
+                <Text style={styles.buttonText}>Forfeit Challenge</Text>
+              </Pressable>
+            </View>
           )}
         </View>
       </View>
@@ -132,6 +150,12 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md,
     padding: 20,
     gap: 14,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 12,
   },
   title: {
     fontSize: 20,
@@ -167,21 +191,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   startButton: {
-    alignSelf: "center",
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.pill,
     paddingVertical: 8,
-    paddingHorizontal: 20,
+    paddingHorizontal: 12,
+    width: 120,
+    alignSelf: "center",
+    shadowColor: COLORS.primaryDropShadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 1,
+    elevation: 4,
   },
   closeButton: {
-    alignSelf: "center",
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 8,
-    paddingHorizontal: 20,
+    paddingHorizontal: 12,
+    shadowColor: COLORS.primaryDropShadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 1,
+    elevation: 4,
   },
   buttonText: {
     color: "#000",
-    fontWeight: "700",
+    fontFamily: "Jua",
+    fontSize: 15,
+    textAlign: "center",
   },
 });

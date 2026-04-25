@@ -1,5 +1,9 @@
-import { Pressable, Image, StyleSheet, View } from "react-native";
+import { Pressable, Image, StyleSheet, View, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { Dimensions } from "react-native";
+const screenWidth = Dimensions.get("window").width;
+const CARD_GAP = 12;
+const CARD_SIZE = (screenWidth - 24 - CARD_GAP * 2) / 3;
 export default function BadgeCard({ badge, unlocked, onClick, preview }) {
   return (
     <Pressable
@@ -16,11 +20,18 @@ export default function BadgeCard({ badge, unlocked, onClick, preview }) {
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.imageWrapper}>
-          <Image
-            source={badge.icon}
-            style={[styles.image, !unlocked && styles.lockedImage]}
-            resizeMode="contain"
-          />
+          {badge.icon ? (
+            <Image
+              source={badge.icon}
+              style={[styles.image, !unlocked && styles.lockedImage]}
+              resizeMode="contain"
+              onError={(e) =>
+                console.log("Badge image failed:", badge.id, e.nativeEvent)
+              }
+            />
+          ) : (
+            <Text style={{ color: "white" }}>No Icon</Text>
+          )}
         </View>
       </LinearGradient>
     </Pressable>
@@ -29,8 +40,8 @@ export default function BadgeCard({ badge, unlocked, onClick, preview }) {
 
 const styles = StyleSheet.create({
   card: {
-    width: "31%",
-    aspectRatio: 1,
+    width: CARD_SIZE,
+    height: CARD_SIZE,
     borderRadius: 18,
     marginBottom: 12,
     alignItems: "center",

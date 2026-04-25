@@ -23,7 +23,9 @@ export default function ChallengeCard({ challenge }) {
           router.push({
             pathname: "/create-log",
             params: {
-              challenge: challenge.title,
+              challengeId: challenge.userChallengeId,
+              templateKey: challenge.templateKey,
+              challengeTitle: challenge.title,
             },
           })
         }

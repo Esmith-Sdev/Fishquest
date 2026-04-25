@@ -87,7 +87,9 @@ export default function CreateLog() {
 
   const speciesDisabled = skunked || saving;
   const isGridFull = files.length >= 4;
-
+  const challengeId = params.challengeId ?? "";
+  const templateKey = params.templateKey ?? "";
+  const challengeTitle = params.challengeTitle ?? "";
   useEffect(() => {
     if (skunked) setSpecies(null);
   }, [skunked]);
@@ -148,7 +150,9 @@ export default function CreateLog() {
       pathname: "/create-rig",
       params: {
         returnTo: "/create-log",
-        challenge: params.challenge ?? "",
+        challengeId,
+        templateKey,
+        challengeTitle,
       },
     });
   }
@@ -304,9 +308,19 @@ export default function CreateLog() {
         notes,
         imageUrls: urls,
         skunked,
+        weather: selectedWeather,
         address: form.address,
         city: form.city,
         state: form.state,
+        ...(challengeId
+          ? {
+              challenge: {
+                userChallengeId: challengeId,
+                templateKey,
+                title: challengeTitle,
+              },
+            }
+          : {}),
         ...(skunked
           ? {}
           : {
@@ -797,7 +811,7 @@ export default function CreateLog() {
               <View style={styles.logRow}>
                 <Text style={styles.logLabel}>Challenge:</Text>
                 <Text style={styles.challengeText}>
-                  {params.challenge || "No Challenge"}
+                  {challengeTitle || "No Challenge"}
                 </Text>
               </View>
 
@@ -1306,7 +1320,8 @@ const styles = StyleSheet.create({
 
   notesBox: {
     backgroundColor: "#dedede",
-    paddingHorizontal: 5,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
     textAlignVertical: "top",
     fontSize: 14,
     lineHeight: 20,

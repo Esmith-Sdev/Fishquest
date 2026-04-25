@@ -10,6 +10,8 @@ import {
   Alert,
   ActivityIndicator,
   FlatList,
+  TouchableOpacity,
+  Modal,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -32,7 +34,7 @@ import { POLES } from "../data/poles.config";
 import { WEIGHTS } from "../data/weight.config";
 import { STATE_ABBREVIATIONS } from "../data/states";
 import { COLORS, RADIUS } from "../constants/theme";
-
+import ImagePreviewModal from "../components/ImagePreviewModal";
 import StateDropdown from "../components/StateDropdown";
 
 export default function UpdateLog() {
@@ -68,6 +70,9 @@ export default function UpdateLog() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedWeather, setSelectedWeather] = useState(false);
   const speciesDisabled = skunked || saving;
+  const [show, setShow] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
   const weatherOptions = [
     { id: "sunny", label: "Sunny", icon: "weather-sunny" },
     { id: "cloudy", label: "Cloudy", icon: "weather-cloudy" },
@@ -166,7 +171,7 @@ export default function UpdateLog() {
         setWeightUnit(log.weightUnit || "LB");
         setLengthUnit(log.lengthUnit || "CM");
         setSelectedDate(log.date ? new Date(log.date) : new Date());
-        setSelectedWeather(log.weather || "Sunny");
+        setSelectedWeather((log.weather || "sunny").toLowerCase());
         setForm({
           address: log.address || "",
           city: log.city || "",
@@ -327,9 +332,16 @@ export default function UpdateLog() {
           ) : (
             <View style={styles.imageGrid}>
               {allImages.map((img, i) => (
-                <View style={styles.imageTile} key={i}>
+                <Pressable
+                  key={i}
+                  style={styles.imageTile}
+                  onPress={() => {
+                    setSelectedImageIndex(i);
+                    setShow(true);
+                  }}
+                >
                   <Image source={{ uri: img.uri }} style={styles.gridImage} />
-                </View>
+                </Pressable>
               ))}
             </View>
           )}
@@ -356,7 +368,7 @@ export default function UpdateLog() {
                 style={[styles.checkboxBox, skunked && styles.checkboxChecked]}
               >
                 {skunked ? (
-                  <Ionicons name="checkmark" size={16} color="#000" />
+                  <Ionicons name="checkmark" size={20} color="#000" />
                 ) : null}
               </View>
             </View>
@@ -408,8 +420,9 @@ export default function UpdateLog() {
               </View>
             </View>
             <View style={styles.logRow}>
-              <Text style={styles.logLabel}>Weather:</Text>
-              <View style={styles.inlineField}>
+              <View style={styles.logColumn}>
+                <Text style={styles.logLabel}>Weather:</Text>
+
                 <FlatList
                   data={weatherOptions}
                   horizontal
@@ -418,7 +431,6 @@ export default function UpdateLog() {
                   contentContainerStyle={{ gap: 8 }}
                   renderItem={({ item }) => {
                     const isSelected = selectedWeather === item.id;
-
                     return (
                       <View
                         onPress={() => setSelectedWeather(item.id)}
@@ -449,13 +461,15 @@ export default function UpdateLog() {
             <View style={styles.logColumn}>
               <Text style={styles.logLabel}>Location:</Text>
 
-              <View style={styles.logRow}>
-                <View style={styles.pillDisplayLarge}>
-                  <Text style={styles.displayText}>
-                    {form.address || "No address"}
-                  </Text>
+              <View style={styles.logColumn}>
+                <View style={styles.logRow}>
+                  <View style={styles.pillDisplayLarge}>
+                    <Text style={styles.displayText}>
+                      {form.address || "No address"}
+                    </Text>
+                  </View>
                 </View>
-                <View style={styles.locationRow}>
+                <View style={styles.logRow}>
                   <View style={styles.pillInputSmall}>
                     <Text style={styles.displayText}>{form.state || "--"}</Text>
                   </View>
@@ -471,18 +485,23 @@ export default function UpdateLog() {
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Challenge:</Text>
               <Text style={styles.challengeText}>
-                {params.challenge || "Catch a fish in 10min"}
+                {params.challenge || "No Challenge"}
               </Text>
             </View>
 
             <View style={styles.notesBox}>
-              <Text style={styles.displayText}>{notes || "No notes"}</Text>
+              <Text style={styles.notesText}>{notes || "No notes"}</Text>
             </View>
           </View>
 
           {rigsError ? <Text style={styles.rigsError}>{rigsError}</Text> : null}
         </ScrollView>
-
+        <ImagePreviewModal
+          show={show}
+          onHide={() => setShow(false)}
+          images={allImages.map((img) => ({ uri: img.uri }))}
+          imageIndex={selectedImageIndex}
+        />
         <BottomNavbar />
       </View>
     </SafeAreaView>
@@ -789,6 +808,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "Jua",
     fontSize: 16,
+    flex: 1,
   },
   fieldFlex: {
     minWidth: 0,
@@ -799,18 +819,20 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   pillDisplay: {
-    width: 100,
+    width: 150,
     backgroundColor: "#dedede",
     borderRadius: 50,
     paddingVertical: 8,
     paddingHorizontal: 12,
   },
   pillDisplayLarge: {
-    width: 125,
+    width: 220,
+    textWrap: "nowrap",
     backgroundColor: "#dedede",
     borderRadius: 50,
     paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 6,
+    alignItems: "center",
   },
   displayText: {
     color: "#000",
@@ -929,18 +951,43 @@ const styles = StyleSheet.create({
   },
 
   challengeText: {
-    color: "#fff",
-    opacity: 0.9,
+    color: COLORS.secondary,
+    opacity: 1,
     fontWeight: "600",
-  },
-  notesBlock: {
-    marginTop: 6,
+    paddingVertical: 10,
   },
   notesBox: {
     backgroundColor: "#dedede",
-    padding: 5,
-    fontSize: 15,
-    fontFamily: "Jua",
+
     borderRadius: 15,
+    width: "100%",
+    height: 150,
+  },
+  notesText: {
+    textAlignVertical: "top",
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Jua",
+  },
+  weatherOption: {
+    backgroundColor: "#dedede",
+    borderRadius: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  weatherOptionSelected: {
+    backgroundColor: COLORS.secondary,
+  },
+  weatherText: {
+    color: "#000",
+    fontSize: 8,
+    fontFamily: "Jua",
+  },
+  weatherTextSelected: {
+    color: "#fff",
   },
 });
