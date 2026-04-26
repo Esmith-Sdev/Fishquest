@@ -2,7 +2,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import UserSpeciesStats from "../models/UserSpeciesStats.js";
-
+import UserFishingStats from "../models/UserFishingStats.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
