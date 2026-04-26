@@ -1,11 +1,11 @@
 export const WEIGHTS = [
   {
-    id: "noWeight",
+    id: "no_weight",
     name: "None",
     image: require("../assets/images/icons/none-icon.png"),
   },
   {
-    id: "bankSinker",
+    id: "bank_sinker",
     name: "Bank Sinker",
     image: require("../assets/images/Weights/bank-sinker.png"),
   },

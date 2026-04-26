@@ -1,6 +1,6 @@
 export const BAIT = [
   {
-    id: "liveWorm",
+    id: "live_worm",
     name: "Worm",
     image: require("../assets/images/Bait/live-worm.png"),
     effectiveness: ["Panfish", "Trout", "Bass", "Catfish"],
@@ -42,7 +42,7 @@ export const BAIT = [
     effectiveness: ["Bass", "Walleye", "Trout", "Pike"],
   },
   {
-    id: "otherPlastic",
+    id: "other_plastic",
     name: "Other Plastic",
     image: require("../assets/images/Bait/other-plastic.png"),
     effectiveness: ["Bass", "Panfish"],
@@ -55,13 +55,13 @@ export const BAIT = [
   },
 
   {
-    id: "roosterTail",
+    id: "rooster_tail",
     name: "Rooster Tail",
     image: require("../assets/images/Bait/rooster-tail.png"),
     effectiveness: ["Bass", "Panfish", "Trout"],
   },
   {
-    id: "plasticWorm",
+    id: "plastic_worm",
     name: "Plastic Worm",
     image: require("../assets/images/Bait/sparkle-worm.png"),
     effectiveness: ["Bass", "Panfish", "Trout"],
@@ -85,7 +85,7 @@ export const BAIT = [
     effectiveness: ["Bass"],
   },
   {
-    id: "otherLiveBait",
+    id: "other_live_bait",
     name: "Other Live Bait",
     image: require("../assets/images/Bait/other-live-bait.png"),
     effectiveness: ["Catfish"],

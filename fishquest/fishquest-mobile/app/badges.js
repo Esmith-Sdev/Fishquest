@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useFocusEffect } from "expo-router";
 import {
   View,
   Text,
@@ -18,20 +19,12 @@ import { COLORS } from "../constants/theme";
 import { RADIUS } from "../constants/theme";
 import Feather from "@expo/vector-icons/Feather";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
-const userStats = {
-  total_catches: 7,
-  baitcaster_count: 12,
-  bluegill_count: 3,
-};
-
-function getProgressValue(type) {
-  return userStats[type] ?? 0;
-}
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getToken } from "../api/auth";
 export default function BadgesPage() {
   const [show, setShow] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState(null);
-
+  const [userStats, setUserStats] = useState({});
   function handleClose() {
     setSelectedBadge(null);
     setShow(false);
@@ -48,7 +41,49 @@ export default function BadgesPage() {
 
   const needed = selectedBadge ? selectedBadge.requirement.value : 0;
   const unlocked = selectedBadge ? current >= needed : false;
+  useFocusEffect(
+    useCallback(() => {
+      async function fetchUserStats() {
+        try {
+          const token = await getToken();
 
+          const res = await fetch(
+            "https://fishquest.onrender.com/api/user-stats",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          const data = await res.json();
+          console.log("badge stats response:", data);
+
+          const formattedStats = {
+            total_catches: data?.totalCatches || 0,
+          };
+
+          const speciesStats = Array.isArray(data?.species) ? data.species : [];
+
+          speciesStats.forEach((species) => {
+            const normalizedId = species.speciesId.replace(/-/g, "_");
+            formattedStats[`${normalizedId}_count`] = species.catchCount;
+          });
+
+          console.log("formatted badge stats:", formattedStats);
+
+          setUserStats(formattedStats);
+        } catch (err) {
+          console.error("Failed to fetch badge stats:", err);
+        }
+      }
+
+      fetchUserStats();
+    }, []),
+  );
+  function getProgressValue(type) {
+    return userStats[type] ?? 0;
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
       <View style={styles.container}>

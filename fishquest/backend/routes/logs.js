@@ -5,6 +5,8 @@ import RigStats from "../models/RigStats.js";
 import getTimeOfDay from "../utils/getTimeOfDay.js";
 import User from "../models/User.js";
 import UserSpeciesStats from "../models/UserSpeciesStats.js";
+import RigPreset from "../models/Rigs.js";
+import UserFishingStats from "../models/UserFishingStats.js";
 const router = express.Router();
 async function updateUserTotalCatches(userId, log) {
   if (log.skunked) return;
@@ -15,7 +17,36 @@ async function updateUserTotalCatches(userId, log) {
     },
   });
 }
+async function updateUserFishingStats(userId, log) {
+  const inc = {};
 
+  if (log.skunked) {
+    inc.skunkedCount = 1;
+  } else {
+    inc.totalCatches = 1;
+
+    if (log.timeOfDay) inc[`timeOfDay.${log.timeOfDay}`] = 1;
+    if (log.weather) inc[`weather.${log.weather}`] = 1;
+    if (log.poleId) inc[`poles.${log.poleId}`] = 1;
+    if (log.baitId) inc[`baits.${log.baitId}`] = 1;
+    if (log.hookId) inc[`hooks.${log.hookId}`] = 1;
+    if (log.weightId) inc[`weights.${log.weightId}`] = 1;
+    if (log.bobber) inc.bobberCount = 1;
+  }
+
+  await UserFishingStats.findOneAndUpdate(
+    { userId },
+    {
+      $setOnInsert: { userId },
+      $inc: inc,
+    },
+    {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true,
+    },
+  );
+}
 async function updateUserSpeciesStats(userId, log) {
   if (log.skunked || !log.speciesId) return;
 
@@ -121,16 +152,34 @@ router.post("/", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const logDate = req.body.date || new Date();
+    let rigData = {};
 
+    if (req.body.rigPresetId) {
+      const rig = await RigPreset.findOne({
+        _id: req.body.rigPresetId,
+        userId: decoded.sub,
+      });
+
+      if (rig) {
+        rigData = {
+          poleId: rig.poleId,
+          baitId: rig.baitId,
+          hookId: rig.hookId,
+          weightId: rig.weightId,
+          bobber: rig.bobber,
+        };
+      }
+    }
     const newLog = new Logs({
       ...req.body,
+      ...rigData,
       userId: decoded.sub,
       date: logDate,
       timeOfDay: getTimeOfDay(logDate),
     });
 
     await newLog.save();
-
+    await updateUserFishingStats(decoded.sub, newLog);
     await updateUserTotalCatches(decoded.sub, newLog);
     await updateUserSpeciesStats(decoded.sub, newLog);
 
