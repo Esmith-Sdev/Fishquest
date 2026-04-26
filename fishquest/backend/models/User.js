@@ -24,18 +24,6 @@ const userSchema = new mongoose.Schema(
     },
     stats: {
       totalCatches: { type: Number, default: 0 },
-
-      species: {
-        bass: { type: Number, default: 0 },
-      },
-
-      timeOfDay: {
-        day: { type: Number, default: 0 },
-      },
-
-      methods: {
-        baitcaster: { type: Number, default: 0 },
-      },
     },
     passwordHash: { type: String, required: true, select: false },
   },

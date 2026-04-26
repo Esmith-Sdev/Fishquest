@@ -1,30 +1,24 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   View,
   Text,
   TextInput,
-  FlatList,
   Pressable,
   StyleSheet,
-  Platform,
+  ScrollView,
 } from "react-native";
 import { AllSpecies } from "../data/species.config";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { KeyboardAvoidingView, ScrollView } from "react-native";
-
-import { useEffect } from "react";
-export function getSpeciesById(speciesId) {
-  return AllSpecies.find((fish) => fish.id === speciesId) || null;
-}
 
 export default function FishSpeciesTypeahead({
   value,
   onPick,
   placeholder = "Search fish species",
   disabled = false,
+  onOpenChange,
 }) {
   const [query, setQuery] = useState(value?.name || "");
   const [showResults, setShowResults] = useState(false);
+
   const normalizedSpecies = useMemo(() => {
     return (AllSpecies || [])
       .map((fish) => ({
@@ -58,27 +52,32 @@ export default function FishSpeciesTypeahead({
     });
   }, [query, normalizedSpecies]);
 
-  const handleInputChange = (text) => {
+  function handleInputChange(text) {
     setQuery(text);
 
     if (!text.trim()) {
       onPick(null);
-      setShowResults(false);
+      setDropdownOpen(false);
     } else {
-      setShowResults(true);
+      setDropdownOpen(true);
     }
-  };
+  }
 
-  const handleSelect = (item) => {
+  function handleSelect(item) {
     setQuery(item.name || item.label);
     onPick(item);
-    setShowResults(false);
-  };
+    setDropdownOpen(false);
+  }
+  function setDropdownOpen(value) {
+    setShowResults(value);
+    onOpenChange?.(value);
+  }
   useEffect(() => {
     if (value) {
       setQuery(value.name || value.label);
     }
   }, [value]);
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -88,96 +87,102 @@ export default function FishSpeciesTypeahead({
         editable={!disabled}
         style={[styles.input, disabled && styles.disabledInput]}
         onFocus={() => {
-          if (query.trim().length >= 2) setShowResults(true);
+          if (query.trim().length >= 2) setDropdownOpen(true);
         }}
       />
 
-      {showResults && filteredSpecies.length > 0 && (
+      {showResults && query.trim().length >= 2 && (
         <View style={styles.dropdown}>
-          <FlatList
+          <ScrollView
+            style={styles.dropdownList}
+            contentContainerStyle={styles.dropdownContent}
             keyboardShouldPersistTaps="handled"
-            data={filteredSpecies}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={({ item }) => (
-              <Pressable style={styles.item} onPress={() => handleSelect(item)}>
-                <Text style={styles.itemTitle}>{item.name || item.label}</Text>
-
-                {(item.group || item.category) && (
-                  <Text style={styles.itemSubtitle}>
-                    {[item.group, item.category].filter(Boolean).join(" • ")}
+            nestedScrollEnabled={true}
+            showsVerticalScrollIndicator={true}
+          >
+            {filteredSpecies.length > 0 ? (
+              filteredSpecies.map((item) => (
+                <Pressable
+                  key={String(item.id)}
+                  style={styles.item}
+                  onPress={() => handleSelect(item)}
+                >
+                  <Text style={styles.itemTitle}>
+                    {item.name || item.label}
                   </Text>
-                )}
-              </Pressable>
+
+                  {(item.group || item.category) && (
+                    <Text style={styles.itemSubtitle}>
+                      {[item.group, item.category].filter(Boolean).join(" • ")}
+                    </Text>
+                  )}
+                </Pressable>
+              ))
+            ) : (
+              <Text style={styles.emptyText}>No fish found.</Text>
             )}
-          />
+          </ScrollView>
         </View>
       )}
-
-      {showResults &&
-        query.trim().length >= 2 &&
-        filteredSpecies.length === 0 && (
-          <View style={styles.dropdown}>
-            <Text style={styles.emptyText}>No fish found.</Text>
-          </View>
-        )}
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    position: "relative",
     zIndex: 9999,
-    elevation: 30,
-  },
-  input: {
-    width: 180,
-    backgroundColor: "#dedede",
-    borderRadius: 50,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    color: "#000",
-    fontFamily: "Jua",
+    elevation: 40,
   },
 
-  disabledInput: {
-    backgroundColor: "#f2f2f2",
-    opacity: 0.6,
-  },
   dropdown: {
-    position: "absolute",
-    top: 42,
-    left: 0,
-    right: 0,
-    width: "100%",
+    width: 220,
+    height: 220,
+    marginTop: 6,
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 10,
     backgroundColor: "#dedede",
-    maxHeight: 220,
     overflow: "hidden",
     zIndex: 10000,
-    elevation: 40,
+    elevation: 50,
   },
-  item: {
-    paddingHorizontal: 14,
+
+  dropdownList: {
+    height: 220,
+  },
+
+  dropdownContent: {
+    paddingBottom: 8,
+  },
+  input: {
+    backgroundColor: "#dedede",
+    borderRadius: 50,
     paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    paddingHorizontal: 14,
+    color: "#000",
     fontFamily: "Jua",
   },
+
+  item: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#bbb",
+  },
+
   itemTitle: {
     fontSize: 16,
     fontWeight: "600",
     fontFamily: "Jua",
   },
+
   itemSubtitle: {
     marginTop: 2,
     fontSize: 13,
     color: "#666",
     fontFamily: "Jua",
   },
+
   emptyText: {
     padding: 12,
     fontSize: 14,

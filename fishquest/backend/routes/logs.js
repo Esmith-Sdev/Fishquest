@@ -3,8 +3,44 @@ import jwt from "jsonwebtoken";
 import Logs from "../models/Logs.js";
 import RigStats from "../models/RigStats.js";
 import getTimeOfDay from "../utils/getTimeOfDay.js";
+import User from "../models/User.js";
+import UserSpeciesStats from "../models/UserSpeciesStats.js";
 const router = express.Router();
+async function updateUserTotalCatches(userId, log) {
+  if (log.skunked) return;
 
+  await User.findByIdAndUpdate(userId, {
+    $inc: {
+      "stats.totalCatches": 1,
+    },
+  });
+}
+
+async function updateUserSpeciesStats(userId, log) {
+  if (log.skunked || !log.speciesId) return;
+
+  await UserSpeciesStats.findOneAndUpdate(
+    {
+      userId,
+      speciesId: log.speciesId,
+    },
+    {
+      $setOnInsert: {
+        userId,
+        speciesId: log.speciesId,
+        speciesName: log.speciesName,
+      },
+      $inc: {
+        catchCount: 1,
+      },
+    },
+    {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true,
+    },
+  );
+}
 async function recalculateRigStats(userId, rigId) {
   if (!rigId) return;
 
@@ -94,6 +130,9 @@ router.post("/", async (req, res) => {
     });
 
     await newLog.save();
+
+    await updateUserTotalCatches(decoded.sub, newLog);
+    await updateUserSpeciesStats(decoded.sub, newLog);
 
     if (newLog.rigPresetId) {
       await recalculateRigStats(decoded.sub, newLog.rigPresetId);

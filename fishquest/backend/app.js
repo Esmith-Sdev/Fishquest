@@ -13,7 +13,7 @@ import rigStatsRoutes from "./routes/rigStats.js";
 import uploadRoutes from "./routes/uploads.js";
 import logsRoutes from "./routes/logs.js";
 import identifyFishRoutes from "./routes/identifyFish.js";
-
+import userStatsRoutes from "./routes/userStats.js";
 const app = express();
 
 const allowedOrigins = new Set([
@@ -60,7 +60,7 @@ app.use("/api/challenges", challengesRoute);
 app.use("/api/uploads", uploadRoutes);
 app.use("/api/logs", logsRoutes);
 app.use("/api/auth", router);
-
+app.use("/api/user-stats", userStatsRoutes);
 const upload = multer({
   storage: multer.diskStorage({}),
   limits: { fileSize: 8 * 1024 * 1024 },

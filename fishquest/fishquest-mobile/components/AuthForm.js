@@ -37,7 +37,7 @@ export default function AuthForm({
 
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="Username"
         autoCapitalize="none"
         keyboardType="email-address"
         value={email}
