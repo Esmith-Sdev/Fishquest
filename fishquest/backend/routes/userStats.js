@@ -41,6 +41,7 @@ router.get("/", async (req, res) => {
       species: speciesStats,
     });
   } catch (err) {
+    console.error("USER STATS ERROR:", err);
     res.status(500).json({ message: "Failed to fetch user stats" });
   }
 });
