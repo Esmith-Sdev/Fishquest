@@ -20,9 +20,24 @@ router.get("/", async (req, res) => {
     const speciesStats = await UserSpeciesStats.find({
       userId: decoded.sub,
     });
-
+    const fishingStats = await UserFishingStats.findOne({
+      userId: decoded.sub,
+    });
     res.json({
-      totalCatches: user?.stats?.totalCatches || 0,
+      totalCatches: fishingStats?.totalCatches || 0,
+      skunkedCount: fishingStats?.skunkedCount || 0,
+
+      timeOfDay: fishingStats?.timeOfDay || {},
+      methods: fishingStats?.methods || {},
+      weather: fishingStats?.weather || {},
+
+      baits: fishingStats?.baits || {},
+      poles: fishingStats?.poles || {},
+      hooks: fishingStats?.hooks || {},
+      weights: fishingStats?.weights || {},
+
+      bobberCount: fishingStats?.bobberCount || 0,
+
       species: speciesStats,
     });
   } catch (err) {

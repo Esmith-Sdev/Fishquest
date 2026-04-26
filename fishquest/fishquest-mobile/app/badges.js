@@ -69,7 +69,44 @@ export default function BadgesPage() {
             const normalizedId = species.speciesId.replace(/-/g, "_");
             formattedStats[`${normalizedId}_count`] = species.catchCount;
           });
+          // time of day
+          Object.entries(data?.timeOfDay || {}).forEach(([key, value]) => {
+            formattedStats[`${key}_count`] = value;
+          });
 
+          // methods
+          Object.entries(data?.methods || {}).forEach(([key, value]) => {
+            formattedStats[`${key}_count`] = value;
+          });
+
+          // weather
+          Object.entries(data?.weather || {}).forEach(([key, value]) => {
+            formattedStats[`${key}_count`] = value;
+          });
+
+          // baits
+          Object.entries(data?.baits || {}).forEach(([key, value]) => {
+            formattedStats[`${key}_count`] = value;
+          });
+
+          // poles
+          Object.entries(data?.poles || {}).forEach(([key, value]) => {
+            formattedStats[`${key}_count`] = value;
+          });
+
+          // hooks
+          Object.entries(data?.hooks || {}).forEach(([key, value]) => {
+            formattedStats[`${key}_count`] = value;
+          });
+
+          // weights
+          Object.entries(data?.weights || {}).forEach(([key, value]) => {
+            formattedStats[`${key}_count`] = value;
+          });
+
+          // bobber + skunked
+          formattedStats.bobber_count = data?.bobberCount || 0;
+          formattedStats.skunked_count = data?.skunkedCount || 0;
           console.log("formatted badge stats:", formattedStats);
 
           setUserStats(formattedStats);
