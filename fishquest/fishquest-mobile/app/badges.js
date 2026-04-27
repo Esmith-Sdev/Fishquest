@@ -74,11 +74,6 @@ export default function BadgesPage() {
             formattedStats[`${key}_count`] = value;
           });
 
-          // methods
-          Object.entries(data?.methods || {}).forEach(([key, value]) => {
-            formattedStats[`${key}_count`] = value;
-          });
-
           // weather
           Object.entries(data?.weather || {}).forEach(([key, value]) => {
             formattedStats[`${key}_count`] = value;

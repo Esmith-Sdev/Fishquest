@@ -50,6 +50,13 @@ const logsSchema = new mongoose.Schema(
     state: { type: String, default: "" },
     weightUnit: { type: String, default: "LB" },
     lengthUnit: { type: String, default: "CM" },
+    rigSnapshot: {
+      poleId: String,
+      baitId: String,
+      hookId: String,
+      weightId: String,
+      bobber: Boolean,
+    },
     challenge: {
       userChallengeId: {
         type: mongoose.Schema.Types.ObjectId,

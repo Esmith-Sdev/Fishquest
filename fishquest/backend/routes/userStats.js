@@ -26,11 +26,8 @@ router.get("/", async (req, res) => {
     res.json({
       totalCatches: fishingStats?.totalCatches || 0,
       skunkedCount: fishingStats?.skunkedCount || 0,
-
       timeOfDay: fishingStats?.timeOfDay || {},
-      methods: fishingStats?.methods || {},
       weather: fishingStats?.weather || {},
-
       baits: fishingStats?.baits || {},
       poles: fishingStats?.poles || {},
       hooks: fishingStats?.hooks || {},
