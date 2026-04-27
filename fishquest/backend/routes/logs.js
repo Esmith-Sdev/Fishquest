@@ -7,6 +7,7 @@ import User from "../models/User.js";
 import UserSpeciesStats from "../models/UserSpeciesStats.js";
 import RigPreset from "../models/Rigs.js";
 import UserFishingStats from "../models/UserFishingStats.js";
+import { checkDailyChallengesForLog } from "../utils/checkDailyChallengesForLog.js";
 import { recalculateUserFishingStats } from "../utils/recalculateUserFishingStats.js";
 const router = express.Router();
 
@@ -126,12 +127,18 @@ router.post("/", async (req, res) => {
     });
 
     await recalculateUserFishingStats(decoded.sub);
-
+    const completedChallenges = await checkDailyChallengesForLog(
+      decoded.sub,
+      newLog,
+    );
     if (newLog.rigPresetId) {
       await recalculateRigStats(decoded.sub, newLog.rigPresetId.toString());
     }
 
-    res.status(201).json(newLog);
+    res.status(201).json({
+      log: newLog,
+      completedChallenges,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message });

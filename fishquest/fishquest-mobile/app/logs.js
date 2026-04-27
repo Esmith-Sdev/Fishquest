@@ -13,17 +13,20 @@ import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomNavbar from "../components/BottomNavbar";
-import { fetchLogs } from "../api/logs";
+import { fetchLogs, deleteLog } from "../api/logs";
 import { getToken } from "../api/auth";
 import skunkImage from "../assets/images/Fish/skunked.png";
 import { COLORS, RADIUS } from "../constants/theme";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 import Entypo from "@expo/vector-icons/Entypo";
+import ConfirmModal from "../components/ConfirmModal";
 export default function Logs() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const [deleteModeLogId, setDeleteModeLogId] = useState(null);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [selectedLogId, setSelectedLogId] = useState(null);
   useEffect(() => {
     async function loadLogs() {
       try {
@@ -49,7 +52,24 @@ export default function Logs() {
   function getImageSource(photo) {
     return typeof photo === "string" ? { uri: photo } : photo;
   }
+  async function handleRemoveLog(logId) {
+    try {
+      const token = await getToken();
 
+      if (!token) {
+        router.replace("/login");
+        return;
+      }
+
+      await deleteLog(logId, token);
+
+      setLogs((prev) => prev.filter((log) => log._id !== logId));
+      setDeleteModeLogId(null);
+    } catch (err) {
+      console.error("Delete log failed:", err);
+      setError(err.message || "Failed to delete log");
+    }
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
       <View style={styles.screen}>
@@ -79,6 +99,7 @@ export default function Logs() {
 
         <FlatList
           data={logs}
+          extraData={deleteModeLogId}
           keyExtractor={(item) => item._id}
           numColumns={3}
           columnWrapperStyle={styles.gridRow}
@@ -105,13 +126,43 @@ export default function Logs() {
             return (
               <Pressable
                 style={styles.card}
-                onPress={() =>
+                onPress={() => {
+                  if (deleteModeLogId === log._id) {
+                    setDeleteModeLogId(null);
+                    return;
+                  }
+
                   router.push({
                     pathname: "/view-log",
                     params: { id: log._id },
-                  })
-                }
+                  });
+                }}
+                onLongPress={() => setDeleteModeLogId(log._id)}
               >
+                <ConfirmModal
+                  visible={confirmVisible}
+                  onClose={() => {
+                    setConfirmVisible(false);
+                    setSelectedLogId(null);
+                  }}
+                  onConfirm={() => {
+                    if (!selectedLogId) return;
+                    handleRemoveLog(selectedLogId);
+                    setConfirmVisible(false);
+                    setSelectedLogId(null);
+                  }}
+                />
+                {deleteModeLogId === log._id && (
+                  <Pressable
+                    style={styles.deleteBtn}
+                    onPress={() => {
+                      setSelectedLogId(log._id);
+                      setConfirmVisible(true);
+                    }}
+                  >
+                    <Ionicons name="close" size={16} color="#fff" />
+                  </Pressable>
+                )}
                 <View style={styles.cardBodyTop}>
                   <Text style={styles.cardTitle} numberOfLines={2}>
                     {title}
@@ -182,6 +233,19 @@ const styles = StyleSheet.create({
     paddingTop: 18,
     paddingHorizontal: 12,
   },
+  deleteBtn: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "rgba(0,0,0,0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+    elevation: 10,
+  },
   sortLabel: {
     color: "#fff",
     fontSize: 15,
@@ -229,6 +293,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
     paddingVertical: 8,
+    position: "relative",
   },
   cardBodyTop: {
     width: "100%",

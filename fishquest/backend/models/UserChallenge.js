@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 const userChallengeSchema = new mongoose.Schema(
   {
     userId: {
@@ -6,20 +5,34 @@ const userChallengeSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
     templateId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "ChallengeTemplate",
       required: true,
     },
+
     templateKey: {
       type: String,
       required: true,
     },
+
+    dateKey: {
+      type: String,
+      required: true,
+    },
+
     progress: {
       type: Number,
       default: 0,
     },
+
     isFinished: {
+      type: Boolean,
+      default: false,
+    },
+
+    rewardClaimed: {
       type: Boolean,
       default: false,
     },
@@ -28,8 +41,9 @@ const userChallengeSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+
     lastCompletedDate: {
-      type: String, // "YYYY-MM-DD"
+      type: String,
       default: null,
     },
 
@@ -37,10 +51,12 @@ const userChallengeSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+
     expiresAt: {
       type: Date,
       default: null,
     },
+
     completedAt: {
       type: Date,
       default: null,
@@ -48,4 +64,10 @@ const userChallengeSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+userChallengeSchema.index(
+  { userId: 1, templateKey: 1, dateKey: 1 },
+  { unique: true },
+);
+
 export default mongoose.model("UserChallenge", userChallengeSchema);

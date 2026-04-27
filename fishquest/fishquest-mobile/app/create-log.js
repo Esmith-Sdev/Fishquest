@@ -10,6 +10,7 @@ import {
   Alert,
   ActivityIndicator,
   FlatList,
+  Keyboard,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -64,7 +65,7 @@ export default function CreateLog() {
   const [rigsError, setRigsError] = useState("");
   const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
   const [weightUnit, setWeightUnit] = useState("LB");
-  const [lengthUnit, setLengthUnit] = useState("CM");
+  const [lengthUnit, setLengthUnit] = useState("IN");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [speciesDropdownOpen, setSpeciesDropdownOpen] = useState(false);
@@ -158,6 +159,9 @@ export default function CreateLog() {
         challengeTitle,
       },
     });
+  }
+  function dismissKeyboardBeforeDropdown() {
+    Keyboard.dismiss();
   }
   async function ensureUploadedImages() {
     if (uploadedImageUrls.length) return uploadedImageUrls;
@@ -336,8 +340,27 @@ export default function CreateLog() {
             }),
       };
 
-      await createCatchLog(payload, token);
-      router.replace("/logs");
+      const result = await createCatchLog(payload, token);
+
+      if (result.completedChallenges?.length > 0) {
+        const totalXp = result.completedChallenges.reduce(
+          (sum, challenge) => sum + (challenge.xpAwarded || 0),
+          0,
+        );
+
+        Alert.alert(
+          "Challenge Complete!",
+          `You completed ${result.completedChallenges.length} challenge(s) and earned ${totalXp} XP!`,
+          [
+            {
+              text: "OK",
+              onPress: () => router.replace("/logs"),
+            },
+          ],
+        );
+      } else {
+        router.replace("/logs");
+      }
     } catch (err) {
       console.error("Create log failed:", err);
       Alert.alert("Error", err.message || "Create log failed");
@@ -386,9 +409,10 @@ export default function CreateLog() {
           contentContainerStyle={styles.content}
           enableOnAndroid
           extraScrollHeight={200}
-          scrollEnabled={true}
-          keyboardShouldPersistTaps="handled"
+          scrollEnabled={!saving}
+          keyboardShouldPersistTaps="always"
           nestedScrollEnabled={true}
+          keyboardDismissMode="on-drag"
         >
           <View style={styles.topArea}>
             {selectedRig ? (
@@ -471,7 +495,6 @@ export default function CreateLog() {
               </View>
             )}
           </View>
-
           {files.length === 0 ? (
             <Pressable style={styles.uploadImageContainer} onPress={pickImages}>
               <Ionicons name="camera" size={25} color="#000" />
@@ -488,7 +511,6 @@ export default function CreateLog() {
                     source={getImageSource(file)}
                     style={styles.gridImage}
                   />
-
                   <Pressable
                     style={styles.removeImageBtn}
                     onPress={() => handleRemoveImage(i)}
@@ -497,7 +519,6 @@ export default function CreateLog() {
                   </Pressable>
                 </View>
               ))}
-
               {!isGridFull && (
                 <Pressable style={styles.largeSquare} onPress={pickImages}>
                   <Text style={styles.addImageText}>Add Image</Text>
@@ -525,7 +546,6 @@ export default function CreateLog() {
                 AI Suggestion: {aiResult.speciesName} (
                 {Math.round(aiResult.confidence * 100)}%)
               </Text>
-
               {aiResult.alternatives?.length > 0 ? (
                 <Text style={styles.challengeText}>
                   Also possible:{" "}
@@ -548,7 +568,6 @@ export default function CreateLog() {
                 ) : null}
               </View>
             </Pressable>
-
             <View style={styles.speciesRow}>
               <Text style={styles.logLabel}>Fish Species:</Text>
               <View style={styles.fieldFlex}>
@@ -562,7 +581,6 @@ export default function CreateLog() {
                 </View>
               </View>
             </View>
-
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Est. Weight:</Text>
               <View style={styles.inlineField}>
@@ -578,55 +596,34 @@ export default function CreateLog() {
                     setWeight(text.replace(/\D/g, "").slice(0, 2))
                   }
                 />
-
-                <SelectDropdown
-                  statusBarTranslucent={true}
-                  data={["LB", "OZ"]}
-                  defaultValue={weightUnit}
-                  disabled={skunked}
-                  dropdownOverlayColor="transparent"
-                  onSelect={(selectedItem) => setWeightUnit(selectedItem)}
-                  renderButton={(selectedItem, isOpened) => (
-                    <View
+                <View style={styles.unitToggle}>
+                  {["LB", "OZ"].map((unit) => (
+                    <Pressable
+                      key={unit}
+                      onPress={() => {
+                        Keyboard.dismiss();
+                        setWeightUnit(unit);
+                      }}
+                      disabled={skunked}
                       style={[
-                        styles.pillSelectSmall,
+                        styles.unitOption,
+                        weightUnit === unit && styles.unitOptionSelected,
                         skunked && styles.disabledButton,
                       ]}
                     >
-                      <View style={styles.logRow}>
-                        <Text style={styles.selectText}>
-                          {selectedItem || "LB"}
-                        </Text>
-                        {!isOpened ? (
-                          <FontAwesome6
-                            name="caret-down"
-                            size={20}
-                            color="black"
-                          />
-                        ) : (
-                          <FontAwesome6
-                            name="caret-up"
-                            size={20}
-                            color="black"
-                          />
-                        )}
-                      </View>
-                    </View>
-                  )}
-                  renderItem={(item, index, isSelected) => (
-                    <View
-                      style={[
-                        styles.dropdownItem,
-                        isSelected && styles.dropdownItemSelected,
-                      ]}
-                    >
-                      <Text style={styles.selectText}>{item}</Text>
-                    </View>
-                  )}
-                />
+                      <Text
+                        style={[
+                          styles.unitText,
+                          weightUnit === unit && styles.unitTextSelected,
+                        ]}
+                      >
+                        {unit}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
               </View>
             </View>
-
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Est. Length:</Text>
               <View style={styles.inlineField}>
@@ -642,54 +639,34 @@ export default function CreateLog() {
                     setLength(text.replace(/\D/g, "").slice(0, 2))
                   }
                 />
-                <SelectDropdown
-                  statusBarTranslucent={true}
-                  data={["IN", "CM"]}
-                  defaultValue={lengthUnit}
-                  disabled={skunked}
-                  dropdownOverlayColor="transparent"
-                  onSelect={(selectedItem) => setLengthUnit(selectedItem)}
-                  renderButton={(selectedItem, isOpened) => (
-                    <View
+                <View style={styles.unitToggle}>
+                  {["IN", "CM"].map((unit) => (
+                    <Pressable
+                      key={unit}
+                      onPress={() => {
+                        Keyboard.dismiss();
+                        setLengthUnit(unit);
+                      }}
+                      disabled={skunked}
                       style={[
-                        styles.pillSelectSmall,
+                        styles.unitOption,
+                        lengthUnit === unit && styles.unitOptionSelected,
                         skunked && styles.disabledButton,
                       ]}
                     >
-                      <View style={styles.logRow}>
-                        <Text style={styles.selectText}>
-                          {selectedItem || "IN"}
-                        </Text>
-                        {!isOpened ? (
-                          <FontAwesome6
-                            name="caret-down"
-                            size={20}
-                            color="black"
-                          />
-                        ) : (
-                          <FontAwesome6
-                            name="caret-up"
-                            size={20}
-                            color="black"
-                          />
-                        )}
-                      </View>
-                    </View>
-                  )}
-                  renderItem={(item, index, isSelected) => (
-                    <View
-                      style={[
-                        styles.dropdownItem,
-                        isSelected && styles.dropdownItemSelected,
-                      ]}
-                    >
-                      <Text style={styles.selectText}>{item}</Text>
-                    </View>
-                  )}
-                />
+                      <Text
+                        style={[
+                          styles.unitText,
+                          lengthUnit === unit && styles.unitTextSelected,
+                        ]}
+                      >
+                        {unit}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
               </View>
             </View>
-
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Date:</Text>
               <View style={styles.fieldFlex}>
@@ -703,7 +680,6 @@ export default function CreateLog() {
                 </Pressable>
               </View>
             </View>
-
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Time:</Text>
               <View style={styles.inlineField}>
@@ -727,7 +703,6 @@ export default function CreateLog() {
                 >
                   {weatherOptions.map((item) => {
                     const isSelected = selectedWeather === item.id;
-
                     return (
                       <Pressable
                         key={item.id}
@@ -758,7 +733,6 @@ export default function CreateLog() {
             </View>
             <View style={styles.logColumn}>
               <Text style={styles.logLabel}>Location:</Text>
-
               <TextInput
                 style={styles.pillInputFull}
                 placeholder="Street Address"
@@ -769,7 +743,6 @@ export default function CreateLog() {
                   setForm((p) => ({ ...p, address: text }))
                 }
               />
-
               <View style={styles.locationRow}>
                 <View style={styles.stateDropdownWrap}>
                   <StateDropdown
@@ -779,7 +752,6 @@ export default function CreateLog() {
                     }
                   />
                 </View>
-
                 <TextInput
                   style={styles.pillInputCity}
                   placeholder="City"
@@ -791,7 +763,6 @@ export default function CreateLog() {
                   }
                 />
               </View>
-
               <Pressable
                 style={styles.orangeButton}
                 disabled={loadingLocation}
@@ -803,19 +774,16 @@ export default function CreateLog() {
                     : "Use Current Location"}
                 </Text>
               </Pressable>
-
               {geoError ? (
                 <Text style={styles.geoError}>{geoError}</Text>
               ) : null}
             </View>
-
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Challenge:</Text>
               <Text style={styles.challengeText}>
                 {challengeTitle || "No Challenge"}
               </Text>
             </View>
-
             <TextInput
               multiline
               numberOfLines={4}
@@ -826,7 +794,6 @@ export default function CreateLog() {
               onChangeText={setNotes}
             />
           </View>
-
           {rigsError ? <Text style={styles.rigsError}>{rigsError}</Text> : null}
         </KeyboardAwareScrollView>
         {showDatePicker && (
@@ -836,22 +803,18 @@ export default function CreateLog() {
             display="default"
             onChange={(event, pickedDate) => {
               setShowDatePicker(false);
-
               if (!event || event.type !== "set" || !pickedDate) return;
-
               const nextDate = new Date(selectedDate);
               nextDate.setFullYear(
                 pickedDate.getFullYear(),
                 pickedDate.getMonth(),
                 pickedDate.getDate(),
               );
-
               setSelectedDate(nextDate);
               setShowTimePicker(true);
             }}
           />
         )}
-
         {showTimePicker && (
           <DateTimePicker
             value={selectedDate}
@@ -860,18 +823,13 @@ export default function CreateLog() {
             display="default"
             onChange={(event, pickedDate) => {
               setShowTimePicker(false);
-
               if (!event || event.type !== "set" || !pickedDate) return;
-
               const nextDate = new Date(selectedDate);
               nextDate.setHours(pickedDate.getHours(), pickedDate.getMinutes());
-
               setSelectedDate(nextDate);
-
               const h24 = nextDate.getHours();
               const mins = nextDate.getMinutes();
               const h12 = h24 % 12 || 12;
-
               setTimeValue(
                 `${String(h12).padStart(2, "0")}:${String(mins).padStart(2, "0")}`,
               );
@@ -894,6 +852,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#0D1B1E",
+    paddingBottom: 50,
   },
   savingOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -944,6 +903,34 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "Jua",
     fontSize: 18,
+  },
+  unitToggle: {
+    flexDirection: "row",
+    backgroundColor: "#dedede",
+    borderRadius: RADIUS.pill,
+    overflow: "hidden",
+  },
+
+  unitOption: {
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    minWidth: 42,
+    alignItems: "center",
+  },
+
+  unitOptionSelected: {
+    backgroundColor: COLORS.secondary,
+  },
+
+  unitText: {
+    color: "#000",
+    fontFamily: "Jua",
+    fontSize: 14,
+  },
+  unitTextSelected: {
+    color: "#fff",
+    fontFamily: "Jua",
+    fontSize: 14,
   },
   orangeButton: {
     backgroundColor: COLORS.secondary,
@@ -1214,6 +1201,7 @@ const styles = StyleSheet.create({
   },
   fieldFlex: {
     minWidth: 0,
+    flex: 1,
   },
   inlineField: {
     flexDirection: "row",

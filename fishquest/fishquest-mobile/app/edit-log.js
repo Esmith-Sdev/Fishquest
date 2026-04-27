@@ -74,6 +74,7 @@ export default function UpdateLog() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedWeather, setSelectedWeather] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [challenge, setChallenge] = useState(null);
   const [timeValue, setTimeValue] = useState(() => {
     const d = new Date();
     const h24 = d.getHours();
@@ -276,6 +277,7 @@ export default function UpdateLog() {
         }
 
         const log = await fetchLogById(id, token);
+        setChallenge(log.challenge || null);
         if (log.date) {
           const d = new Date(log.date);
           setSelectedDate(d);
@@ -393,6 +395,7 @@ export default function UpdateLog() {
         address: form.address,
         city: form.city,
         state: form.state,
+        challenge,
         ...(skunked
           ? {}
           : {
@@ -878,7 +881,7 @@ export default function UpdateLog() {
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Challenge:</Text>
               <Text style={styles.challengeText}>
-                {params.challenge || "Catch a fish in 10min"}
+                {challenge?.title || challenge?.templateKey || "No Challenge"}
               </Text>
             </View>
 

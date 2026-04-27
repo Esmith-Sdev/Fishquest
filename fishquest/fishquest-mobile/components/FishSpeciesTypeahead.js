@@ -1,12 +1,14 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import {
+  Modal,
   View,
   Text,
   TextInput,
   Pressable,
   StyleSheet,
-  ScrollView,
+  FlatList,
 } from "react-native";
+
 import { AllSpecies } from "../data/species.config";
 
 export default function FishSpeciesTypeahead({
@@ -17,16 +19,13 @@ export default function FishSpeciesTypeahead({
   onOpenChange,
 }) {
   const [query, setQuery] = useState(value?.name || "");
-  const [showResults, setShowResults] = useState(false);
-
+  const [open, setOpen] = useState(false);
+  const inputRef = useRef(null);
   const normalizedSpecies = useMemo(() => {
     return (AllSpecies || [])
       .map((fish) => ({
         ...fish,
         label: fish.name,
-        commonName: fish.name,
-        scientificName: fish.scientificName ?? "",
-        source: fish.source ?? "config",
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
   }, []);
@@ -35,81 +34,96 @@ export default function FishSpeciesTypeahead({
     const q = query.trim().toLowerCase();
     if (q.length < 2) return [];
 
-    return normalizedSpecies.filter((option) => {
+    return normalizedSpecies.filter((fish) => {
       const fields = [
-        option.name,
-        option.group,
-        option.category,
-        ...(option.aliases || []),
-        ...(option.searchTerms || []),
-        ...(option.tags || []),
+        fish.name,
+        fish.group,
+        fish.category,
+        ...(fish.aliases || []),
+        ...(fish.searchTerms || []),
+        ...(fish.tags || []),
       ];
 
-      return fields.some((field) => {
-        const text = String(field || "").toLowerCase();
-        return text.split(/[\s\-\/]+/).some((word) => word.startsWith(q));
-      });
+      return fields.some((field) =>
+        String(field || "")
+          .toLowerCase()
+          .includes(q),
+      );
     });
   }, [query, normalizedSpecies]);
 
-  function handleInputChange(text) {
-    setQuery(text);
-
-    if (!text.trim()) {
-      onPick(null);
-      setDropdownOpen(false);
-    } else {
-      setDropdownOpen(true);
+  useEffect(() => {
+    if (value) {
+      setQuery(value.name || value.label || "");
     }
+  }, [value]);
+
+  function openModal() {
+    if (disabled) return;
+    setOpen(true);
+    onOpenChange?.(true);
+  }
+
+  function closeModal() {
+    setOpen(false);
+    onOpenChange?.(false);
   }
 
   function handleSelect(item) {
     setQuery(item.name || item.label);
     onPick(item);
-    setDropdownOpen(false);
+    closeModal();
   }
-  function setDropdownOpen(value) {
-    setShowResults(value);
-    onOpenChange?.(value);
-  }
-  useEffect(() => {
-    if (value) {
-      setQuery(value.name || value.label);
-    }
-  }, [value]);
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        value={query}
-        onChangeText={handleInputChange}
-        placeholder={placeholder}
-        editable={!disabled}
-        style={[styles.input, disabled && styles.disabledInput]}
-        onFocus={() => {
-          if (query.trim().length >= 2) setDropdownOpen(true);
-        }}
-      />
+    <>
+      <Pressable
+        disabled={disabled}
+        style={[styles.fakeInput, disabled && styles.disabledInput]}
+        onPress={openModal}
+      >
+        <Text style={styles.fakeInputText}>
+          {value?.name || value?.label || query || placeholder}
+        </Text>
+      </Pressable>
 
-      {showResults && query.trim().length >= 2 && (
-        <View style={styles.dropdown}>
-          <ScrollView
-            style={styles.dropdownList}
-            contentContainerStyle={styles.dropdownContent}
-            keyboardShouldPersistTaps="handled"
-            nestedScrollEnabled={true}
-            showsVerticalScrollIndicator={true}
-          >
-            {filteredSpecies.length > 0 ? (
-              filteredSpecies.map((item) => (
+      <Modal
+        visible={open}
+        transparent
+        animationType="fade"
+        onRequestClose={closeModal}
+        onShow={() => {
+          setTimeout(() => {
+            inputRef.current?.focus();
+          }, 250);
+        }}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.box}>
+            <TextInput
+              ref={inputRef}
+              value={query}
+              onChangeText={(text) => {
+                setQuery(text);
+                if (!text.trim()) onPick(null);
+              }}
+              placeholder={placeholder}
+              showSoftInputOnFocus={true}
+              autoFocus={false}
+              style={styles.searchInput}
+            />
+
+            <FlatList
+              data={filteredSpecies}
+              keyExtractor={(item) => String(item.id)}
+              keyboardShouldPersistTaps="always"
+              style={styles.resultsList}
+              renderItem={({ item }) => (
                 <Pressable
-                  key={String(item.id)}
                   style={styles.item}
                   onPress={() => handleSelect(item)}
                 >
-                  <Text style={styles.itemTitle}>
-                    {item.name || item.label}
-                  </Text>
+                  <Text style={styles.itemTitle}>{item.name}</Text>
 
                   {(item.group || item.category) && (
                     <Text style={styles.itemSubtitle}>
@@ -117,50 +131,72 @@ export default function FishSpeciesTypeahead({
                     </Text>
                   )}
                 </Pressable>
-              ))
-            ) : (
-              <Text style={styles.emptyText}>No fish found.</Text>
-            )}
-          </ScrollView>
+              )}
+              ListEmptyComponent={
+                query.trim().length >= 2 ? (
+                  <Text style={styles.emptyText}>No fish found.</Text>
+                ) : (
+                  <Text style={styles.emptyText}>Type at least 2 letters.</Text>
+                )
+              }
+            />
+
+            <Pressable style={styles.cancelButton} onPress={closeModal}>
+              <Text style={styles.cancelText}>Cancel</Text>
+            </Pressable>
+          </View>
         </View>
-      )}
-    </View>
+      </Modal>
+    </>
   );
 }
+
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    zIndex: 9999,
-    elevation: 40,
-  },
-
-  dropdown: {
-    width: 220,
-    height: 220,
-    marginTop: 6,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    backgroundColor: "#dedede",
-    overflow: "hidden",
-    zIndex: 10000,
-    elevation: 50,
-  },
-
-  dropdownList: {
-    height: 220,
-  },
-
-  dropdownContent: {
-    paddingBottom: 8,
-  },
-  input: {
+  fakeInput: {
     backgroundColor: "#dedede",
     borderRadius: 50,
     paddingVertical: 8,
     paddingHorizontal: 14,
+    width: "100%",
+  },
+
+  fakeInputText: {
     color: "#000",
     fontFamily: "Jua",
+  },
+
+  disabledInput: {
+    opacity: 0.6,
+  },
+
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+
+  box: {
+    width: "100%",
+    maxWidth: 340,
+    height: 360,
+    backgroundColor: "#dedede",
+    borderRadius: 18,
+    overflow: "hidden",
+  },
+
+  searchInput: {
+    backgroundColor: "#fff",
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    color: "#000",
+    fontFamily: "Jua",
+    fontSize: 16,
+  },
+
+  resultsList: {
+    flex: 1,
   },
 
   item: {
@@ -172,21 +208,32 @@ const styles = StyleSheet.create({
 
   itemTitle: {
     fontSize: 16,
-    fontWeight: "600",
     fontFamily: "Jua",
+    color: "#000",
   },
 
   itemSubtitle: {
     marginTop: 2,
-    fontSize: 13,
-    color: "#666",
+    fontSize: 12,
+    color: "#555",
     fontFamily: "Jua",
   },
 
   emptyText: {
-    padding: 12,
-    fontSize: 14,
+    padding: 14,
     color: "#666",
     fontFamily: "Jua",
+  },
+
+  cancelButton: {
+    padding: 12,
+    alignItems: "center",
+    backgroundColor: "#ccc",
+  },
+
+  cancelText: {
+    color: "#000",
+    fontFamily: "Jua",
+    fontSize: 16,
   },
 });

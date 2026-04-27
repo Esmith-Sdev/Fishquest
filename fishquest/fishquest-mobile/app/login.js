@@ -2,7 +2,14 @@ import { router } from "expo-router";
 import AuthForm from "../components/AuthForm";
 import { useAuth } from "../context/AuthContext";
 import GradientBackground from "../components/GradientBackground";
-import { Alert, ActivityIndicator, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  ActivityIndicator,
+  StyleSheet,
+  View,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
@@ -51,21 +58,27 @@ export default function LoginScreen() {
       )}
       {!loading && (
         <SafeAreaView style={{ flex: 1 }}>
-          <KeyboardAwareScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={styles.content}
-            enableOnAndroid
-            extraScrollHeight={10}
+          <TouchableWithoutFeedback
+            onPress={Keyboard.dismiss}
+            accessible={false}
           >
-            <AuthForm
-              buttonText="Log In"
-              onSubmit={handleLogin}
-              footerText="Don't have an account?"
-              footerLinkText="Sign up"
-              footerHref="/signup"
-              errorText={error}
-            />
-          </KeyboardAwareScrollView>
+            <KeyboardAwareScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={styles.content}
+              enableOnAndroid
+              extraScrollHeight={10}
+              keyboardShouldPersistTaps="handled"
+            >
+              <AuthForm
+                buttonText="Log In"
+                onSubmit={handleLogin}
+                footerText="Don't have an account?"
+                footerLinkText="Sign up"
+                footerHref="/signup"
+                errorText={error}
+              />
+            </KeyboardAwareScrollView>
+          </TouchableWithoutFeedback>
         </SafeAreaView>
       )}
     </GradientBackground>

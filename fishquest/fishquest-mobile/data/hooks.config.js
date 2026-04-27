@@ -20,6 +20,16 @@ export const HOOKS = [
     image: require("../assets/images/Hooks/wacky-hook.png"),
   },
   {
+    id: "ewg_hook",
+    name: "EWG Hook",
+    image: require("../assets/images/Hooks/ewg-hook.png"),
+  },
+  {
+    id: "circle_hook",
+    name: "EWG Hook",
+    image: require("../assets/images/Hooks/circle-hook.png"),
+  },
+  {
     id: "no_hook",
     name: "None",
     image: require("../assets/images/icons/none-icon.png"),

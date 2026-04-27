@@ -37,7 +37,7 @@ import { COLORS, RADIUS } from "../constants/theme";
 import ImagePreviewModal from "../components/ImagePreviewModal";
 import StateDropdown from "../components/StateDropdown";
 
-export default function UpdateLog() {
+export default function ViewLog() {
   const params = useLocalSearchParams();
   const { id } = useLocalSearchParams();
   console.log("EDIT PAGE ID:", id);
@@ -72,7 +72,7 @@ export default function UpdateLog() {
   const speciesDisabled = skunked || saving;
   const [show, setShow] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-
+  const [challenge, setChallenge] = useState(null);
   const weatherOptions = [
     { id: "sunny", label: "Sunny", icon: "weather-sunny" },
     { id: "cloudy", label: "Cloudy", icon: "weather-cloudy" },
@@ -127,7 +127,9 @@ export default function UpdateLog() {
       pathname: "/create-rig",
       params: {
         returnTo: "/create-log",
-        challenge: params.challenge ?? "",
+        challengeId,
+        templateKey,
+        challengeTitle,
       },
     });
   }
@@ -142,6 +144,7 @@ export default function UpdateLog() {
         }
 
         const log = await fetchLogById(id, token);
+        setChallenge(log.challenge || null);
         if (log.date) {
           const d = new Date(log.date);
           setSelectedDate(d);
@@ -485,7 +488,7 @@ export default function UpdateLog() {
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Challenge:</Text>
               <Text style={styles.challengeText}>
-                {params.challenge || "No Challenge"}
+                {challenge?.title || challenge?.templateKey || "No Challenge"}
               </Text>
             </View>
 

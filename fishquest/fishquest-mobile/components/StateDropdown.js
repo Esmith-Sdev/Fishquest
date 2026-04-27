@@ -120,9 +120,10 @@ const styles = StyleSheet.create({
   },
   pillSelectSmall: {
     width: 80,
+    height: 33,
     backgroundColor: "#dedede",
     borderRadius: 50,
-    paddingVertical: 8,
+    justifyContent: "center",
     paddingHorizontal: 12,
     alignItems: "center",
   },

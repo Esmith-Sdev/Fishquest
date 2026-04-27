@@ -5,71 +5,45 @@ import ChallengeCard from "./ChallengeCard";
 import TimedChallengeCard from "./TimedChallengeCard";
 import DisabledChallengeCard from "../components/DisabledChallengeCard";
 import { COLORS, RADIUS } from "../constants/theme";
-import { filterByDaily, limitChallenges } from "../utils/getFilteredCategories";
 import { useAuth } from "../context/AuthContext";
+import { getToken } from "../api/auth";
 const API_URL = "https://fishquest.onrender.com";
-
 export default function DailyChallenges() {
   const [challenges, setChallenges] = useState([]);
 
-  const { user } = useAuth();
-  const userId = user?.id;
-
-  const dailyChallenges = limitChallenges(filterByDaily(challenges), 3);
+  const dailyChallenges = challenges;
 
   useEffect(() => {
-    if (!userId) return;
+    fetchChallenges();
+  }, []);
 
-    fetch(`${API_URL}/api/challenges/${userId}`)
-      .then((res) => res.json())
-      .then((data) => setChallenges(data))
-      .catch((err) => console.log("fetch error:", err));
-  }, [userId]);
   async function fetchChallenges() {
-    const res = await fetch(`${API_URL}/api/challenges/${userId}`);
-    const data = await res.json();
-    setChallenges(data);
+    try {
+      const token = await getToken();
+
+      if (!token) {
+        router.replace("/login");
+        return;
+      }
+
+      const res = await fetch(`${API_URL}/api/challenges`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to fetch challenges");
+      }
+
+      setChallenges(data);
+    } catch (err) {
+      console.log("fetch error:", err);
+    }
   }
-  return (
-    <View style={styles.wrapper}>
-      <View style={styles.card}>
-        <Text style={styles.title}>DAILY CHALLENGES</Text>
-
-        {dailyChallenges.map((challenge) => {
-          const isDisabled = challenge.isOnCooldown;
-
-          if (isDisabled) {
-            return (
-              <DisabledChallengeCard key={challenge.id} challenge={challenge} />
-            );
-          }
-
-          if (challenge.type === "timed") {
-            return (
-              <TimedChallengeCard
-                key={challenge.id}
-                challenge={challenge}
-                onRefresh={fetchChallenges}
-              />
-            );
-          }
-
-          return <ChallengeCard key={challenge.id} challenge={challenge} />;
-        })}
-
-        <View style={styles.shadowWrapper}>
-          <Pressable
-            style={styles.button}
-            onPress={() => router.push("/challenges")}
-          >
-            <Text style={styles.buttonText}>All Challenges</Text>
-          </Pressable>
-        </View>
-      </View>
-    </View>
-  );
 }
-
 const styles = StyleSheet.create({
   wrapper: {
     padding: 16,
