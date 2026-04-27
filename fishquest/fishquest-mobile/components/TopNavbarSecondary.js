@@ -8,7 +8,8 @@ export default function TopNavbarSecondary({
   title,
   buttonText,
   showButton = true,
-
+  disabled = false,
+  loading = false,
   // right button
   onButtonPress,
   buttonRoute,
@@ -44,7 +45,13 @@ export default function TopNavbarSecondary({
       <Text style={styles.headerTitle}>{title}</Text>
 
       {showButton ? (
-        <Pressable style={[styles.orangeButton]} onPress={handleRightButton}>
+        <Pressable
+          style={[
+            styles.orangeButton,
+            (disabled || loading) && styles.disabledButton,
+          ]}
+          onPress={handleRightButton}
+        >
           <Text style={styles.buttonText}>{buttonText}</Text>
         </Pressable>
       ) : (
@@ -92,6 +99,18 @@ const styles = StyleSheet.create({
   },
   orangeButton: {
     backgroundColor: COLORS.secondary,
+    borderRadius: RADIUS.pill,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    shadowColor: COLORS.secondaryDropShadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 1,
+    elevation: 4,
+    zIndex: 10,
+  },
+  disabledButton: {
+    backgroundColor: COLORS.secondaryDropShadow,
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
     paddingHorizontal: 12,

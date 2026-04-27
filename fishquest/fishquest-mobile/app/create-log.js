@@ -38,9 +38,11 @@ import StateDropdown from "../components/StateDropdown";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import SelectDropdown from "react-native-select-dropdown";
+
 export default function CreateLog() {
   const params = useLocalSearchParams();
   const [stateValue, setStateValue] = useState("");
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     address: "",
     city: "",
@@ -272,6 +274,7 @@ export default function CreateLog() {
   }
 
   async function handleSubmitLog() {
+    if (saving) return;
     if (!rigPresetId) {
       Alert.alert("Missing rig", "Please select a rig preset first.");
       return;
@@ -351,6 +354,8 @@ export default function CreateLog() {
           buttonText="Save"
           showButton={true}
           onPress={handleSubmitLog}
+          disabled={saving}
+          loading={saving}
         />
 
         <View style={styles.centerState}>
@@ -372,6 +377,8 @@ export default function CreateLog() {
           showButton={true}
           onButtonPress={handleSubmitLog}
           backRoute="/home"
+          disabled={saving}
+          loading={saving}
         />
         <BottomNavbar />
         <KeyboardAwareScrollView
@@ -872,6 +879,12 @@ export default function CreateLog() {
             }}
           />
         )}
+        {saving && (
+          <View style={styles.savingOverlay}>
+            <ActivityIndicator size="large" color={COLORS.secondary} />
+            <Text style={styles.savingText}>Saving...</Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -881,6 +894,21 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#0D1B1E",
+  },
+  savingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.55)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 99999,
+    elevation: 99999,
+  },
+
+  savingText: {
+    marginTop: 12,
+    color: "#fff",
+    fontFamily: "Jua",
+    fontSize: 18,
   },
   header: {
     paddingTop: 10,
@@ -1339,5 +1367,10 @@ const styles = StyleSheet.create({
   },
   weatherTextSelected: {
     color: "#fff",
+  },
+  center: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
   },
 });
