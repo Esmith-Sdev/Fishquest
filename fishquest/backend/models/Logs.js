@@ -43,6 +43,7 @@ const logsSchema = new mongoose.Schema(
     baitId: { type: String, default: "" },
     hookId: { type: String, default: "" },
     weightId: { type: String, default: "" },
+    poleId: { type: String, default: "" },
     bobber: { type: Boolean, default: false },
     address: { type: String, default: "" },
     city: { type: String, default: "" },

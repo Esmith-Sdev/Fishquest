@@ -18,13 +18,6 @@ const userFishingStatsSchema = new mongoose.Schema(
       night: { type: Number, default: 0 },
     },
 
-    methods: {
-      baitcaster: { type: Number, default: 0 },
-      spinning: { type: Number, default: 0 },
-      button: { type: Number, default: 0 },
-      fly: { type: Number, default: 0 },
-    },
-
     weather: {
       sunny: { type: Number, default: 0 },
       stormy: { type: Number, default: 0 },

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
-import { router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import TimedChallengeCard from "../components/TimedChallengeCard";
 import ChallengeCard from "../components/ChallengeCard";
 import BottomNavbar from "../components/BottomNavbar";
