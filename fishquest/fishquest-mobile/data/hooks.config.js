@@ -19,4 +19,9 @@ export const HOOKS = [
     name: "Wacky Hook",
     image: require("../assets/images/Hooks/wacky-hook.png"),
   },
+  {
+    id: "no_hook",
+    name: "None",
+    image: require("../assets/images/icons/none-icon.png"),
+  },
 ];

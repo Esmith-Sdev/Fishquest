@@ -315,7 +315,8 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingVertical: 4,
     paddingHorizontal: 12,
-    textAlign: "center",
+    textAlign: "left",
+
     fontFamily: "Jua",
     fontSize: 16,
     color: "#000",

@@ -80,12 +80,60 @@ async function recalculateRigStats(userId, rigId) {
 }
 router.post("/", async (req, res) => {
   try {
-    const newLog = await Logs.create(req.body);
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
 
-    await recalculateUserFishingStats(req.body.userId);
+    if (!token) {
+      return res.status(401).json({ message: "Missing token" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (req.body.date) {
+      req.body.timeOfDay = getTimeOfDay(req.body.date);
+    }
+
+    let rigData = {};
+
+    if (req.body.rigPresetId) {
+      const rig = await RigPreset.findOne({
+        _id: req.body.rigPresetId,
+        userId: decoded.sub,
+      });
+
+      if (rig) {
+        rigData = {
+          poleId: rig.poleId,
+          baitId: rig.baitId,
+          hookId: rig.hookId,
+          weightId: rig.weightId,
+          bobber: rig.bobber,
+          rigSnapshot: {
+            poleId: rig.poleId,
+            baitId: rig.baitId,
+            hookId: rig.hookId,
+            weightId: rig.weightId,
+            bobber: rig.bobber,
+          },
+        };
+      }
+    }
+
+    const newLog = await Logs.create({
+      ...req.body,
+      ...rigData,
+      userId: decoded.sub,
+    });
+
+    await recalculateUserFishingStats(decoded.sub);
+
+    if (newLog.rigPresetId) {
+      await recalculateRigStats(decoded.sub, newLog.rigPresetId.toString());
+    }
 
     res.status(201).json(newLog);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 });
