@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Alert,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,11 +22,23 @@ const API_URL = "https://fishquest.onrender.com";
 export default function SignUp() {
   const { login } = useAuth();
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
   });
+
+  if (loading) {
+    return (
+      <GradientBackground>
+        <View style={styles.centerState}>
+          <ActivityIndicator size="large" color={COLORS.secondary} />
+          <Text style={styles.loadingText}>Signing up...</Text>
+        </View>
+      </GradientBackground>
+    );
+  }
 
   function handleChange(name, value) {
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -38,6 +51,7 @@ export default function SignUp() {
 
   async function handleSubmit() {
     try {
+      setLoading(true);
       const res = await fetch(`${API_URL}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -64,6 +78,8 @@ export default function SignUp() {
       }
     } catch (err) {
       Alert.alert("Error", err.message);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -135,6 +151,7 @@ export default function SignUp() {
                 value={form.password}
                 onChangeText={(text) => handleChange("password", text)}
                 placeholder="Password"
+                autoCapitalize="none"
                 placeholderTextColor="#666"
                 secureTextEntry
               />
@@ -156,6 +173,16 @@ const styles = StyleSheet.create({
     flex: 1,
 
     justifyContent: "center",
+  },
+  centerState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "#fff",
+    marginTop: 12,
+    fontSize: 16,
   },
   content: {
     flexGrow: 1,

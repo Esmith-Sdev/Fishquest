@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
 import TimedChallengeModal from "./TimedChallengeModal";
 
@@ -25,6 +25,13 @@ export default function TimedChallengeCard({ challenge, onRefresh }) {
   };
   return (
     <View style={[styles.card, difficultyStyles[difficulty]]}>
+      {difficulty === "very hard" && (
+        <Image
+          source={require("../assets/images/icons/Crown.png")}
+          style={styles.crown}
+          resizeMode="contain"
+        />
+      )}
       <Text style={styles.xp}>+{challenge.rewardXp}XP</Text>
 
       <Text style={styles.title}>{challenge.title}</Text>
@@ -57,6 +64,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     position: "relative",
+    overflow: "visible",
   },
   difficulty: {
     position: "absolute",
@@ -121,5 +129,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Jua",
     textAlign: "center",
+  },
+  crown: {
+    position: "absolute",
+    top: -28,
+    alignSelf: "center",
+    width: 50,
+    height: 50,
+    zIndex: 10,
   },
 });

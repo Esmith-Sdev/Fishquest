@@ -1,31 +1,37 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { router } from "expo-router";
 import { COLORS, RADIUS } from "../constants/theme";
-
+import { LinearGradient } from "expo-linear-gradient";
 export default function ChallengeCard({ challenge }) {
   const progress = challenge?.progress ?? 0;
   const goal = challenge?.goal ?? 1;
   const percent = goal ? Math.min((progress / goal) * 100, 100) : 0;
   const difficulty = challenge?.difficulty || "easy";
-  const difficultyStyles = {
-    "very easy": {
-      backgroundColor: "#C9EFC7",
-    },
-    easy: {
-      backgroundColor: "#B7E4FF",
-    },
-    medium: {
-      backgroundColor: "#FFE7A3",
-    },
-    hard: {
-      backgroundColor: "#FFB38A",
-    },
-    "very hard": {
-      backgroundColor: "#FF8A8A",
-    },
-  };
+  function getGradientColors(difficulty) {
+    switch (difficulty) {
+      case "very easy":
+        return ["#ccc", "#aaa"];
+      case "easy":
+        return ["#ccc", "#aaa"];
+      case "medium":
+        return ["#ccc", "#aaa"];
+      case "hard":
+        return ["#ccc", "#aaa"];
+      case "very hard":
+        return ["#4deaff", "#8A2BE2"];
+      default:
+        return ["#ccc", "#aaa"];
+    }
+  }
   return (
-    <View style={[styles.card, difficultyStyles[difficulty]]}>
+    <LinearGradient colors={getGradientColors(difficulty)} style={styles.card}>
+      {difficulty === "very hard" && (
+        <Image
+          source={require("../assets/images/icons/Crown.png")}
+          style={styles.crown}
+          resizeMode="contain"
+        />
+      )}
       <Text style={styles.xp}>+{challenge?.rewardXp}XP</Text>
 
       <Text style={styles.title}>{challenge?.title ?? "Challenge"}</Text>
@@ -34,22 +40,49 @@ export default function ChallengeCard({ challenge }) {
         <View style={[styles.progressFill, { width: `${percent}%` }]} />
       </View>
 
-      <Pressable
-        style={styles.button}
-        onPress={() =>
-          router.push({
-            pathname: "/create-log",
-            params: {
-              challengeId: challenge.userChallengeId,
-              templateKey: challenge.templateKey,
-              challengeTitle: challenge.title,
-            },
-          })
-        }
-      >
-        <Text style={styles.buttonText}>LOG</Text>
-      </Pressable>
-    </View>
+      {difficulty === "very hard" ? (
+        <View style={styles.glowWrap}>
+          <LinearGradient
+            colors={["#4dcdff", "#8a2be2"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.gradientButton}
+          >
+            <Pressable
+              style={styles.buttonInner}
+              onPress={() =>
+                router.push({
+                  pathname: "/create-log",
+                  params: {
+                    challengeId: challenge.userChallengeId,
+                    templateKey: challenge.templateKey,
+                    challengeTitle: challenge.title,
+                  },
+                })
+              }
+            >
+              <Text style={styles.gradientButtonText}>LOG</Text>
+            </Pressable>
+          </LinearGradient>
+        </View>
+      ) : (
+        <Pressable
+          style={styles.button}
+          onPress={() =>
+            router.push({
+              pathname: "/create-log",
+              params: {
+                challengeId: challenge.userChallengeId,
+                templateKey: challenge.templateKey,
+                challengeTitle: challenge.title,
+              },
+            })
+          }
+        >
+          <Text style={styles.buttonText}>LOG</Text>
+        </Pressable>
+      )}
+    </LinearGradient>
   );
 }
 
@@ -87,6 +120,12 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 13,
   },
+  gradientButtonText: {
+    color: "#fff",
+    fontSize: 13,
+    fontFamily: "Jua",
+    textAlign: "center",
+  },
   title: {
     color: "#000",
     marginVertical: 2,
@@ -107,12 +146,31 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
 
+  glowWrap: {
+    shadowColor: "#ffffff",
+    shadowOpacity: 0.9,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 14,
+  },
+  gradientButton: {
+    borderRadius: RADIUS.pill,
+    marginTop: 4,
+    overflow: "hidden",
+  },
+  buttonInner: {
+    paddingVertical: 4,
+    paddingHorizontal: 18,
+    minWidth: 80,
+    alignItems: "center",
+  },
   button: {
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 4,
     paddingHorizontal: 18,
     minWidth: 80,
+
     marginTop: 4,
     shadowColor: COLORS.secondaryDropShadow,
     shadowOffset: {
@@ -128,5 +186,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Jua",
     textAlign: "center",
+  },
+  crown: {
+    position: "absolute",
+    top: -28,
+    alignSelf: "center",
+    width: 50,
+    height: 50,
+    zIndex: 10,
   },
 });
