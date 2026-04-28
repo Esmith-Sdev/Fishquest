@@ -87,7 +87,14 @@ router.get("/", async (req, res) => {
         expiresAt: challenge.expiresAt,
       };
     });
-
+    console.log(
+      "CHALLENGE API RESPONSE:",
+      response.map((c) => ({
+        id: c.id,
+        title: c.title,
+        difficulty: c.difficulty,
+      })),
+    );
     res.json(response);
   } catch (err) {
     console.error("Fetch daily challenges failed:", err);
