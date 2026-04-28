@@ -5,7 +5,7 @@ import { COLORS, RADIUS } from "../constants/theme";
 export default function ChallengeCard({ challenge }) {
   const progress = challenge?.progress ?? 0;
   const goal = challenge?.goal ?? 1;
-  const percent = goal ? (progress / goal) * 100 : 0;
+  const percent = goal ? Math.min((progress / goal) * 100, 100) : 0;
 
   return (
     <View style={styles.card}>

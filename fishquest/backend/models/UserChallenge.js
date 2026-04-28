@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 const userChallengeSchema = new mongoose.Schema(
   {
     userId: {
