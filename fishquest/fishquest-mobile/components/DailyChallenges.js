@@ -79,3 +79,48 @@ export default function DailyChallenges() {
     </View>
   );
 }
+const styles = StyleSheet.create({
+  wrapper: {
+    padding: 16,
+    width: "100%",
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: RADIUS.md,
+    padding: 12,
+    gap: 12,
+    alignItems: "center",
+  },
+  title: {
+    color: "#000",
+    fontSize: 16,
+    fontWeight: "700",
+    textDecorationLine: "underline",
+  },
+  shadowWrapper: {
+    marginTop: 2,
+    alignSelf: "center",
+  },
+  button: {
+    backgroundColor: COLORS.secondary,
+    borderRadius: RADIUS.pill,
+    paddingVertical: 4,
+    paddingHorizontal: 18,
+    minWidth: 80,
+    marginTop: 2,
+    shadowColor: COLORS.secondaryDropShadow,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 1,
+    elevation: 4,
+  },
+  buttonText: {
+    color: "#000",
+    fontSize: 16,
+    fontFamily: "Jua",
+    textAlign: "center",
+  },
+});

@@ -5,11 +5,15 @@ import challengeTemplates from "./config/challengeTemplates.config.js";
 
 async function seedTemplates() {
   try {
-    await ChallengeTemplate.deleteMany({});
+    for (const template of challengeTemplates) {
+      await ChallengeTemplate.updateOne(
+        { id: template.id },
+        { $set: template },
+        { upsert: true },
+      );
+    }
 
-    await ChallengeTemplate.insertMany(challengeTemplates);
-
-    console.log(`Seeded ${challengeTemplates.length} challenge templates`);
+    console.log(`Upserted ${challengeTemplates.length} challenge templates`);
     process.exit(0);
   } catch (error) {
     console.error("Seed failed:", error);

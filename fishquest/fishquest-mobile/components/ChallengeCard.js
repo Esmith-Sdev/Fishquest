@@ -6,9 +6,26 @@ export default function ChallengeCard({ challenge }) {
   const progress = challenge?.progress ?? 0;
   const goal = challenge?.goal ?? 1;
   const percent = goal ? Math.min((progress / goal) * 100, 100) : 0;
-
+  const difficulty = challenge?.difficulty || "easy";
+  const difficultyStyles = {
+    "very easy": {
+      backgroundColor: "#C9EFC7",
+    },
+    easy: {
+      backgroundColor: "#B7E4FF",
+    },
+    medium: {
+      backgroundColor: "#FFE7A3",
+    },
+    hard: {
+      backgroundColor: "#FFB38A",
+    },
+    "very hard": {
+      backgroundColor: "#FF8A8A",
+    },
+  };
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, difficultyStyles[difficulty]]}>
       <Text style={styles.xp}>+{challenge?.rewardXp}XP</Text>
 
       <Text style={styles.title}>{challenge?.title ?? "Challenge"}</Text>
@@ -44,6 +61,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     position: "relative",
+  },
+  difficulty: {
+    position: "absolute",
+    top: 6,
+    left: 10,
+    fontFamily: "Jua",
+    fontSize: 10,
+    color: "#000",
   },
   disabledCard: {
     backgroundColor: "#212529",
