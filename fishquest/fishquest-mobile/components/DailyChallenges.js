@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 16,
     fontWeight: "700",
+    paddingBottom: 10,
     textDecorationLine: "underline",
   },
   shadowWrapper: {

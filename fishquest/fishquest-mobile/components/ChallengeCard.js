@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { router } from "expo-router";
 import { COLORS, RADIUS } from "../constants/theme";
 import { LinearGradient } from "expo-linear-gradient";
+import SpecialButton from "./SpecialButton";
 export default function ChallengeCard({ challenge }) {
   const progress = challenge?.progress ?? 0;
   const goal = challenge?.goal ?? 1;
@@ -18,7 +19,7 @@ export default function ChallengeCard({ challenge }) {
       case "hard":
         return ["#ccc", "#aaa"];
       case "very hard":
-        return ["#4deaff", "#8A2BE2"];
+        return ["#89cdf5", "#2ba8e2"];
       default:
         return ["#ccc", "#aaa"];
     }
@@ -40,48 +41,21 @@ export default function ChallengeCard({ challenge }) {
         <View style={[styles.progressFill, { width: `${percent}%` }]} />
       </View>
 
-      {difficulty === "very hard" ? (
-        <View style={styles.glowWrap}>
-          <LinearGradient
-            colors={["#4dcdff", "#8a2be2"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientButton}
-          >
-            <Pressable
-              style={styles.buttonInner}
-              onPress={() =>
-                router.push({
-                  pathname: "/create-log",
-                  params: {
-                    challengeId: challenge.userChallengeId,
-                    templateKey: challenge.templateKey,
-                    challengeTitle: challenge.title,
-                  },
-                })
-              }
-            >
-              <Text style={styles.gradientButtonText}>LOG</Text>
-            </Pressable>
-          </LinearGradient>
-        </View>
-      ) : (
-        <Pressable
-          style={styles.button}
-          onPress={() =>
-            router.push({
-              pathname: "/create-log",
-              params: {
-                challengeId: challenge.userChallengeId,
-                templateKey: challenge.templateKey,
-                challengeTitle: challenge.title,
-              },
-            })
-          }
-        >
-          <Text style={styles.buttonText}>LOG</Text>
-        </Pressable>
-      )}
+      <Pressable
+        style={styles.button}
+        onPress={() =>
+          router.push({
+            pathname: "/create-log",
+            params: {
+              challengeId: challenge.userChallengeId,
+              templateKey: challenge.templateKey,
+              challengeTitle: challenge.title,
+            },
+          })
+        }
+      >
+        <Text style={styles.buttonText}>LOG</Text>
+      </Pressable>
     </LinearGradient>
   );
 }
