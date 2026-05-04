@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { router } from "expo-router";
 import { COLORS, RADIUS } from "../constants/theme";
 import { LinearGradient } from "expo-linear-gradient";
-import SpecialButton from "./SpecialButton";
+
 export default function ChallengeCard({ challenge }) {
   const progress = challenge?.progress ?? 0;
   const goal = challenge?.goal ?? 1;

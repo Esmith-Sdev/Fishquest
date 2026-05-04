@@ -325,14 +325,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     gap: 8,
     justifyContent: "center",
+
   },
 
   rigName: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "400",
     flexShrink: 1,
     fontFamily: "Jua",
     color: "#fff",
+    textAlign: "center",
   },
   rigImageContainer: {
     width: "100%",

@@ -26,7 +26,7 @@ export const HOOKS = [
   },
   {
     id: "circle_hook",
-    name: "EWG Hook",
+    name: "Circle Hook",
     image: require("../assets/images/Hooks/circle-hook.png"),
   },
   {
