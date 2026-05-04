@@ -29,11 +29,23 @@ export async function checkDailyChallengesForLog(userId, log) {
 
     if (!template) continue;
 
-    const result = verifyChallengeCompletion(log, template, previousLogs);
+    const result = verifyChallengeCompletion(
+      log,
+      template,
+      previousLogs,
+      userChallenge,
+    );
 
-    if (!result.passed) continue;
+    if (typeof result.progress === "number") {
+      userChallenge.progress = result.progress;
+    } else if (result.passed) {
+      userChallenge.progress = (userChallenge.progress || 0) + 1;
+    }
 
-    userChallenge.progress = (userChallenge.progress || 0) + 1;
+    if (!result.passed) {
+      await userChallenge.save();
+      continue;
+    }
 
     if (userChallenge.progress >= template.goal) {
       userChallenge.isFinished = true;

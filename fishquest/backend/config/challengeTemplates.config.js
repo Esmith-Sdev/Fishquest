@@ -258,6 +258,17 @@ const challengeTemplates = [
     difficulty: "hard",
     verificationMode: "auto",
   },
+  {
+    id: "Catch-two-fish",
+    title: "Catch 2 Fish",
+    type: "fish_count",
+    scheduleType: "daily",
+    fishKey: null,
+    goal: 2,
+    rewardXp: 800,
+    difficulty: "medium",
+    verificationMode: "auto",
+  },
 ];
 
 export default challengeTemplates;

@@ -25,7 +25,7 @@ export default function ChallengeCard({ challenge }) {
     }
   }
   return (
-    <SpecialBackground>
+    <SpecialGradient>
       {difficulty === "very hard" && (
         <Image
           source={require("../assets/images/icons/Crown.png")}
@@ -53,7 +53,7 @@ export default function ChallengeCard({ challenge }) {
       >
         <Text style={styles.buttonText}>LOG</Text>
       </Pressable>
-    </SpecialBackground>
+    </SpecialGradient>
   );
 }
 

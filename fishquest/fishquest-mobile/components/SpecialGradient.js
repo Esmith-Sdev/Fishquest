@@ -2,7 +2,7 @@ import { View, StyleSheet, Animated, Easing } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
 
-export default function GradientBackground({ children }) {
+export default function SpecialGradient({ children }) {
   const anim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
