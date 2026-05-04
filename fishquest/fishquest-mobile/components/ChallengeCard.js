@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { router } from "expo-router";
 import { COLORS, RADIUS } from "../constants/theme";
 import { LinearGradient } from "expo-linear-gradient";
-
+import { SpecialGradient } from "../components/SpecialGradient";
 export default function ChallengeCard({ challenge }) {
   const progress = challenge?.progress ?? 0;
   const goal = challenge?.goal ?? 1;
@@ -25,7 +25,7 @@ export default function ChallengeCard({ challenge }) {
     }
   }
   return (
-    <LinearGradient colors={getGradientColors(difficulty)} style={styles.card}>
+    <SpecialBackground>
       {difficulty === "very hard" && (
         <Image
           source={require("../assets/images/icons/Crown.png")}
@@ -34,13 +34,10 @@ export default function ChallengeCard({ challenge }) {
         />
       )}
       <Text style={styles.xp}>+{challenge?.rewardXp}XP</Text>
-
       <Text style={styles.title}>{challenge?.title ?? "Challenge"}</Text>
-
       <View style={styles.progressTrack}>
         <View style={[styles.progressFill, { width: `${percent}%` }]} />
       </View>
-
       <Pressable
         style={styles.button}
         onPress={() =>
@@ -56,7 +53,7 @@ export default function ChallengeCard({ challenge }) {
       >
         <Text style={styles.buttonText}>LOG</Text>
       </Pressable>
-    </LinearGradient>
+    </SpecialBackground>
   );
 }
 

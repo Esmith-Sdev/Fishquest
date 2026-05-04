@@ -32,6 +32,7 @@ router.get("/", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.sub;
     const dateKey = getTodayKey();
+    const difficulties = ["very easy", "easy", "medium", "hard", "very hard"];
 
     let todayChallenges = await UserChallenge.find({
       userId,
@@ -42,9 +43,15 @@ router.get("/", async (req, res) => {
       const templates = await ChallengeTemplate.find({
         scheduleType: "daily",
       });
+      const selectedTemplates = difficulties
+        .map((difficulty) => {
+          const matchingTemplates = templates.filter(
+            (template) => template.difficulty === difficulty,
+          );
 
-      const selectedTemplates = pickRandomItems(templates, 3);
-
+          return pickRandomItems(matchingTemplates, 1)[0];
+        })
+        .filter(Boolean);
       await UserChallenge.insertMany(
         selectedTemplates.map((template) => ({
           userId,
