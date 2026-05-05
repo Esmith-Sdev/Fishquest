@@ -8,7 +8,7 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
-
+import { COLORS } from "../constants/theme";
 import { AllSpecies } from "../data/species.config";
 
 export default function FishSpeciesTypeahead({
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     padding: 12,
     alignItems: "center",
-    backgroundColor: "#ccc",
+    backgroundColor: COLORS.secondary,
   },
 
   cancelText: {

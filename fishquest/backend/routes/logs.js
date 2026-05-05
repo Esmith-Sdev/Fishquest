@@ -120,17 +120,36 @@ router.post("/", async (req, res) => {
       }
     }
 
+    if (req.body.challenge?.userChallengeId) {
+      const tempLog = {
+        ...req.body,
+        ...rigData,
+        userId: decoded.sub,
+      };
+
+      const result = await checkDailyChallengesForLog(decoded.sub, tempLog, {
+        validateOnly: true,
+      });
+
+      if (result?.error) {
+        return res.status(400).json({
+          message: result.error,
+        });
+      }
+    }
+
     const newLog = await Logs.create({
       ...req.body,
       ...rigData,
       userId: decoded.sub,
     });
 
-    await recalculateUserFishingStats(decoded.sub);
     const completedChallenges = await checkDailyChallengesForLog(
       decoded.sub,
       newLog,
     );
+
+    await recalculateUserFishingStats(decoded.sub);
     if (newLog.rigPresetId) {
       await recalculateRigStats(decoded.sub, newLog.rigPresetId.toString());
     }

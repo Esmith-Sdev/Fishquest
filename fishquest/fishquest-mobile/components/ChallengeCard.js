@@ -1,31 +1,33 @@
-import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Image,
+  Animated,
+} from "react-native";
+
 import { router } from "expo-router";
 import { COLORS, RADIUS } from "../constants/theme";
-import { LinearGradient } from "expo-linear-gradient";
-import { SpecialGradient } from "../components/SpecialGradient";
+import VeryHardGradientCard from "./VeryHardGradientCard";
+import GradientProgress from "./GradientProgress";
+import GradientCard from "./GradientCard";
 export default function ChallengeCard({ challenge }) {
   const progress = challenge?.progress ?? 0;
+
   const goal = challenge?.goal ?? 1;
   const percent = goal ? Math.min((progress / goal) * 100, 100) : 0;
+
   const difficulty = challenge?.difficulty || "easy";
-  function getGradientColors(difficulty) {
-    switch (difficulty) {
-      case "very easy":
-        return ["#ccc", "#aaa"];
-      case "easy":
-        return ["#ccc", "#aaa"];
-      case "medium":
-        return ["#ccc", "#aaa"];
-      case "hard":
-        return ["#ccc", "#aaa"];
-      case "very hard":
-        return ["#89cdf5", "#2ba8e2"];
-      default:
-        return ["#ccc", "#aaa"];
-    }
-  }
+  const isVeryHard = difficulty === "very hard";
+
+  const Wrapper =
+    difficulty === "very hard" ? VeryHardGradientCard : GradientCard;
+
   return (
-    <SpecialGradient>
+    <Wrapper
+      style={[styles.card, difficulty === "very hard" && styles.veryHardCard]}
+    >
       {difficulty === "very hard" && (
         <Image
           source={require("../assets/images/icons/Crown.png")}
@@ -33,10 +35,24 @@ export default function ChallengeCard({ challenge }) {
           resizeMode="contain"
         />
       )}
-      <Text style={styles.xp}>+{challenge?.rewardXp}XP</Text>
-      <Text style={styles.title}>{challenge?.title ?? "Challenge"}</Text>
-      <View style={styles.progressTrack}>
-        <View style={[styles.progressFill, { width: `${percent}%` }]} />
+      <Text style={[styles.xp, isVeryHard && styles.whiteText]}>
+        +{challenge?.rewardXp}XP
+      </Text>
+      <Text style={[styles.title, isVeryHard && styles.whiteText]}>
+        {challenge?.title ?? "Challenge"}
+      </Text>
+      <View style={styles.progressRow}>
+        <Text style={[styles.progressText, isVeryHard && styles.whiteText]}>
+          {progress}/{goal}
+        </Text>
+        <View style={styles.progressTrack}>
+          <GradientProgress
+            style={{
+              width: `${percent}%`,
+              height: "100%",
+            }}
+          />
+        </View>
       </View>
       <Pressable
         style={styles.button}
@@ -53,19 +69,36 @@ export default function ChallengeCard({ challenge }) {
       >
         <Text style={styles.buttonText}>LOG</Text>
       </Pressable>
-    </SpecialGradient>
+    </Wrapper>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#B2B2B2",
+    backgroundColor: "#dedede",
     padding: 16,
     borderRadius: RADIUS.md,
     alignItems: "center",
     width: "100%",
     position: "relative",
   },
+  progressText: {
+    fontFamily: "Jua",
+    fontWeight: "700",
+    color: "#000",
+    fontSize: 13,
+  },
+  veryHardCard: {
+    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.8)",
+    elevation: 5,
+    shadowColor: "#000",
+    padding: 16,
+    borderRadius: RADIUS.md,
+    alignItems: "center",
+    width: "100%",
+    position: "relative",
+  },
+
   difficulty: {
     position: "absolute",
     top: 6,
@@ -97,17 +130,29 @@ const styles = StyleSheet.create({
     fontFamily: "Jua",
     textAlign: "center",
   },
+  progressRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 5,
+    marginBottom: 10,
+  },
   title: {
     color: "#000",
     marginVertical: 2,
-    fontSize: 13,
+    marginBottom: 5,
+    fontSize: 15,
     fontWeight: "400",
     fontFamily: "Jua",
+    textDecorationLine: "underline",
+  },
+  whiteText: {
+    color: "#fff",
   },
   progressTrack: {
-    width: "100%",
+    width: "90%",
     height: 12,
-    backgroundColor: "#ddd",
+    backgroundColor: "#ffffff",
     borderRadius: 999,
     overflow: "hidden",
     borderWidth: 1,
@@ -129,20 +174,15 @@ const styles = StyleSheet.create({
     marginTop: 4,
     overflow: "hidden",
   },
-  buttonInner: {
-    paddingVertical: 4,
-    paddingHorizontal: 18,
-    minWidth: 80,
-    alignItems: "center",
-  },
+
   button: {
+    boxShadow: "0px 4px 0px #733800",
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
-    paddingVertical: 4,
+    paddingVertical: 6,
     paddingHorizontal: 18,
     minWidth: 80,
-
-    marginTop: 4,
+    width: 100,
     shadowColor: COLORS.secondaryDropShadow,
     shadowOffset: {
       width: 0,

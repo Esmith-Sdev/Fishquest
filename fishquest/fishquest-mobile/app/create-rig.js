@@ -24,9 +24,8 @@ import { getToken } from "../api/auth";
 import { COLORS, RADIUS } from "../constants/theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
-export default function CreateRig() {
-  const params = useLocalSearchParams();
 
+export default function CreateRig() {
   const [poleId, setPoleId] = useState(POLES[0].id);
   const [baitId, setBaitId] = useState(BAIT[0].id);
   const [hookId, setHookId] = useState(HOOKS[0].id);
@@ -43,7 +42,12 @@ export default function CreateRig() {
   const currentBait = BAIT[baitIndex];
   const currentWeight = WEIGHTS[weightIndex];
   const currentHook = HOOKS[hookIndex];
-
+  const {
+    returnTo = "/create-log",
+    challengeId = "",
+    templateKey = "",
+    challengeTitle = "",
+  } = useLocalSearchParams();
   const nextPole = () => setPolesIndex((prev) => (prev + 1) % POLES.length);
   const prevPole = () =>
     setPolesIndex((prev) => (prev - 1 + POLES.length) % POLES.length);
@@ -104,16 +108,14 @@ export default function CreateRig() {
 
       await createRigPreset(rig, token);
 
-      const returnTo =
-        typeof params.returnTo === "string" ? params.returnTo : "/tacklebox";
-      const challenge =
-        typeof params.challenge === "string" ? params.challenge : null;
-
       router.replace({
         pathname: returnTo,
-        params: challenge
-          ? { challenge, rigCreated: "true" }
-          : { rigCreated: "true" },
+        params: {
+          challengeId,
+          templateKey,
+          challengeTitle,
+          rigCreated: "true",
+        },
       });
     } catch (err) {
       Alert.alert("Error", err.message || "Failed to save rig.");

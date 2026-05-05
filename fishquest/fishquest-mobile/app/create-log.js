@@ -69,6 +69,7 @@ export default function CreateLog() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [speciesDropdownOpen, setSpeciesDropdownOpen] = useState(false);
+  const rigCreated = params.rigCreated === "true";
   const [timeValue, setTimeValue] = useState(() => {
     const d = new Date();
     const h24 = d.getHours();

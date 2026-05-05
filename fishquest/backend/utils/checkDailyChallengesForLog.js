@@ -7,13 +7,21 @@ function getTodayKey() {
   return new Date().toISOString().slice(0, 10);
 }
 
-export async function checkDailyChallengesForLog(userId, log) {
+export async function checkDailyChallengesForLog(userId, log, options = {}) {
+  const validateOnly = options.validateOnly;
+
+  if (validateOnly) {
+    if (!passesChallenge) {
+      return { error: "You must use a spinnerbait." };
+    }
+    return { ok: true };
+  }
   const todayKey = getTodayKey();
 
   const activeChallenges = await UserChallenge.find({
     userId,
     isFinished: false,
-    // only include this if you added dateKey to UserChallenge
+
     dateKey: todayKey,
   }).populate("templateId");
 

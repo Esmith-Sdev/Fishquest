@@ -11,7 +11,13 @@ const API_URL = "https://fishquest.onrender.com";
 
 export default function DailyChallenges() {
   const [challenges, setChallenges] = useState([]);
-
+  const difficultyOrder = {
+    "very hard": 1,
+    hard: 2,
+    medium: 3,
+    easy: 4,
+    "very easy": 5,
+  };
   useEffect(() => {
     fetchChallenges();
   }, []);
@@ -42,14 +48,19 @@ export default function DailyChallenges() {
       console.log("fetch error:", err);
     }
   }
-
+  const sortedChallenges = [...challenges].sort((a, b) => {
+    return (
+      (difficultyOrder[a.difficulty] ?? 999) -
+      (difficultyOrder[b.difficulty] ?? 999)
+    );
+  });
   return (
     <View style={styles.wrapper}>
       <View style={styles.card}>
         <Text style={styles.title}>DAILY CHALLENGES</Text>
 
-        {challenges.map((challenge) => {
-          if (challenge.isOnCooldown) {
+        {sortedChallenges.map((challenge) => {
+          if (challenge.isOnCooldown || challenge.isFinished) {
             return (
               <DisabledChallengeCard
                 key={challenge.userChallengeId}
@@ -93,7 +104,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#000",
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "700",
     paddingBottom: 10,
     textDecorationLine: "underline",

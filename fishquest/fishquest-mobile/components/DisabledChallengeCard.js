@@ -19,8 +19,8 @@ export default function DisabledChallengeCard({ challenge }) {
   }, []);
 
   const availableText = useMemo(() => {
+    if (challenge?.isFinished) return "Challenge Completed!";
     if (!challenge?.availableAgainAt) return "Unavailable";
-
     const end = new Date(challenge.availableAgainAt).getTime();
     const diff = Math.max(end - now, 0);
 
