@@ -9,6 +9,7 @@ import RigPreset from "../models/Rigs.js";
 import UserFishingStats from "../models/UserFishingStats.js";
 import { checkDailyChallengesForLog } from "../utils/checkDailyChallengesForLog.js";
 import { recalculateUserFishingStats } from "../utils/recalculateUserFishingStats.js";
+import { awardXp } from "../utils/awardXp.js";
 const router = express.Router();
 
 async function recalculateRigStats(userId, rigId) {
@@ -143,11 +144,22 @@ router.post("/", async (req, res) => {
       userId: decoded.sub,
     });
 
-    const completedChallenges = await checkDailyChallengesForLog(
-      decoded.sub,
-      newLog,
-    );
+    const result = await checkDailyChallengesForLog(decoded.sub, newLog);
 
+    const completedChallenges = result.completedChallenges;
+    const totalXpEarned = result.totalXp + 50;
+
+    if (completedChallenges?.length) {
+      for (const challenge of completedChallenges) {
+        totalXpEarned += challenge.rewardXp || 0;
+      }
+    }
+
+    totalXpEarned += 50;
+
+    if (totalXpEarned > 0) {
+      await awardXp(decoded.sub, totalXpEarned);
+    }
     await recalculateUserFishingStats(decoded.sub);
     if (newLog.rigPresetId) {
       await recalculateRigStats(decoded.sub, newLog.rigPresetId.toString());

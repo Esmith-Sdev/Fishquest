@@ -2,7 +2,7 @@ import { View, Text, Image, StyleSheet } from "react-native";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, RADIUS } from "../constants/theme";
-
+import { LEVELS } from "../data/levels.config";
 import Coin from "../assets/images/icons/Coin.png";
 
 export default function Topbar() {
@@ -35,33 +35,6 @@ export default function Topbar() {
   });
 
   const setTime = formatter.format(currentDate);
-
-  const titles = [
-    "Minnow Wrangler",
-    "Pond Rookie",
-    "Bobber Buddy",
-    "Reel Recruit",
-    "Hook Apprentice",
-    "Line Caster",
-    "Bait Specialist",
-    "Tackle Technician",
-    "Lure Adept",
-    "Dock Adventurer",
-    "Shoreline Scout",
-    "River Ranger",
-    "Lake Legend",
-    "Deepwater Pro",
-    "Tide Tamer",
-    "Master Angler",
-    "Mythic Fisher",
-    "King of the Catch",
-    "Reelmaster Supreme",
-    "Fish God",
-  ];
-
-  const rank = 1;
-  const setRankTitle = titles[rank - 1];
-  const xp = 60;
 
   return (
     <View style={styles.topNavbar}>

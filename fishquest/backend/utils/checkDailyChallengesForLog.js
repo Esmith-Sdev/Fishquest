@@ -64,19 +64,23 @@ export async function checkDailyChallengesForLog(userId, log, options = {}) {
 
       const xpAwarded = template.rewardXp || 0;
 
-      await User.findByIdAndUpdate(userId, {
-        $inc: { xp: xpAwarded },
-      });
-
       completedChallenges.push({
         id: template.id,
         title: template.title,
-        xpAwarded,
+        rewardXp: xpAwarded,
       });
     }
 
     await userChallenge.save();
   }
 
-  return validateOnly ? { ok: true } : completedChallenges;
+  return validateOnly
+    ? { ok: true }
+    : {
+        completedChallenges,
+        totalXp: completedChallenges.reduce(
+          (sum, c) => sum + (c.rewardXp || 0),
+          0,
+        ),
+      };
 }

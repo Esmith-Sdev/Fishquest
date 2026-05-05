@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
+    levelTitle: {
+      type: String,
+      default: "Minnow Wrangler",
+    },
     stats: {
       totalCatches: { type: Number, default: 0 },
     },

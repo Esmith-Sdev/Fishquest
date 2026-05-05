@@ -95,6 +95,7 @@ export default function CreateLog() {
   const challengeId = params.challengeId ?? "";
   const templateKey = params.templateKey ?? "";
   const challengeTitle = params.challengeTitle ?? "";
+
   useEffect(() => {
     if (skunked) setSpecies(null);
   }, [skunked]);

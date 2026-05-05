@@ -4,7 +4,19 @@ import User from "../models/User.js";
 import UserSpeciesStats from "../models/UserSpeciesStats.js";
 import UserFishingStats from "../models/UserFishingStats.js";
 const router = express.Router();
+router.get("/:userId", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
 
+    res.json({
+      xp: user.xp,
+      level: user.level,
+      title: user.levelTitle,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch user stats" });
+  }
+});
 router.get("/", async (req, res) => {
   try {
     const authHeader = req.headers.authorization || "";
