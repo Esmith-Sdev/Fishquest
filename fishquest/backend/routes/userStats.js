@@ -36,6 +36,9 @@ router.get("/", async (req, res) => {
       userId: decoded.sub,
     });
     res.json({
+      xp: user?.xp || 0,
+      level: user?.level || 1,
+      title: user?.levelTitle || "Minnow Wrangler",
       totalCatches: fishingStats?.totalCatches || 0,
       skunkedCount: fishingStats?.skunkedCount || 0,
       timeOfDay: fishingStats?.timeOfDay || {},
