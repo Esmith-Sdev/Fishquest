@@ -10,19 +10,15 @@ function getTodayKey() {
 export async function checkDailyChallengesForLog(userId, log, options = {}) {
   const validateOnly = options.validateOnly;
 
-  if (validateOnly) {
-    if (!passesChallenge) {
-      return { error: "You must use a spinnerbait." };
-    }
-    return { ok: true };
-  }
   const todayKey = getTodayKey();
 
   const activeChallenges = await UserChallenge.find({
     userId,
     isFinished: false,
-
     dateKey: todayKey,
+    ...(log.challenge?.userChallengeId
+      ? { _id: log.challenge.userChallengeId }
+      : {}),
   }).populate("templateId");
 
   const previousLogs = await Logs.find({
@@ -43,7 +39,13 @@ export async function checkDailyChallengesForLog(userId, log, options = {}) {
       previousLogs,
       userChallenge,
     );
+    if (validateOnly) {
+      if (!result.passed) {
+        return { error: result.reason };
+      }
 
+      return { ok: true };
+    }
     if (typeof result.progress === "number") {
       userChallenge.progress = result.progress;
     } else if (result.passed) {
@@ -76,5 +78,5 @@ export async function checkDailyChallengesForLog(userId, log, options = {}) {
     await userChallenge.save();
   }
 
-  return completedChallenges;
+  return validateOnly ? { ok: true } : completedChallenges;
 }
