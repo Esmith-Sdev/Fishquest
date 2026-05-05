@@ -39,7 +39,7 @@ import StateDropdown from "../components/StateDropdown";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import SelectDropdown from "react-native-select-dropdown";
-
+import { useAuth } from "../context/AuthContext";
 export default function CreateLog() {
   const params = useLocalSearchParams();
   const [stateValue, setStateValue] = useState("");
@@ -95,7 +95,7 @@ export default function CreateLog() {
   const challengeId = params.challengeId ?? "";
   const templateKey = params.templateKey ?? "";
   const challengeTitle = params.challengeTitle ?? "";
-
+  const { refreshUserStats } = useAuth();
   useEffect(() => {
     if (skunked) setSpecies(null);
   }, [skunked]);
@@ -346,10 +346,10 @@ export default function CreateLog() {
 
       if (result.completedChallenges?.length > 0) {
         const totalXp = result.completedChallenges.reduce(
-          (sum, challenge) => sum + (challenge.xpAwarded || 0),
+          (sum, challenge) => sum + (challenge.rewardXp || 0),
           0,
         );
-
+        await refreshUserStats();
         Alert.alert(
           "Challenge Complete!",
           `You completed ${result.completedChallenges.length} challenge(s) and earned ${totalXp} XP!`,

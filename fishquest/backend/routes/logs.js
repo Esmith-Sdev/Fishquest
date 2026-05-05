@@ -147,15 +147,7 @@ router.post("/", async (req, res) => {
     const result = await checkDailyChallengesForLog(decoded.sub, newLog);
 
     const completedChallenges = result.completedChallenges;
-    const totalXpEarned = result.totalXp + 50;
-
-    if (completedChallenges?.length) {
-      for (const challenge of completedChallenges) {
-        totalXpEarned += challenge.rewardXp || 0;
-      }
-    }
-
-    totalXpEarned += 50;
+    let totalXpEarned = (result?.totalXp || 0) + 50;
 
     if (totalXpEarned > 0) {
       await awardXp(decoded.sub, totalXpEarned);

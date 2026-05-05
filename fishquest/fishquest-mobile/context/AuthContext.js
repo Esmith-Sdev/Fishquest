@@ -7,7 +7,11 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const isAuthenticated = !!user;
-
+  const [userStats, setUserStats] = useState({
+    xp: 0,
+    level: 1,
+    title: "Minnow Wrangler",
+  });
   useEffect(() => {
     async function loadStoredAuth() {
       try {
@@ -25,7 +29,23 @@ export function AuthProvider({ children }) {
 
     loadStoredAuth();
   }, []);
+  async function refreshUserStats() {
+    const token = await AsyncStorage.getItem("token");
 
+    const res = await fetch(`${API_URL}/api/user-stats`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    setUserStats({
+      xp: data.xp || 0,
+      level: data.level || 1,
+      title: data.title || "Minnow Wrangler",
+    });
+  }
   async function login(data) {
     setUser(data.user);
     setToken(data.token);
@@ -42,7 +62,15 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, login, logout, isAuthenticated }}
+      value={{
+        user,
+        token,
+        login,
+        logout,
+        isAuthenticated,
+        userStats,
+        refreshUserStats,
+      }}
     >
       {children}
     </AuthContext.Provider>
