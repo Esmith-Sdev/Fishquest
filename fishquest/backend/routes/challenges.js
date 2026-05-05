@@ -108,5 +108,33 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch daily challenges" });
   }
 });
+router.post("/:userChallengeId/start", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
 
+    if (!token) {
+      return res.status(401).json({ message: "Missing token" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const challenge = await UserChallenge.findOne({
+      _id: req.params.userChallengeId,
+      userId: decoded.sub,
+    });
+
+    if (!challenge) {
+      return res.status(404).json({ message: "Challenge not found" });
+    }
+
+    challenge.startedAt = new Date(); // track start time
+    await challenge.save();
+
+    res.json({ message: "Challenge started", startedAt: challenge.startedAt });
+  } catch (err) {
+    console.error("Start challenge failed:", err);
+    res.status(500).json({ message: "Failed to start challenge" });
+  }
+});
 export default router;

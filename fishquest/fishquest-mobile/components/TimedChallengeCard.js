@@ -4,6 +4,8 @@ import { COLORS, RADIUS } from "../constants/theme";
 import TimedChallengeModal from "./TimedChallengeModal";
 import GradientProgress from "./GradientProgress";
 import DisabledChallengeCard from "./DisabledChallengeCard";
+import GradientCard from "./GradientCard";
+
 export default function TimedChallengeCard({ challenge, onRefresh }) {
   const [showModal, setShowModal] = useState(false);
   const progress = challenge?.progress ?? 0;
@@ -68,8 +70,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     position: "relative",
-    overflow: "visible",
   },
+  progressText: {
+    fontFamily: "Jua",
+    fontWeight: "700",
+    color: "#000",
+    fontSize: 13,
+  },
+  veryHardCard: {
+    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.8)",
+    elevation: 5,
+    shadowColor: "#000",
+    padding: 16,
+    borderRadius: RADIUS.md,
+    alignItems: "center",
+    width: "100%",
+    position: "relative",
+  },
+
   difficulty: {
     position: "absolute",
     top: 6,
@@ -78,8 +96,13 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#000",
   },
-  whiteText: {
-    color: "#fff",
+  disabledCard: {
+    backgroundColor: "#212529",
+    padding: 16,
+    borderRadius: RADIUS.md,
+    alignItems: "center",
+    width: "100%",
+    position: "relative",
   },
   xp: {
     position: "absolute",
@@ -90,6 +113,19 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 13,
   },
+  gradientButtonText: {
+    color: "#fff",
+    fontSize: 13,
+    fontFamily: "Jua",
+    textAlign: "center",
+  },
+  progressRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 5,
+    marginBottom: 10,
+  },
   title: {
     color: "#000",
     marginVertical: 2,
@@ -99,19 +135,33 @@ const styles = StyleSheet.create({
     fontFamily: "Jua",
     textDecorationLine: "underline",
   },
+  whiteText: {
+    color: "#fff",
+  },
   progressTrack: {
-    width: "100%",
+    width: "90%",
     height: 12,
     backgroundColor: "#ffffff",
     borderRadius: 999,
     overflow: "hidden",
     borderWidth: 1,
-    marginBottom: 15,
   },
   progressFill: {
     height: "100%",
-    width: "0%",
     backgroundColor: COLORS.primary,
+  },
+
+  glowWrap: {
+    shadowColor: "#ffffff",
+    shadowOpacity: 0.9,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 14,
+  },
+  gradientButton: {
+    borderRadius: RADIUS.pill,
+    marginTop: 4,
+    overflow: "hidden",
   },
 
   button: {

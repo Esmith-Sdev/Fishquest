@@ -34,6 +34,16 @@ export function verifyChallengeCompletion(
     case "catch-thirty-min":
     case "catch-two-min": {
       if (!caughtFish) return fail("You need to catch a fish.");
+      const start = userChallenge.startedAt;
+      const logTime = new Date(log.date);
+
+      if (!start) return fail("Challenge was never started");
+
+      const elapsed = (logTime - start) / 1000;
+
+      return elapsed <= template.timeLimit
+        ? pass()
+        : fail("Time limit exceeded");
       return pass();
     }
 

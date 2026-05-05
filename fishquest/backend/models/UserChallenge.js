@@ -62,6 +62,10 @@ const userChallengeSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    startedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true },
 );

@@ -3,6 +3,8 @@ import { Modal, View, Text, StyleSheet, Pressable } from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
 import { router } from "expo-router";
 import { getToken } from "../api/auth";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import ConfirmModal from "./ConfirmModal";
 export default function TimedChallengeModal({
   show,
   onHide,
@@ -29,7 +31,7 @@ export default function TimedChallengeModal({
     const res = await fetch(
       `${API_URL}/api/challenges/${userChallengeId}/start`,
       {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -90,6 +92,17 @@ export default function TimedChallengeModal({
     >
       <View style={styles.overlay}>
         <View style={styles.modal}>
+          {!start && (
+            <View style={{ position: "absolute", right: 15, top: 10 }}>
+              <Pressable onPress={onHide} style={styles.button}>
+                <MaterialIcons
+                  name="cancel"
+                  size={30}
+                  color={COLORS.secondary}
+                />{" "}
+              </Pressable>
+            </View>
+          )}
           <Text style={styles.title}>{challenge?.title}</Text>
 
           <Text style={styles.time}>{formatTime(timeLeft)}</Text>
@@ -118,14 +131,16 @@ export default function TimedChallengeModal({
                   router.push({
                     pathname: "/create-log",
                     params: {
-                      challenge: challenge.title,
+                      challengeId: challenge.userChallengeId,
+                      templateKey: challenge.templateKey,
+                      challengeTitle: challenge.title,
                     },
                   })
                 }
               >
                 <Text style={styles.buttonText}>Log Challenge</Text>
               </Pressable>
-              <Pressable style={styles.closeButton} onPress={forfeitChallenge}>
+              <Pressable style={styles.closeButton} onPress={openConfirmModal}>
                 <Text style={styles.buttonText}>Forfeit Challenge</Text>
               </Pressable>
             </View>
@@ -183,13 +198,7 @@ const styles = StyleSheet.create({
     color: "#000",
     textAlign: "center",
   },
-  button: {
-    alignSelf: "center",
-    backgroundColor: COLORS.secondary,
-    borderRadius: RADIUS.pill,
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-  },
+
   startButton: {
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.pill,
