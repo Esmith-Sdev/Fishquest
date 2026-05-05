@@ -127,17 +127,16 @@ router.post("/", async (req, res) => {
         userId: decoded.sub,
       };
 
-      const result = await checkDailyChallengesForLog(decoded.sub, tempLog, {
+      const check = await checkDailyChallengesForLog(decoded.sub, tempLog, {
         validateOnly: true,
       });
 
-      if (result?.error) {
+      if (check?.error) {
         return res.status(400).json({
-          message: result.error,
+          message: check.error,
         });
       }
     }
-
     const newLog = await Logs.create({
       ...req.body,
       ...rigData,
