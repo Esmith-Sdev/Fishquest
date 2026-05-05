@@ -1,13 +1,12 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 import { Link } from "expo-router";
-import { useEffect, useState } from "react";
+
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { COLORS } from "../constants/theme";
 import { LEVELS } from "../data/levels.config";
 import Coin from "../assets/images/icons/Coin.png";
 import { useAuth } from "@/context/AuthContext";
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export default function Topbar() {
   const { userStats } = useAuth();

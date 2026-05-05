@@ -11,7 +11,7 @@ export function AuthProvider({ children }) {
   const [userStats, setUserStats] = useState({
     xp: 0,
     level: 1,
-    title: "Minnow Wrangler",
+    levelTitle: "Minnow Wrangler",
   });
   useEffect(() => {
     async function loadStoredAuth() {
@@ -44,7 +44,7 @@ export function AuthProvider({ children }) {
     setUserStats({
       xp: data.xp || 0,
       level: data.level || 1,
-      title: data.title || "Minnow Wrangler",
+      levelTitle: data.title || "Minnow Wrangler",
     });
   }
   async function login(data) {
