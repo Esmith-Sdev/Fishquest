@@ -1,8 +1,7 @@
 import { Modal, View, Text, Pressable, StyleSheet } from "react-native";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { COLORS } from "../constants/theme";
-import { RADIUS } from "../constants/theme";
+import { COLORS, RADIUS } from "../constants/theme";
 export default function ConfirmModal({ visible, onClose, onConfirm }) {
   return (
     <Modal

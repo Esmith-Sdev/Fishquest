@@ -160,6 +160,8 @@ router.post("/", async (req, res) => {
     res.status(201).json({
       log: newLog,
       completedChallenges,
+      challengeXp: result?.totalXp || 0,
+      totalXpEarned,
     });
   } catch (err) {
     console.error(err);

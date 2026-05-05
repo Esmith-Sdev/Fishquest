@@ -344,15 +344,12 @@ export default function CreateLog() {
 
       const result = await createCatchLog(payload, token);
 
+      await refreshUserStats();
+
       if (result.completedChallenges?.length > 0) {
-        const totalXp = result.completedChallenges.reduce(
-          (sum, challenge) => sum + (challenge.rewardXp || 0),
-          0,
-        );
-        await refreshUserStats();
         Alert.alert(
           "Challenge Complete!",
-          `You completed ${result.completedChallenges.length} challenge(s) and earned ${totalXp} XP!`,
+          `You completed ${result.completedChallenges.length} challenge(s) and earned ${result.challengeXp || 0} XP!`,
           [
             {
               text: "OK",
