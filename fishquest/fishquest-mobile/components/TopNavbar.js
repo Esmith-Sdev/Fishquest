@@ -15,29 +15,6 @@ export default function Topbar() {
   const xp = userStats.xp;
   const level = userStats.level;
   const title = userStats.title;
-  useEffect(() => {
-    fetchXp();
-  }, []);
-
-  async function fetchXp() {
-    try {
-      const token = await AsyncStorage.getItem("token");
-
-      const res = await fetch(`${API_URL}/api/user-stats`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
-
-      setXp(data.xp || 0);
-      setLevel(data.level || 1);
-      setTitle(data.title || "Minnow Wrangler");
-    } catch (err) {
-      console.log("Failed to fetch XP:", err);
-    }
-  }
 
   const currentLevel = LEVELS.find((l) => l.level === level);
   const nextLevel = LEVELS.find((l) => l.level === level + 1);
