@@ -11,7 +11,7 @@ router.get("/:userId", async (req, res) => {
     res.json({
       xp: user.xp,
       level: user.level,
-      title: user.levelTitle,
+      levelTitle: user.levelTitle,
     });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch user stats" });

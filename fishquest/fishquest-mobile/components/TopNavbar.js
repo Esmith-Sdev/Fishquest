@@ -12,23 +12,23 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export default function Topbar() {
   const { userStats } = useAuth();
 
-  const xp = userStats.xp;
-  const level = userStats.level;
-  const title = userStats.title;
+  const xp = userStats?.xp ?? 0;
+  const level = userStats?.level ?? 1;
+  const title = userStats?.levelTitle ?? "Minnow Wrangler";
 
-  const currentLevel = LEVELS.find((l) => l.level === level);
+  const currentLevel = LEVELS.find((l) => l.level === level) ?? LEVELS[0];
   const nextLevel = LEVELS.find((l) => l.level === level + 1);
 
-  const currentMinXp = currentLevel?.minXp || 0;
-  const nextMinXp = nextLevel?.minXp || currentMinXp;
+  const currentMinXp = currentLevel.minXp;
+  const nextMinXp = nextLevel?.minXp ?? currentMinXp;
 
-  const xpIntoLevel = xp - currentMinXp;
+  const xpIntoLevel = Math.max(xp - currentMinXp, 0);
   const xpNeededForLevel = nextMinXp - currentMinXp;
 
-  const progressPercent = nextLevel
-    ? Math.min((xpIntoLevel / xpNeededForLevel) * 100, 100)
-    : 100;
-
+  const progressPercent =
+    nextLevel && xpNeededForLevel > 0
+      ? Math.min((xpIntoLevel / xpNeededForLevel) * 100, 100)
+      : 100;
   const currentDate = new Date();
 
   const setDate = currentDate.toLocaleDateString("en-US", {

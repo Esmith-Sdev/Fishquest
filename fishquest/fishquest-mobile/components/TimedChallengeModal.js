@@ -14,7 +14,7 @@ export default function TimedChallengeModal({
   const API_URL = "https://fishquest.onrender.com";
   const [timeLeft, setTimeLeft] = useState(challenge?.timeLimit ?? 0);
   const [start, setStart] = useState(false);
-
+  const [openConfirm, setOpenConfirm] = useState(false);
   async function startChallenge() {
     try {
       await startChallengeCooldown(challenge.userChallengeId);
@@ -45,8 +45,10 @@ export default function TimedChallengeModal({
   }
   async function forfeitChallenge() {
     try {
+      setOpenConfirm(false);
       await startChallengeCooldown(challenge.userChallengeId);
       onHide();
+
       await onRefresh();
     } catch (err) {
       console.error("Failed to forfeit challenge:", err);
@@ -103,46 +105,83 @@ export default function TimedChallengeModal({
               </Pressable>
             </View>
           )}
-          <Text style={styles.title}>{challenge?.title}</Text>
+          {!openConfirm ? (
+            <>
+              <Text style={styles.title}>{challenge?.title}</Text>
 
-          <Text style={styles.time}>{formatTime(timeLeft)}</Text>
+              <Text style={styles.time}>{formatTime(timeLeft)}</Text>
 
-          <View style={styles.progressTrack}>
-            <View style={[styles.progressFill, { width: `${percent}%` }]} />
-          </View>
+              <View style={styles.progressTrack}>
+                <View style={[styles.progressFill, { width: `${percent}%` }]} />
+              </View>
 
-          <Text style={styles.body}>
-            Once you click "Start" the challenge begins. You have one chance,
-            good luck!
-          </Text>
+              <Text style={styles.body}>
+                Once you click "Start" the challenge begins. You have one
+                chance, good luck!
+              </Text>
 
-          {!start ? (
-            <Pressable
-              style={styles.startButton}
-              onPress={() => startChallenge()}
-            >
-              <Text style={styles.buttonText}>Start</Text>
-            </Pressable>
+              {!start ? (
+                <Pressable
+                  style={styles.startButton}
+                  onPress={() => startChallenge()}
+                >
+                  <Text style={styles.buttonText}>Start</Text>
+                </Pressable>
+              ) : (
+                <View style={styles.row}>
+                  <Pressable
+                    style={styles.startButton}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/create-log",
+                        params: {
+                          challengeId: challenge.userChallengeId,
+                          templateKey: challenge.templateKey,
+                          challengeTitle: challenge.title,
+                        },
+                      })
+                    }
+                  >
+                    <Text style={styles.buttonText}>Log Challenge</Text>
+                  </Pressable>
+
+                  <Pressable
+                    style={styles.closeButton}
+                    onPress={() => setOpenConfirm(true)}
+                  >
+                    <Text style={styles.buttonText}>Forfeit Challenge</Text>
+                  </Pressable>
+                </View>
+              )}
+            </>
           ) : (
-            <View style={styles.row}>
-              <Pressable
-                style={styles.startButton}
-                onPress={() =>
-                  router.push({
-                    pathname: "/create-log",
-                    params: {
-                      challengeId: challenge.userChallengeId,
-                      templateKey: challenge.templateKey,
-                      challengeTitle: challenge.title,
-                    },
-                  })
-                }
-              >
-                <Text style={styles.buttonText}>Log Challenge</Text>
-              </Pressable>
-              <Pressable style={styles.closeButton} onPress={openConfirmModal}>
-                <Text style={styles.buttonText}>Forfeit Challenge</Text>
-              </Pressable>
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 30,
+                flex: 1,
+              }}
+            >
+              <Text style={styles.title}>Are You Sure?</Text>
+              <View style={{ flexDirection: "row", gap: 10 }}>
+                <Pressable
+                  style={styles.startButton}
+                  onPress={forfeitChallenge}
+                >
+                  <Text style={styles.buttonText}>Yes</Text>
+                </Pressable>
+
+                <Pressable
+                  style={styles.closeButton}
+                  onPress={() => {
+                    setOpenConfirm(false);
+                  }}
+                >
+                  <Text style={styles.buttonText}>No</Text>
+                </Pressable>
+              </View>
             </View>
           )}
         </View>
@@ -160,11 +199,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modal: {
-    width: "100%",
+    width: "90%",
     backgroundColor: "#fff",
     borderRadius: RADIUS.md,
     padding: 20,
     gap: 14,
+    height: 250,
   },
   row: {
     flexDirection: "row",
@@ -204,7 +244,7 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.pill,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    width: 120,
+
     alignSelf: "center",
     shadowColor: COLORS.primaryDropShadow,
     shadowOffset: { width: 0, height: 4 },
