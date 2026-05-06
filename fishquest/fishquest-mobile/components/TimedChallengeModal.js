@@ -43,16 +43,26 @@ export default function TimedChallengeModal({
 
     return res.json();
   }
-  async function forfeitChallenge() {
-    try {
-      setOpenConfirm(false);
-      await startChallengeCooldown(challenge.userChallengeId);
-      onHide();
+  async function forfeitChallenge(userChallengeId) {
+    const token = await getToken();
 
-      await onRefresh();
-    } catch (err) {
-      console.error("Failed to forfeit challenge:", err);
+    const res = await fetch(
+      `${API_URL}/api/challenges/${userChallengeId}/forfeit`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to forfeit challenge");
     }
+    await onRefresh();
+    onHide();
+    return res.json();
   }
   useEffect(() => {
     if (!show) return;
@@ -168,7 +178,7 @@ export default function TimedChallengeModal({
               <View style={{ flexDirection: "row", gap: 10 }}>
                 <Pressable
                   style={styles.startButton}
-                  onPress={forfeitChallenge}
+                  onPress={() => forfeitChallenge(challenge.userChallengeId)}
                 >
                   <Text style={styles.buttonText}>Yes</Text>
                 </Pressable>

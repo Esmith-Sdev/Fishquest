@@ -66,6 +66,10 @@ const userChallengeSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    cooldownEndsAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true },
 );

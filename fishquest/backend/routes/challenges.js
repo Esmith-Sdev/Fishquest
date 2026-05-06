@@ -90,6 +90,13 @@ router.get("/", async (req, res) => {
 
         progress: challenge.progress || 0,
         isFinished: challenge.isFinished,
+
+        isOnCooldown:
+          challenge.cooldownEndsAt &&
+          new Date(challenge.cooldownEndsAt) > new Date(),
+
+        cooldownEndsAt: challenge.cooldownEndsAt,
+
         assignedAt: challenge.assignedAt,
         expiresAt: challenge.expiresAt,
       };
@@ -108,6 +115,7 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch daily challenges" });
   }
 });
+
 router.post("/:userChallengeId/start", async (req, res) => {
   try {
     const authHeader = req.headers.authorization || "";
@@ -135,6 +143,38 @@ router.post("/:userChallengeId/start", async (req, res) => {
   } catch (err) {
     console.error("Start challenge failed:", err);
     res.status(500).json({ message: "Failed to start challenge" });
+  }
+});
+router.post("/:userChallengeId/forfeit", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const challenge = await UserChallenge.findOne({
+      _id: req.params.userChallengeId,
+      userId: decoded.sub,
+    });
+
+    if (!challenge) {
+      return res.status(404).json({ message: "Challenge not found" });
+    }
+
+    const cooldownEnd = new Date(Date.now() + 30 * 60 * 1000);
+
+    challenge.isOnCooldown = true;
+    challenge.cooldownEndsAt = cooldownEnd;
+
+    await challenge.save();
+
+    res.json({
+      message: "Challenge forfeited",
+      cooldownEndsAt: cooldownEnd,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to forfeit challenge" });
   }
 });
 export default router;
