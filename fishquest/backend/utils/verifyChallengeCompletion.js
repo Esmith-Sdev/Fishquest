@@ -80,17 +80,17 @@ export function verifyChallengeCompletion(
     case "early-catch": {
       if (!caughtFish) return fail("You need to catch a fish.");
 
-      const hour = new Date(log.date).getHours();
-
-      return hour < 6 ? pass() : fail("This catch must be before sunrise.");
+      return log.timeOfDay === "morning"
+        ? pass()
+        : fail("This catch must be before sunrise.");
     }
 
     case "night-catch": {
       if (!caughtFish) return fail("You need to catch a fish.");
 
-      const hour = new Date(log.date).getHours();
-
-      return hour >= 20 ? pass() : fail("This catch must be after sunset.");
+      return log.timeOfDay === "night"
+        ? pass()
+        : fail("This catch must be after sunset.");
     }
 
     case "rain-fisher": {

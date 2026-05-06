@@ -14,6 +14,11 @@ export function AuthProvider({ children }) {
     levelTitle: "Minnow Wrangler",
   });
   useEffect(() => {
+    if (token) {
+      refreshUserStats();
+    }
+  }, [token]);
+  useEffect(() => {
     async function loadStoredAuth() {
       try {
         const storedUser = await AsyncStorage.getItem("user");
@@ -31,11 +36,14 @@ export function AuthProvider({ children }) {
     loadStoredAuth();
   }, []);
   async function refreshUserStats() {
-    const token = await AsyncStorage.getItem("token");
+    const storedToken = await AsyncStorage.getItem("token");
+    if (!storedToken) return;
+
+    const parsedToken = JSON.parse(storedToken);
 
     const res = await fetch(`${API_URL}/api/user-stats`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${parsedToken}`,
       },
     });
 
@@ -44,7 +52,7 @@ export function AuthProvider({ children }) {
     setUserStats({
       xp: data.xp || 0,
       level: data.level || 1,
-      levelTitle: data.title || "Minnow Wrangler",
+      levelTitle: data.levelTitle || "Minnow Wrangler",
     });
   }
   async function login(data) {
