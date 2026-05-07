@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Pressable, Image, Alert } from "react-native";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -10,7 +10,16 @@ import TopNavbarSecondary from "../components/TopNavbarSecondary";
 
 import SettingsModal from "../components/SettingsModal";
 export default function Profile() {
-  const username = getAuth();
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    async function loadUsername() {
+      const storedUsername = await getAuth();
+      setUsername(storedUsername || "User");
+    }
+
+    loadUsername();
+  }, []);
   const [showModal, setShowModal] = useState(false);
 
   const titles = [
@@ -107,15 +116,74 @@ export default function Profile() {
               </View>
             </View>
           </View>
-          <View style={styles.rankContainer}>
-            <Text style={styles.rankText}>{rankTitle}</Text>
-            <View style={styles.progressTrack}>
-              <View style={[styles.progressFill, { width: `${xp}%` }]} />
-              <Text style={styles.progressLabel}>XP</Text>
+          <View style={styles.otherColumn}>
+            <View style={styles.tipsContainer}>
+              <Text style={styles.title}>Tips/Tricks</Text>
+              <View style={styles.tipsColumn}>
+                <Pressable
+                  style={styles.blueButton}
+                  onPress={() =>
+                    Alert.alert(
+                      "Feature Unavailable",
+                      "This is not available in beta yet.",
+                    )
+                  }
+                >
+                  <Text style={styles.buttonText}>Popular Rig Setups</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.blueButton}
+                  onPress={() =>
+                    Alert.alert(
+                      "Feature Unavailable",
+                      "This is not available in beta yet.",
+                    )
+                  }
+                >
+                  <Text style={styles.buttonText}>
+                    Fishing Different Species
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={styles.blueButton}
+                  onPress={() =>
+                    Alert.alert(
+                      "Feature Unavailable",
+                      "This is not available in beta yet.",
+                    )
+                  }
+                >
+                  <Text style={styles.buttonText}>Choosing the Right Rig</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.blueButton}
+                  onPress={() =>
+                    Alert.alert(
+                      "Feature Unavailable",
+                      "This is not available in beta yet.",
+                    )
+                  }
+                >
+                  <Text style={styles.buttonText}>Snag Preventers</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.blueButton}
+                  onPress={() =>
+                    Alert.alert(
+                      "Feature Unavailable",
+                      "This is not available in beta yet.",
+                    )
+                  }
+                >
+                  <Text style={styles.buttonText}>
+                    How to Use Different Lures
+                  </Text>
+                </Pressable>
+              </View>
             </View>
-            <Text style={styles.levelText}>Level {rank}</Text>
           </View>
         </View>
+
         <BottomNavbar />
       </View>
     </SafeAreaView>
@@ -137,15 +205,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#e5e5e5",
   },
-  headerTitle: {
-    position: "absolute",
-    left: 0,
-    right: 0,
+  title: {
     textAlign: "center",
     fontSize: 24,
     fontFamily: "Jua",
-    color: "#fff",
-    paddingHorizontal: 90,
+    color: "#000",
+    textDecorationLine: "underline",
+    marginBottom: 15,
+  },
+  tipsContainer: {
+    width: "90%",
+    marginTop: 20,
+    padding: 20,
+    backgroundColor: "#dedede",
+    borderRadius: 15,
+    boxShadow: "0 4px 0 #747474",
   },
   content: {
     flex: 1,
@@ -155,6 +229,7 @@ const styles = StyleSheet.create({
   profileRow: {
     flexDirection: "row",
     gap: 16,
+    marginBottom: 20,
     alignItems: "flex-start",
   },
   leftColumn: {
@@ -167,6 +242,7 @@ const styles = StyleSheet.create({
     fontFamily: "Jua",
     marginBottom: 8,
     textAlign: "center",
+    textDecorationLine: "underline",
   },
   profileImageContainer: {
     width: 130,
@@ -183,14 +259,22 @@ const styles = StyleSheet.create({
     height: "125%",
   },
   statsColumn: {
-    flex: 1.2,
+    flex: 1,
     gap: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  otherColumn: {
+    flex: 1,
+    gap: 12,
+    alignItems: "center",
   },
   statsTitle: {
     color: "#fff",
     fontSize: 24,
     fontFamily: "Jua",
     textAlign: "center",
+    textDecorationLine: "underline",
     marginBottom: 8,
   },
   statRow: {
@@ -256,9 +340,26 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
+
     paddingHorizontal: 12,
-    minWidth: 90,
+    boxShadow: "0px 4px 0px #733800",
     shadowColor: COLORS.secondaryDropShadow,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 1,
+    elevation: 4,
+  },
+  blueButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.pill,
+    paddingVertical: 6,
+    width: 250,
+    paddingHorizontal: 30,
+    boxShadow: "0px 4px 0px #003f73",
+    shadowColor: COLORS.primaryDropShadow,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -304,5 +405,10 @@ const styles = StyleSheet.create({
   modalFooter: {
     marginTop: 12,
     alignItems: "flex-end",
+  },
+  tipsColumn: {
+    flexDirection: "column",
+    gap: 20,
+    alignItems: "center",
   },
 });

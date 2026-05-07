@@ -169,19 +169,14 @@ export function verifyChallengeCompletion(
     case "use-dropshot": {
       if (!caughtFish) return fail("You need to catch a fish.");
 
-      const isDropshotHook =
-        hookId.includes("dropshot") ||
-        hookId.includes("drop_shot") ||
-        hookId.includes("drop-shot");
-
       const isDropshotWeight =
         weightId.includes("dropshot") ||
         weightId.includes("drop_shot") ||
         weightId.includes("drop-shot");
 
-      return isDropshotHook && isDropshotWeight
+      return isDropshotWeight
         ? pass()
-        : fail("You need to use a dropshot rig.");
+        : fail("You need to use a dropshot weight.");
     }
 
     case "use-topwater": {
@@ -226,42 +221,50 @@ export function verifyChallengeCompletion(
         : fail("Fish must be trophy sized.");
     }
 
-    case "fish_count": {
-      if (log.skunked || !log.speciesId) {
-        return fail("You need to catch a fish.");
-      }
-
-      const startTime = new Date(userChallenge.assignedAt);
-
-      const relevantLogs = previousLogs.filter((oldLog) => {
-        if (oldLog.skunked || !oldLog.speciesId) return false;
-
-        const logTime = new Date(oldLog.createdAt || oldLog.date);
-        return logTime >= startTime;
-      });
-
-      const totalFish = relevantLogs.length + 1;
-
-      return {
-        passed: totalFish >= (template.goal || 1),
-        progress: totalFish,
-        reason:
-          totalFish >= (template.goal || 1)
-            ? undefined
-            : `You need ${template.goal} fish. (${totalFish}/${template.goal})`,
-      };
-    }
     // Species/category challenges if you add daily species challenges later
     default: {
       if (template.type === "species_count") {
         return verifySpeciesChallenge(log, template);
       }
 
+      if (template.type === "fish_count") {
+        return verifyFishCountChallenge(
+          log,
+          template,
+          previousLogs,
+          userChallenge,
+        );
+      }
+
       return fail("This challenge cannot be automatically verified yet.");
     }
   }
 }
+function verifyFishCountChallenge(log, template, previousLogs, userChallenge) {
+  if (log.skunked || !log.speciesId) {
+    return fail("You need to catch a fish.");
+  }
 
+  const startTime = new Date(userChallenge.assignedAt);
+
+  const relevantLogs = previousLogs.filter((oldLog) => {
+    if (oldLog.skunked || !oldLog.speciesId) return false;
+
+    const logTime = new Date(oldLog.createdAt || oldLog.date);
+    return logTime >= startTime;
+  });
+
+  const totalFish = relevantLogs.length + 1;
+
+  return {
+    passed: totalFish >= (template.goal || 1),
+    progress: totalFish,
+    reason:
+      totalFish >= (template.goal || 1)
+        ? undefined
+        : `You need ${template.goal} fish. (${totalFish}/${template.goal})`,
+  };
+}
 function verifySpeciesChallenge(log, template) {
   if (log.skunked || !log.speciesId) {
     return fail("You need to catch a fish.");

@@ -1,10 +1,13 @@
 import { Pressable, Image, StyleSheet, View, Text } from "react-native";
+import { ActivityIndicator } from "react-native";
+import { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Dimensions } from "react-native";
 const screenWidth = Dimensions.get("window").width;
 const CARD_GAP = 12;
 const CARD_SIZE = (screenWidth - 24 - CARD_GAP * 2) / 3;
 export default function BadgeCard({ badge, unlocked, onClick, preview }) {
+  const [imageLoading, setImageLoading] = useState(true);
   return (
     <Pressable
       onPress={onClick}
@@ -20,14 +23,25 @@ export default function BadgeCard({ badge, unlocked, onClick, preview }) {
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.imageWrapper}>
+          {imageLoading && (
+            <ActivityIndicator
+              size="small"
+              color="#00b2ff"
+              style={styles.loader}
+            />
+          )}
+
           {badge.icon ? (
             <Image
               source={badge.icon}
               style={[styles.image, !unlocked && styles.lockedImage]}
               resizeMode="contain"
-              onError={(e) =>
-                console.log("Badge image failed:", badge.id, e.nativeEvent)
-              }
+              onLoadStart={() => setImageLoading(true)}
+              onLoadEnd={() => setImageLoading(false)}
+              onError={(e) => {
+                setImageLoading(false);
+                console.log("Badge image failed:", badge.id, e.nativeEvent);
+              }}
             />
           ) : (
             <Text style={{ color: "white" }}>No Icon</Text>
@@ -48,7 +62,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 10,
   },
-
+  loader: {
+    position: "absolute",
+    zIndex: 5,
+  },
   gradient: {
     width: "100%",
     height: "100%",

@@ -30,6 +30,7 @@ export default function Logs() {
   useEffect(() => {
     async function loadLogs() {
       try {
+        setLoading(true);
         const token = await getToken();
         if (!token) {
           router.replace("/login");
@@ -80,118 +81,139 @@ export default function Logs() {
           buttonRoute="/create-log"
           backRoute="/home"
         />
-
-        <View style={styles.sortRow}>
-          <Text style={styles.sortLabel}>Sort By:</Text>
-
-          <Pressable style={styles.orangeButtonSmall}>
-            <Text style={styles.orangeButtonText}>Date</Text>
-          </Pressable>
-
-          <Pressable style={styles.orangeButtonSmall}>
-            <Text style={styles.orangeButtonText}>Photo</Text>
-          </Pressable>
-
-          <Pressable style={styles.orangeButtonSmall}>
-            <Text style={styles.orangeButtonText}>Location</Text>
-          </Pressable>
-        </View>
-
-        <FlatList
-          data={logs}
-          extraData={deleteModeLogId}
-          keyExtractor={(item) => item._id}
-          numColumns={3}
-          columnWrapperStyle={styles.gridRow}
-          contentContainerStyle={styles.listContent}
-          ListEmptyComponent={
-            <View style={styles.centerState}>
-              <Text style={styles.stateText}>No logs yet</Text>
-              <Text style={styles.subText}>
-                Create your first log to see it here.
-              </Text>
+        {loading ? (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <ActivityIndicator
+                size="large"
+                color={COLORS.primary}
+                style={styles.center}
+              ></ActivityIndicator>
+              <Text style={styles.loadingText}>Loading...</Text>
             </View>
-          }
-          renderItem={({ item: log }) => {
-            const title = log.skunked
-              ? "Skunked Trip"
-              : log.speciesName || "Unknown Fish";
+          </View>
+        ) : (
+          <>
+            <View style={styles.sortRow}>
+              <Text style={styles.sortLabel}>Sort By:</Text>
 
-            const photo = log.skunked ? skunkImage : log.imageUrls?.[0];
+              <Pressable style={styles.orangeButtonSmall}>
+                <Text style={styles.orangeButtonText}>Date</Text>
+              </Pressable>
 
-            const formattedDate = log.date
-              ? new Date(log.date).toLocaleDateString()
-              : "";
+              <Pressable style={styles.orangeButtonSmall}>
+                <Text style={styles.orangeButtonText}>Photo</Text>
+              </Pressable>
 
-            return (
-              <Pressable
-                style={styles.card}
-                onPress={() => {
-                  if (deleteModeLogId === log._id) {
-                    setDeleteModeLogId(null);
-                    return;
-                  }
+              <Pressable style={styles.orangeButtonSmall}>
+                <Text style={styles.orangeButtonText}>Location</Text>
+              </Pressable>
+            </View>
 
-                  router.push({
-                    pathname: "/view-log",
-                    params: { id: log._id },
-                  });
-                }}
-                onLongPress={() => setDeleteModeLogId(log._id)}
-              >
-                <ConfirmModal
-                  visible={confirmVisible}
-                  onClose={() => {
-                    setConfirmVisible(false);
-                    setSelectedLogId(null);
-                  }}
-                  onConfirm={() => {
-                    if (!selectedLogId) return;
-                    handleRemoveLog(selectedLogId);
-                    setConfirmVisible(false);
-                    setSelectedLogId(null);
-                  }}
-                />
-                {deleteModeLogId === log._id && (
-                  <Pressable
-                    style={styles.deleteBtn}
-                    onPress={() => {
-                      setSelectedLogId(log._id);
-                      setConfirmVisible(true);
-                    }}
-                  >
-                    <Ionicons name="close" size={16} color="#fff" />
-                  </Pressable>
-                )}
-                <View style={styles.cardBodyTop}>
-                  <Text style={styles.cardTitle} numberOfLines={2}>
-                    {title}
+            <FlatList
+              data={logs}
+              extraData={deleteModeLogId}
+              keyExtractor={(item) => item._id}
+              numColumns={3}
+              columnWrapperStyle={styles.gridRow}
+              contentContainerStyle={styles.listContent}
+              ListEmptyComponent={
+                <View style={styles.centerState}>
+                  <Text style={styles.stateText}>No logs yet</Text>
+                  <Text style={styles.subText}>
+                    Create your first log to see it here.
                   </Text>
                 </View>
+              }
+              renderItem={({ item: log }) => {
+                const title = log.skunked
+                  ? "Skunked Trip"
+                  : log.speciesName || "Unknown Fish";
 
-                {photo ? (
-                  <Image
-                    source={getImageSource(photo)}
-                    style={styles.cardImage}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View style={styles.cardImage}>
-                    <Entypo name="camera" size={24} color="black" />
-                    <Text style={{ textAlign: "center", fontSize: 10 }}>
-                      No Photo Available
-                    </Text>
-                  </View>
-                )}
+                const photo = log.skunked ? skunkImage : log.imageUrls?.[0];
 
-                <View style={styles.cardBodyBottom}>
-                  <Text style={styles.cardSubtitle}>{formattedDate}</Text>
-                </View>
-              </Pressable>
-            );
-          }}
-        />
+                const formattedDate = log.date
+                  ? new Date(log.date).toLocaleDateString()
+                  : "";
 
+                return (
+                  <Pressable
+                    style={styles.card}
+                    onPress={() => {
+                      if (deleteModeLogId === log._id) {
+                        setDeleteModeLogId(null);
+                        return;
+                      }
+
+                      router.push({
+                        pathname: "/view-log",
+                        params: { id: log._id },
+                      });
+                    }}
+                    onLongPress={() => setDeleteModeLogId(log._id)}
+                  >
+                    <ConfirmModal
+                      visible={confirmVisible}
+                      onClose={() => {
+                        setConfirmVisible(false);
+                        setSelectedLogId(null);
+                      }}
+                      onConfirm={() => {
+                        if (!selectedLogId) return;
+                        handleRemoveLog(selectedLogId);
+                        setConfirmVisible(false);
+                        setSelectedLogId(null);
+                      }}
+                    />
+                    {deleteModeLogId === log._id && (
+                      <Pressable
+                        style={styles.deleteBtn}
+                        onPress={() => {
+                          setSelectedLogId(log._id);
+                          setConfirmVisible(true);
+                        }}
+                      >
+                        <Ionicons name="close" size={16} color="#fff" />
+                      </Pressable>
+                    )}
+                    <View style={styles.cardBodyTop}>
+                      <Text style={styles.cardTitle} numberOfLines={2}>
+                        {title}
+                      </Text>
+                    </View>
+
+                    {photo ? (
+                      <Image
+                        source={getImageSource(photo)}
+                        style={styles.cardImage}
+                        resizeMode="cover"
+                      />
+                    ) : (
+                      <View style={styles.cardImage}>
+                        <Entypo name="camera" size={24} color="black" />
+                        <Text style={{ textAlign: "center", fontSize: 10 }}>
+                          No Photo Available
+                        </Text>
+                      </View>
+                    )}
+
+                    <View style={styles.cardBodyBottom}>
+                      <Text style={styles.cardSubtitle}>{formattedDate}</Text>
+                    </View>
+                  </Pressable>
+                );
+              }}
+            />
+          </>
+        )}
         <BottomNavbar />
       </View>
     </SafeAreaView>
@@ -202,6 +224,10 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#0D1B1E",
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#fff",
   },
   header: {
     paddingTop: 10,

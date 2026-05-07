@@ -23,6 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToken } from "../api/auth";
 export default function BadgesPage() {
   const [show, setShow] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [userStats, setUserStats] = useState({});
   function handleClose() {
