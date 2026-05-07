@@ -32,7 +32,7 @@ router.get("/", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.sub;
     const dateKey = getTodayKey();
-    const difficulties = ["very easy", "easy", "medium", "hard", "very hard"];
+    const difficulties = ["easy", "medium", "hard"];
 
     let todayChallenges = await UserChallenge.find({
       userId,

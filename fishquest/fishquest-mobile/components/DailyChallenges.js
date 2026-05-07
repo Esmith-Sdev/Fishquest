@@ -12,11 +12,9 @@ const API_URL = "https://fishquest.onrender.com";
 export default function DailyChallenges() {
   const [challenges, setChallenges] = useState([]);
   const difficultyOrder = {
-    "very hard": 1,
-    hard: 2,
-    medium: 3,
-    easy: 4,
-    "very easy": 5,
+    hard: 1,
+    medium: 2,
+    easy: 3,
   };
   useEffect(() => {
     fetchChallenges();

@@ -2,7 +2,7 @@ import { View, StyleSheet, Animated, Easing } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
 import { RADIUS } from "@/constants/theme";
-export default function VeryHardGradientProgress({ children, style }) {
+export default function HardGradientProgress({ children, style }) {
   const anim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {

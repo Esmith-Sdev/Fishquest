@@ -5,7 +5,7 @@ import TimedChallengeModal from "./TimedChallengeModal";
 import GradientProgress from "./GradientProgress";
 import DisabledChallengeCard from "./DisabledChallengeCard";
 import GradientCard from "./GradientCard";
-import VeryHardGradientCard from "./VeryHardGradientCard";
+import HardGradientCard from "./HardGradientCard";
 export default function TimedChallengeCard({ challenge, onRefresh }) {
   const [showModal, setShowModal] = useState(false);
   const progress = challenge?.progress ?? 0;
@@ -13,29 +13,26 @@ export default function TimedChallengeCard({ challenge, onRefresh }) {
   const goal = challenge?.goal ?? 1;
   const percent = goal ? Math.min((progress / goal) * 100, 100) : 0;
   const difficulty = challenge?.difficulty || "easy";
-  const isVeryHard = difficulty === "very hard";
+  const isHard = difficulty === "hard";
 
-  const Wrapper =
-    difficulty === "very hard" ? VeryHardGradientCard : GradientCard;
+  const Wrapper = difficulty === "hard" ? HardGradientCard : GradientCard;
   return (
-    <Wrapper
-      style={[styles.card, difficulty === "very hard" && styles.veryHardCard]}
-    >
-      {difficulty === "very hard" && (
+    <Wrapper style={[styles.card, difficulty === "hard" && styles.hardCard]}>
+      {difficulty === "hard" && (
         <Image
           source={require("../assets/images/icons/Crown.png")}
           style={styles.crown}
           resizeMode="contain"
         />
       )}
-      <Text style={[styles.xp, isVeryHard && styles.whiteText]}>
+      <Text style={[styles.xp, isHard && styles.whiteText]}>
         +{challenge?.rewardXp}XP
       </Text>
-      <Text style={[styles.title, isVeryHard && styles.whiteText]}>
+      <Text style={[styles.title, isHard && styles.whiteText]}>
         {challenge?.title ?? "Challenge"}
       </Text>
       <View style={styles.progressRow}>
-        <Text style={[styles.progressText, isVeryHard && styles.whiteText]}>
+        <Text style={[styles.progressText, isHard && styles.whiteText]}>
           {progress}/{goal}
         </Text>
         <View style={styles.progressTrack}>
@@ -77,7 +74,7 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 13,
   },
-  veryHardCard: {
+  hardCard: {
     boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.8)",
     elevation: 5,
     shadowColor: "#000",

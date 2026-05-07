@@ -8,7 +8,7 @@ const challengeTemplates = [
     fishKey: null,
     goal: 1,
     rewardXp: 1000,
-    difficulty: "hard",
+    difficulty: "medium",
     verificationMode: "auto",
   },
   {
@@ -31,7 +31,7 @@ const challengeTemplates = [
     fishKey: "debri",
     goal: 1,
     rewardXp: 300,
-    difficulty: "very easy",
+    difficulty: "easy",
     verificationMode: "manual",
   },
   {
@@ -42,7 +42,7 @@ const challengeTemplates = [
     fishKey: null,
     goal: 1,
     rewardXp: 1500,
-    difficulty: "very hard",
+    difficulty: "hard",
     verificationMode: "manual",
   },
   {
@@ -54,7 +54,7 @@ const challengeTemplates = [
     fishKey: null,
     goal: 1,
     rewardXp: 1500,
-    difficulty: "very hard",
+    difficulty: "hard",
     verificationMode: "auto",
   },
   {
@@ -65,7 +65,7 @@ const challengeTemplates = [
     fishKey: null,
     goal: 1,
     rewardXp: 300,
-    difficulty: "very easy",
+    difficulty: "easy",
     verificationMode: "manual",
   },
   {
@@ -76,7 +76,7 @@ const challengeTemplates = [
     fishKey: null,
     goal: 1,
     rewardXp: 300,
-    difficulty: "very easy",
+    difficulty: "easy",
     verificationMode: "auto",
   },
   {
@@ -121,7 +121,7 @@ const challengeTemplates = [
     fishKey: null,
     goal: 3,
     rewardXp: 1500,
-    difficulty: "very hard",
+    difficulty: "hard",
     verificationMode: "auto",
   },
 
@@ -222,7 +222,7 @@ const challengeTemplates = [
     fishKey: null,
     goal: 1,
     rewardXp: 300,
-    difficulty: "very easy",
+    difficulty: "easy",
     verificationMode: "manual",
   },
   {
@@ -233,7 +233,7 @@ const challengeTemplates = [
     fishKey: null,
     goal: 1,
     rewardXp: 300,
-    difficulty: "very easy",
+    difficulty: "easy",
     verificationMode: "auto",
   },
   {
@@ -244,7 +244,7 @@ const challengeTemplates = [
     fishKey: null,
     goal: 1,
     rewardXp: 1500,
-    difficulty: "very hard",
+    difficulty: "hard",
     verificationMode: "auto",
   },
   {
@@ -255,7 +255,7 @@ const challengeTemplates = [
     fishKey: null,
     goal: 1,
     rewardXp: 1000,
-    difficulty: "hard",
+    difficulty: "medium",
     verificationMode: "auto",
   },
   {

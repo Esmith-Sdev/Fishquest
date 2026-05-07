@@ -32,7 +32,7 @@ const challengeTemplateSchema = new mongoose.Schema(
 
     difficulty: {
       type: String,
-      enum: ["very easy", "easy", "medium", "hard", "very hard"],
+      enum: ["easy", "medium", "hard"],
       default: "easy",
     },
 
