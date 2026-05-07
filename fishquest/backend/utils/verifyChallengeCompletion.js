@@ -245,29 +245,45 @@ export function verifyChallengeCompletion(
     }
   }
 }
-function verifyFishCountChallenge(log, template, previousLogs, userChallenge) {
+function verifySpeciesCountChallenge(
+  log,
+  template,
+  previousLogs,
+  userChallenge,
+) {
   if (log.skunked || !log.speciesId) {
     return fail("You need to catch a fish.");
   }
 
   const startTime = new Date(userChallenge.assignedAt);
+  const endTime = userChallenge.expiresAt
+    ? new Date(userChallenge.expiresAt)
+    : new Date();
 
-  const relevantLogs = previousLogs.filter((oldLog) => {
-    if (oldLog.skunked || !oldLog.speciesId) return false;
+  const speciesSet = new Set();
 
-    const logTime = new Date(oldLog.createdAt || oldLog.date);
-    return logTime >= startTime;
+  const validLogs = [...previousLogs, log].filter((entry) => {
+    if (entry.skunked || !entry.speciesId) return false;
+
+    const logTime = new Date(entry.createdAt || entry.date);
+
+    return logTime >= startTime && logTime <= endTime;
   });
 
-  const totalFish = relevantLogs.length + 1;
+  validLogs.forEach((entry) => {
+    speciesSet.add(String(entry.speciesId).toLowerCase());
+  });
+
+  const progress = speciesSet.size;
+  const goal = template.goal || 1;
 
   return {
-    passed: totalFish >= (template.goal || 1),
-    progress: totalFish,
+    passed: progress >= goal,
+    progress,
     reason:
-      totalFish >= (template.goal || 1)
+      progress >= goal
         ? undefined
-        : `You need ${template.goal} fish. (${totalFish}/${template.goal})`,
+        : `You need ${goal} different species. (${progress}/${goal})`,
   };
 }
 function verifyFishCountChallenge(log, template, previousLogs, userChallenge) {
