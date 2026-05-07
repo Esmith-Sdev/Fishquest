@@ -5,7 +5,7 @@ import TimedChallengeModal from "./TimedChallengeModal";
 import GradientProgress from "./GradientProgress";
 import DisabledChallengeCard from "./DisabledChallengeCard";
 import GradientCard from "./GradientCard";
-
+import VeryHardGradientCard from "./VeryHardGradientCard";
 export default function TimedChallengeCard({ challenge, onRefresh }) {
   const [showModal, setShowModal] = useState(false);
   const progress = challenge?.progress ?? 0;

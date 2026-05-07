@@ -224,7 +224,12 @@ export function verifyChallengeCompletion(
     // Species/category challenges if you add daily species challenges later
     default: {
       if (template.type === "species_count") {
-        return verifySpeciesChallenge(log, template);
+        return verifySpeciesCountChallenge(
+          log,
+          template,
+          previousLogs,
+          userChallenge,
+        );
       }
 
       if (template.type === "fish_count") {
@@ -265,39 +270,35 @@ function verifyFishCountChallenge(log, template, previousLogs, userChallenge) {
         : `You need ${template.goal} fish. (${totalFish}/${template.goal})`,
   };
 }
-function verifySpeciesChallenge(log, template) {
+function verifyFishCountChallenge(log, template, previousLogs, userChallenge) {
   if (log.skunked || !log.speciesId) {
     return fail("You need to catch a fish.");
   }
 
-  const fishKey = String(template.fishKey || "").toLowerCase();
+  const startTime = new Date(userChallenge.assignedAt);
+  const endTime = userChallenge.expiresAt
+    ? new Date(userChallenge.expiresAt)
+    : new Date();
 
-  if (!fishKey) {
-    return pass();
-  }
+  const validLogs = [...previousLogs, log].filter((entry) => {
+    if (entry.skunked || !entry.speciesId) return false;
 
-  const speciesId = String(log.speciesId || "").toLowerCase();
-  const speciesName = String(log.speciesName || "").toLowerCase();
+    const logTime = new Date(entry.createdAt || entry.date);
 
-  const speciesConfig = AllSpecies.find(
-    (fish) => String(fish.id).toLowerCase() === speciesId,
-  );
+    return logTime >= startTime && logTime <= endTime;
+  });
 
-  const configName = String(speciesConfig?.name || "").toLowerCase();
-  const configGroup = String(speciesConfig?.group || "").toLowerCase();
-  const configCategory = String(speciesConfig?.category || "").toLowerCase();
+  const progress = validLogs.length;
+  const goal = template.goal || 1;
 
-  if (
-    speciesId === fishKey ||
-    speciesName === fishKey ||
-    configName === fishKey ||
-    configGroup === fishKey ||
-    configCategory === fishKey
-  ) {
-    return pass();
-  }
-
-  return fail(`This challenge requires ${template.fishKey}.`);
+  return {
+    passed: progress >= goal,
+    progress,
+    reason:
+      progress >= goal
+        ? undefined
+        : `You need ${goal} fish. (${progress}/${goal})`,
+  };
 }
 
 function verifyDifferentSpecies(log, previousLogs, goal) {
