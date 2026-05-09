@@ -95,16 +95,19 @@ export default function Topbar() {
         >
           <Text style={styles.dropdownItem}>Fishing Forecast</Text>
         </Pressable>
+        <View style={styles.dropdownDivider} />
 
         <Link href="/shop" asChild>
           <Pressable onPress={() => setMenuOpen(false)}>
             <Text style={styles.dropdownItem}>Shop</Text>
           </Pressable>
         </Link>
-
-        <Pressable>
-          <Text style={styles.dropdownItem}>Friends</Text>
-        </Pressable>
+        <View style={styles.dropdownDivider} />
+        <Link href="/buddies" asChild>
+          <Pressable>
+            <Text style={styles.dropdownItem}>Buddies</Text>
+          </Pressable>
+        </Link>
       </Animated.View>
 
       <ForecastModal
@@ -139,20 +142,22 @@ const styles = StyleSheet.create({
     top: 67,
     left: -12,
     right: -12,
-    backgroundColor: COLORS.bg,
-    paddingVertical: 8,
+    backgroundColor: COLORS.primary,
+
     zIndex: 999,
     elevation: 8,
   },
-
+  dropdownDivider: {
+    height: 1,
+    backgroundColor: "#dedede",
+    width: "100%",
+  },
   dropdownItem: {
     paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 25,
     fontSize: 16,
     fontFamily: "Jua",
-    color: "#000",
-    borderBottomWidth: 1,
-    borderColor: COLORS.secondary,
+    color: "#fff",
   },
   center: {
     flex: 1,
