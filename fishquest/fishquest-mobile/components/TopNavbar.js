@@ -1,16 +1,19 @@
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import { Link } from "expo-router";
 
+import { Animated } from "react-native";
+import { useRef, useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { COLORS } from "../constants/theme";
 import { LEVELS } from "../data/levels.config";
 import Coin from "../assets/images/icons/Coin.png";
 import { useAuth } from "@/context/AuthContext";
-
+import ForecastModal from "./ForecastModal";
 export default function Topbar() {
   const { userStats } = useAuth();
-
+  const [showForecast, setShowForecast] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const xp = userStats?.xp ?? 0;
   const level = userStats?.level ?? 1;
   const title = userStats?.levelTitle ?? "Minnow Wrangler";
@@ -41,16 +44,16 @@ export default function Topbar() {
     minute: "2-digit",
     hour12: true,
   });
-
+  const slideAnim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: menuOpen ? 1 : 0,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+  }, [menuOpen]);
   return (
     <View style={styles.topNavbar}>
-      <View style={styles.left}>
-        <View>
-          <Text style={styles.smallText}>{setTime}</Text>
-          <Text style={styles.smallText}>{setDate}</Text>
-        </View>
-      </View>
-
       <View style={styles.center}>
         <Text style={styles.rankText}>
           Lv {level} • {title}
@@ -64,17 +67,50 @@ export default function Topbar() {
         </View>
       </View>
 
-      <View style={styles.right}>
+      <Pressable onPress={() => setMenuOpen((prev) => !prev)}>
+        <Ionicons name={menuOpen ? "close" : "menu"} size={30} color="#fff" />
+      </Pressable>
+
+      <Animated.View
+        style={[
+          styles.dropdown,
+          {
+            opacity: slideAnim,
+            transform: [
+              {
+                translateY: slideAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-20, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+      >
+        <Pressable
+          onPress={() => {
+            setMenuOpen(false);
+            setShowForecast(true);
+          }}
+        >
+          <Text style={styles.dropdownItem}>Fishing Forecast</Text>
+        </Pressable>
+
         <Link href="/shop" asChild>
-          <View style={styles.iconButton}>
-            <Image source={Coin} style={styles.coin} resizeMode="contain" />
-          </View>
+          <Pressable onPress={() => setMenuOpen(false)}>
+            <Text style={styles.dropdownItem}>Shop</Text>
+          </Pressable>
         </Link>
 
-        <View style={styles.iconButton}>
-          <Ionicons name="people" size={24} color="#fff" />
-        </View>
-      </View>
+        <Pressable>
+          <Text style={styles.dropdownItem}>Friends</Text>
+        </Pressable>
+      </Animated.View>
+
+      <ForecastModal
+        visible={showForecast}
+        onClose={() => setShowForecast(false)}
+      />
     </View>
   );
 }
@@ -89,12 +125,34 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     backgroundColor: COLORS.primary,
     width: "100%",
+    zIndex: 1000,
   },
+
   left: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
     flexShrink: 1,
+  },
+  dropdown: {
+    position: "absolute",
+    top: 67,
+    left: -12,
+    right: -12,
+    backgroundColor: COLORS.bg,
+    paddingVertical: 8,
+    zIndex: 999,
+    elevation: 8,
+  },
+
+  dropdownItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    fontFamily: "Jua",
+    color: "#000",
+    borderBottomWidth: 1,
+    borderColor: COLORS.secondary,
   },
   center: {
     flex: 1,

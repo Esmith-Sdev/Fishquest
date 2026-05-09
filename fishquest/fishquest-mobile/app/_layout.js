@@ -7,6 +7,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 export default function Layout() {
   const [fontsLoaded] = useFonts({
     Jua: require("../assets/fonts/Jua-Regular.ttf"),
+    Rubik: require("../assets/fonts/Rubik/Rubik-Medium.ttf"),
   });
 
   if (!fontsLoaded) {
