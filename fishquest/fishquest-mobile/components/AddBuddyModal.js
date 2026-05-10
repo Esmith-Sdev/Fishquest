@@ -5,7 +5,7 @@ import {
   Modal,
   StyleSheet,
   Pressable,
-  Image,
+  FlatList,
   TextInput,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -13,10 +13,44 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { COLORS, RADIUS } from "../constants/theme";
 import { getCurrentLocation } from "../utils/getCurrentLocation";
 import { ActivityIndicator } from "react-native";
-
+import { getToken } from "../api/auth";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export default function AddBuddyModal({ visible, onClose }) {
+  const { token } = getToken();
+  const [query, setQuery] = useState("");
+  const [users, setUsers] = useState([]);
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  async function sendFriendRequest(receiverId) {
+
+  async function handleSearch(text = query) {
+    const searchText = String(text || "");
+
+    setQuery(searchText);
+
+    if (searchText.trim().length < 2) {
+      setUsers([]);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${API_URL}/api/users/search?query=${encodeURIComponent(searchText)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = await res.json();
+      setUsers(data);
+    } catch (error) {
+      console.log("Search users error:", error);
+      setMessage("Could not search users.");
+    }
+  }
+
+  async function handleAddFriend(receiverId) {
     const res = await fetch(`${API_URL}/api/friends/request/${receiverId}`, {
       method: "POST",
       headers: {
@@ -25,19 +59,9 @@ export default function AddBuddyModal({ visible, onClose }) {
     });
 
     const data = await res.json();
-    return data;
+    setMessage(data.message || "Friend request sent.");
   }
 
-  async function searchUsers(query) {
-    const res = await fetch(`${API_URL}/api/users/search?query=${query}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await res.json();
-    return data;
-  }
   return (
     <Modal
       visible={visible}
@@ -78,11 +102,31 @@ export default function AddBuddyModal({ visible, onClose }) {
                 <TextInput
                   placeholder="Enter a username..."
                   style={styles.searchText}
+                  value={query}
+                  onChangeText={handleSearch}
                 />
               </View>
-              <Pressable style={styles.orangeButton} onPress={searchForBuddy}>
+              <Pressable
+                style={styles.orangeButton}
+                onPress={() => handleSearch(query)}
+              >
                 <Text style={styles.buttonText}>Search</Text>
               </Pressable>
+              {message ? <Text>{message}</Text> : null}
+
+              <FlatList
+                data={users}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item }) => (
+                  <View>
+                    <Text>{item.username}</Text>
+
+                    <Pressable onPress={() => handleAddFriend(item._id)}>
+                      <Text>Add Friend</Text>
+                    </Pressable>
+                  </View>
+                )}
+              />
             </View>
           )}
         </Pressable>
