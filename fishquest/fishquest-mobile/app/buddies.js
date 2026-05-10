@@ -20,6 +20,39 @@ import { COLORS, RADIUS } from "../constants/theme";
 export default function Buddies() {
   const [openAddBuddyModal, setOpenAddBuddyModal] = useState(false);
   const friends = ["user1", "user2", "user3", "user4", "user5", "user6"];
+  async function fetchFriendRequests() {
+    const res = await fetch(`${API_URL}/api/friends/requests`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+    return data;
+  }
+  async function acceptFriendRequest(requestId) {
+    const res = await fetch(
+      `${API_URL}/api/friends/requests/${requestId}/accept`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const data = await res.json();
+    return data;
+  }
+  async function fetchFriends() {
+    const res = await fetch(`${API_URL}/api/friends`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await res.json();
+    return data;
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
       <TopNavbarSecondary
@@ -39,10 +72,15 @@ export default function Buddies() {
             contentContainerStyle={styles.listContent}
             ListEmptyComponent={
               <View style={styles.centerState}>
-                <Text style={styles.stateText}>No logs yet</Text>
-                <Text style={styles.subText}>
-                  Create your first log to see it here.
+                <Text style={styles.stateText}>
+                  You don't have any buddies yet
                 </Text>
+                <Text style={styles.subText}>
+                  Add some buddies to see them here.
+                </Text>
+                <Pressable style={styles.orangeButton}>
+                  <Text style={styles.buttonText}>Add Buddy</Text>
+                </Pressable>
               </View>
             }
             renderItem={({ item }) => {

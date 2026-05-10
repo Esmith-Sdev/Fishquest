@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema(
       totalCatches: { type: Number, default: 0 },
     },
     passwordHash: { type: String, required: true, select: false },
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true },
 );

@@ -14,6 +14,7 @@ import uploadRoutes from "./routes/uploads.js";
 import logsRoutes from "./routes/logs.js";
 import identifyFishRoutes from "./routes/identifyFish.js";
 import userStatsRoutes from "./routes/userStats.js";
+import buddiesRoutes from "./routes/buddies.js";
 const app = express();
 
 const allowedOrigins = new Set([
@@ -155,3 +156,4 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
 app.use("/api", identifyFishRoutes);
+app.use("/api/buddies", buddiesRoutes);

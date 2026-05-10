@@ -1,13 +1,43 @@
 import { useState, useEffect } from "react";
-import { View, Text, Modal, StyleSheet, Pressable, Image } from "react-native";
+import {
+  View,
+  Text,
+  Modal,
+  StyleSheet,
+  Pressable,
+  Image,
+  TextInput,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { COLORS, RADIUS } from "../constants/theme";
 import { getCurrentLocation } from "../utils/getCurrentLocation";
 import { ActivityIndicator } from "react-native";
+
 export default function AddBuddyModal({ visible, onClose }) {
   const [loading, setLoading] = useState(false);
+  async function sendFriendRequest(receiverId) {
+    const res = await fetch(`${API_URL}/api/friends/request/${receiverId}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
+    const data = await res.json();
+    return data;
+  }
+
+  async function searchUsers(query) {
+    const res = await fetch(`${API_URL}/api/users/search?query=${query}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+    return data;
+  }
   return (
     <Modal
       visible={visible}
@@ -21,7 +51,7 @@ export default function AddBuddyModal({ visible, onClose }) {
           style={styles.modalCard}
         >
           <View style={styles.header}>
-            <Text style={styles.title}>Enter a Username</Text>
+            <Text style={styles.title}>Add a Buddy</Text>
             <View style={{ position: "absolute", right: -10, top: -10 }}>
               <Pressable onPress={onClose} style={styles.button}>
                 <MaterialIcons
@@ -44,7 +74,15 @@ export default function AddBuddyModal({ visible, onClose }) {
             </View>
           ) : (
             <View style={styles.column}>
-              <Text>Buddies is in development</Text>
+              <View style={styles.searchBar}>
+                <TextInput
+                  placeholder="Enter a username..."
+                  style={styles.searchText}
+                />
+              </View>
+              <Pressable style={styles.orangeButton} onPress={searchForBuddy}>
+                <Text style={styles.buttonText}>Search</Text>
+              </Pressable>
             </View>
           )}
         </Pressable>
@@ -63,6 +101,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Rubik",
   },
+  searchBar: {
+    width: "100%",
+    borderRadius: 999,
+    borderColor: "#c5c5c5",
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 1,
+    marginTop: 20,
+  },
+  searchText: {
+    fontSize: 14,
+    fontFamily: "Rubik",
+  },
   tempText: {
     fontSize: 30,
     fontFamily: "Rubik",
@@ -78,6 +129,7 @@ const styles = StyleSheet.create({
   column: {
     flexDirection: "column",
     alignItems: "center",
+    gap: 15,
   },
   modalCard: {
     width: 300,
