@@ -9,7 +9,7 @@ import {
   getFriends,
   removeFriends,
 } from "../controllers/buddiesController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { protect } from "../middleware/requireAuth.js";
 const router = express.Router();
 router.post("/request", protect, sendFriendRequest);
 router.get("/requests", protect, getFriendRequests);
