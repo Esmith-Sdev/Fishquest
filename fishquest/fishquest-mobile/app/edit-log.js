@@ -425,6 +425,7 @@ export default function UpdateLog() {
           buttonText="Save"
           showButton={true}
           onPress={handleSubmitLog}
+          backRoute="/home"
         />
 
         <View style={styles.centerState}>

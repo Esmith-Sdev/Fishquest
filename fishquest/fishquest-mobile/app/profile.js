@@ -7,19 +7,48 @@ import BottomNavbar from "../components/BottomNavbar";
 import { logout, getAuth } from "../api/auth";
 import { COLORS, RADIUS } from "../constants/theme";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
-
+import { useAuth } from "../context/AuthContext";
 import SettingsModal from "../components/SettingsModal";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export default function Profile() {
   const [username, setUsername] = useState("");
 
+  const { user, token } = useAuth();
+
+  const [stats, setStats] = useState({
+    totalCatches: 0,
+    favoriteBait: "None",
+    skunkedCount: 0,
+  });
+
   useEffect(() => {
-    async function loadUsername() {
-      const storedUsername = await getAuth();
-      setUsername(storedUsername || "User");
+    async function fetchStats() {
+      try {
+        const res = await fetch(`${API_URL}/api/user-stats`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        setStats({
+          totalCatches: data.totalCatches || 0,
+
+          favoriteBait:
+            Object.entries(data.baits || {}).sort(
+              (a, b) => b[1] - a[1],
+            )[0]?.[0] || "None",
+
+          skunkedCount: data.skunkedCount || 0,
+        });
+      } catch (err) {
+        console.log("Failed to fetch profile stats", err);
+      }
     }
 
-    loadUsername();
-  }, []);
+    if (token) fetchStats();
+  }, [token]);
   const [showModal, setShowModal] = useState(false);
 
   const titles = [
@@ -77,7 +106,7 @@ export default function Profile() {
         <View style={styles.content}>
           <View style={styles.profileRow}>
             <View style={styles.leftColumn}>
-              <Text style={styles.username}>{username || "User"}</Text>
+              <Text style={styles.username}>{user?.username || "User"}</Text>
               <View style={styles.profileImageContainer}>
                 <Image
                   style={styles.profileImage}
@@ -98,21 +127,27 @@ export default function Profile() {
             </View>
             <View style={styles.statsColumn}>
               <Text style={styles.statsTitle}>Stats</Text>
-              <View style={styles.statRow}>
-                <Text style={styles.statLabel}>Personal Best:</Text>
-                <Text style={styles.statValue}>5.6lb</Text>
-              </View>
-              <View style={styles.statRow}>
-                <Text style={styles.statLabel}>Fish Caught:</Text>
-                <Text style={styles.statValue}>5</Text>
-              </View>
-              <View style={styles.statRow}>
-                <Text style={styles.statLabel}>Challenges Completed:</Text>
-                <Text style={styles.statValue}>5</Text>
-              </View>
-              <View style={styles.statRow}>
-                <Text style={styles.statLabel}>Favorite Bait:</Text>
-                <Text style={styles.statValue}>Frog</Text>
+              <View style={styles.statsTextColumn}>
+                <View style={styles.statRow}>
+                  <Text style={styles.statLabel}>Personal Best:</Text>
+                  <Text style={styles.statValue}>{stats.personalBest}lb</Text>
+                </View>
+                <View style={styles.statRow}>
+                  <Text style={styles.statLabel}>Fish Caught:</Text>
+                  <Text style={styles.statValue}>{stats.totalCatches}</Text>
+                </View>
+                <View style={styles.statRow}>
+                  <Text style={styles.statLabel}>Challenges Completed:</Text>
+                  <Text style={styles.statValue}>
+                    {stats.challengesCompleted}
+                  </Text>
+                </View>
+                <View style={styles.statRow}>
+                  <Text style={styles.statLabel}>Favorite Bait:</Text>
+                  <Text style={styles.statValue}>
+                    {stats.favoriteBait.replaceAll("_", " ")}
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
@@ -228,13 +263,17 @@ const styles = StyleSheet.create({
   },
   profileRow: {
     flexDirection: "row",
-    gap: 16,
+
     marginBottom: 20,
     alignItems: "flex-start",
   },
   leftColumn: {
     flex: 1,
     alignItems: "center",
+  },
+  statsTextColumn: {
+    flexDirection: "column",
+    alignItems: "flex-start",
   },
   username: {
     color: "#fff",

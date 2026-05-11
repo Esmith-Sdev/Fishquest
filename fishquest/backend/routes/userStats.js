@@ -3,15 +3,27 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import UserSpeciesStats from "../models/UserSpeciesStats.js";
 import UserFishingStats from "../models/UserFishingStats.js";
+import UserChallenge from "../models/UserChallenge.js";
+import Log from "../models/Log.js";
 const router = express.Router();
 router.get("/:userId", async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
+    const personalBestLog = await Log.findOne({
+      userId: decoded.sub,
+      weight: { $gt: 0 },
+    }).sort({ weight: -1 });
 
+    const challengesCompleted = await UserChallenge.countDocuments({
+      userId: decoded.sub,
+      isFinished: true,
+    });
     res.json({
       xp: user.xp,
       level: user.level,
       levelTitle: user.levelTitle,
+      personalBest: personalBestLog?.weight || 0,
+      challengesCompleted,
     });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch user stats" });

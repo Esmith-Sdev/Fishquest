@@ -154,8 +154,6 @@ export default function AddBuddyModal({ visible, onClose }) {
                   keyExtractor={(item) => item._id}
                   renderItem={({ item }) => (
                     <View style={styles.row}>
-                      <View style={styles.spacer} />
-
                       <View style={styles.userContainer}>
                         <Text style={styles.usernameText}>{item.username}</Text>
                       </View>
@@ -217,11 +215,13 @@ const styles = StyleSheet.create({
     borderColor: "#c5c5c5",
     borderWidth: 1,
     paddingHorizontal: 10,
+
     paddingVertical: 1,
     marginTop: 20,
     marginBottom: 10,
   },
   searchText: {
+    color: "#000",
     fontSize: 14,
     fontFamily: "Rubik",
   },
@@ -256,12 +256,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   row: {
-    flex: 1,
-    flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
-    gap: 8,
+    paddingVertical: 12,
+    gap: 10,
+    flexDirection: "row",
+    borderBottomWidth: 1,
     justifyContent: "center",
+    borderBottomColor: "#dedede",
   },
   modalCard: {
     width: 300,

@@ -11,7 +11,8 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { COLORS, RADIUS } from "../constants/theme";
 import { useAuth } from "../context/AuthContext";
-
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export default function BuddyRequestsModal({ visible, onClose }) {
@@ -165,21 +166,21 @@ export default function BuddyRequestsModal({ visible, onClose }) {
                   {actionRequestId === item._id ? (
                     <ActivityIndicator size="small" color={COLORS.primary} />
                   ) : (
-                    <View style={styles.actionRow}>
+                    <>
                       <Pressable
                         style={styles.blueButton}
                         onPress={() => handleAccept(item._id)}
                       >
-                        <Text style={styles.buttonText}>Accept</Text>
+                        <FontAwesome name="check" size={20} color="black" />
                       </Pressable>
 
                       <Pressable
                         style={styles.orangeButton}
                         onPress={() => handleDecline(item._id)}
                       >
-                        <Text style={styles.buttonText}>Decline</Text>
+                        <FontAwesome6 name="xmark" size={20} color="black" />
                       </Pressable>
-                    </View>
+                    </>
                   )}
                 </View>
               )}
@@ -203,6 +204,7 @@ const styles = StyleSheet.create({
     borderColor: "#dedede",
     width: "100%",
   },
+
   messageBox: {
     flex: 1,
     justifyContent: "center",
@@ -213,20 +215,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Rubik",
   },
-  searchBar: {
-    width: "100%",
-    borderRadius: 999,
-    borderColor: "#c5c5c5",
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 1,
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  searchText: {
-    fontSize: 14,
-    fontFamily: "Rubik",
-  },
+
   alertText: {
     fontSize: 14,
     fontFamily: "Rubik",
@@ -262,7 +251,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,
-    gap: 8,
+
     justifyContent: "center",
   },
   modalCard: {
@@ -310,12 +299,7 @@ const styles = StyleSheet.create({
     elevation: 4,
     zIndex: 10,
   },
-  weatherImage: {
-    width: 90,
-    height: 90,
-    resizeMode: "contain",
-    marginTop: 16,
-  },
+
   blueButton: {
     backgroundColor: COLORS.primary,
     boxShadow: "0px 4px 0px #003f73",
@@ -353,16 +337,13 @@ const styles = StyleSheet.create({
     gap: 8,
   },
 
-  list: {
-    width: "100%",
-    marginTop: 15,
-  },
-
   row: {
     alignItems: "center",
     paddingVertical: 12,
     gap: 10,
+    flexDirection: "row",
     borderBottomWidth: 1,
+    justifyContent: "center",
     borderBottomColor: "#dedede",
   },
 });
