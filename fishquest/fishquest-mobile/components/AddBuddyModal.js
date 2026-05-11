@@ -123,14 +123,19 @@ export default function AddBuddyModal({ visible, onClose }) {
               {message ? <Text>{message}</Text> : null}
 
               <FlatList
+                style={{ width: "100%" }}
                 data={users}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
-                  <View>
-                    <Text>{item.username}</Text>
-
-                    <Pressable onPress={() => handleAddFriend(item._id)}>
-                      <Text>Add Friend</Text>
+                  <View style={styles.column}>
+                    <View style={styles.userContainer}>
+                      <Text style={styles.usernameText}>{item.username}</Text>
+                    </View>
+                    <Pressable
+                      style={styles.blueButton}
+                      onPress={() => handleAddFriend(item._id)}
+                    >
+                      <Text style={styles.buttonText}>Add</Text>
                     </Pressable>
                   </View>
                 )}
@@ -161,34 +166,39 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 1,
     marginTop: 20,
+    marginBottom: 10,
   },
   searchText: {
     fontSize: 14,
     fontFamily: "Rubik",
   },
-  tempText: {
-    fontSize: 30,
-    fontFamily: "Rubik",
+  userContainer: {
+    width: 130,
+    height: 130,
+    borderRadius: 16,
+    backgroundColor: COLORS.primary,
+    marginBottom: 12,
+    overflow: "hidden",
+    justifyContent: "center",
+    marginTop: 20,
+    alignItems: "center",
   },
-  weatherText: {
-    fontSize: 15,
-    fontFamily: "Rubik",
-  },
-  windText: {
-    fontSize: 15,
-    fontFamily: "Rubik",
+  usernameText: {
+    fontSize: 16,
+    top: -10,
+    fontFamily: "Jua",
   },
   column: {
+    flex: 1,
     flexDirection: "column",
     alignItems: "center",
-    gap: 15,
   },
   modalCard: {
     width: 300,
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 12,
-    height: 300,
+    height: 400,
   },
   header: {
     flexDirection: "row",
@@ -208,8 +218,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 25,
   },
-
+  profileImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 15,
+    backgroundColor: "#dedede",
+  },
   orangeButton: {
+    boxShadow: "0px 4px 0px #733800",
+
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
@@ -229,6 +246,7 @@ const styles = StyleSheet.create({
   },
   blueButton: {
     backgroundColor: COLORS.primary,
+    boxShadow: "0px 4px 0px #003f73",
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
     paddingHorizontal: 12,
