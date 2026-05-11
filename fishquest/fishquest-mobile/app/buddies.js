@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 import BottomNavbar from "../components/BottomNavbar";
 import { Entypo } from "@expo/vector-icons";
@@ -17,22 +17,35 @@ import { LinearGradient } from "expo-linear-gradient";
 import { ScrollView } from "react-native";
 import AddBuddyModal from "../components/AddBuddyModal";
 import { COLORS, RADIUS } from "../constants/theme";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import BuddyRequestsModal from "../components/BuddyRequestsModal";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export default function Buddies() {
-  const [openAddBuddyModal, setOpenAddBuddyModal] = useState(false);
-  const friends = ["user1", "user2", "user3", "user4", "user5", "user6"];
-  async function fetchFriendRequests() {
-    const res = await fetch(`${API_URL}/api/friends/requests`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  const { token } = useAuth();
 
-    const data = await res.json();
-    return data;
+  const [openAddBuddyModal, setOpenAddBuddyModal] = useState(false);
+  const [openBuddyRequestsModal, setOpenBuddyRequestsModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [requests, setRequests] = useState([]);
+  async function fetchFriendRequests() {
+    try {
+      const res = await fetch(`${API_URL}/api/buddies/requests`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      setRequests(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.log("Failed to fetch requests", err);
+    }
   }
   async function acceptFriendRequest(requestId) {
     const res = await fetch(
-      `${API_URL}/api/friends/requests/${requestId}/accept`,
+      `${API_URL}/api/buddies/requests/${requestId}/accept`,
       {
         method: "PATCH",
         headers: {
@@ -45,14 +58,25 @@ export default function Buddies() {
     return data;
   }
   async function fetchFriends() {
-    const res = await fetch(`${API_URL}/api/friends`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    return data;
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/api/buddies`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.log("Failed to fetch buddies", err);
+    } finally {
+      setLoading(false);
+    }
   }
+  useEffect(() => {
+    fetchFriendRequests();
+    fetchFriends();
+  }, []);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
       <TopNavbarSecondary
@@ -64,8 +88,34 @@ export default function Buddies() {
       />
       <View style={styles.screen}>
         <ScrollView contentContainerStyle={styles.content}>
+          <View style={styles.notificationContainer}>
+            <Pressable
+              style={styles.notificationButton}
+              onPress={() => setOpenBuddyRequestsModal(true)}
+            >
+              <View style={styles.notificationRow}>
+                <Ionicons
+                  name="notifications"
+                  size={30}
+                  color={COLORS.secondary}
+                />
+                <View
+                  style={{
+                    width: 25,
+                    height: 25,
+                    padding: 4,
+                    top: -10,
+                    borderRadius: 9999,
+                    backgroundColor: COLORS.secondary,
+                  }}
+                >
+                  <Text style={styles.notificationText}>{requests.length}</Text>
+                </View>
+              </View>
+            </Pressable>
+          </View>
           <FlatList
-            data={friends}
+            data={users}
             keyExtractor={(item, index) => index.toString()}
             numColumns={3}
             columnWrapperStyle={styles.gridRow}
@@ -79,7 +129,7 @@ export default function Buddies() {
                   Add some buddies to see them here.
                 </Text>
                 <Pressable style={styles.orangeButton}>
-                  <Text style={styles.buttonText}>Add Buddy</Text>
+                  <Text style={styles.orangeButtonText}>Add Buddy</Text>
                 </Pressable>
               </View>
             }
@@ -88,7 +138,7 @@ export default function Buddies() {
                 <Pressable style={styles.card}>
                   <View style={styles.cardBodyTop}>
                     <Text style={styles.cardTitle} numberOfLines={2}>
-                      {item}
+                      {item.username}
                     </Text>
                   </View>
 
@@ -110,6 +160,10 @@ export default function Buddies() {
       <AddBuddyModal
         visible={openAddBuddyModal}
         onClose={() => setOpenAddBuddyModal(false)}
+      />
+      <BuddyRequestsModal
+        visible={openBuddyRequestsModal}
+        onClose={() => setOpenBuddyRequestsModal(false)}
       />
     </SafeAreaView>
   );
@@ -133,6 +187,17 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     marginBottom: 20,
+  },
+  notificationRow: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  notificationText: {
+    color: "#fff",
+    textAlign: "center",
+    fontFamily: "Rubik",
+    fontSize: 12,
   },
   button: {
     backgroundColor: "#008575",

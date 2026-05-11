@@ -6,81 +6,98 @@ import {
   StyleSheet,
   Pressable,
   FlatList,
-  TextInput,
+  ActivityIndicator,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { COLORS, RADIUS } from "../constants/theme";
-import { getCurrentLocation } from "../utils/getCurrentLocation";
-import { ActivityIndicator } from "react-native";
 import { useAuth } from "../context/AuthContext";
+
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
-export default function AddBuddyModal({ visible, onClose }) {
+
+export default function BuddyRequestsModal({ visible, onClose }) {
   const { token } = useAuth();
-  const [query, setQuery] = useState("");
-  const [users, setUsers] = useState([]);
-  const [message, setMessage] = useState("");
+
+  const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searching, setSearching] = useState(false);
-  const [addedUsers, setAddedUsers] = useState({});
-  const [addingUserId, setAddingUserId] = useState(null);
+  const [actionRequestId, setActionRequestId] = useState(null);
   const [resultMessage, setResultMessage] = useState("");
-  async function handleSearch(text = query) {
-    setSearching(true);
-    const searchText = String(text || "");
 
-    setQuery(searchText);
-
-    if (searchText.trim().length < 2) {
-      setUsers([]);
-      setSearching(false);
-      return;
+  useEffect(() => {
+    if (visible) {
+      fetchRequests();
     }
+  }, [visible]);
+
+  async function fetchRequests() {
     try {
-      const res = await fetch(
-        `${API_URL}/api/buddies/search?query=${encodeURIComponent(searchText)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      console.log("STATUS:", res.status);
-      const data = await res.json();
-      console.log("DATA:", data);
+      setLoading(true);
 
-      setUsers(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.log("Search users error:", error);
-      setMessage("Could not search users.");
-    } finally {
-      setSearching(false);
-    }
-  }
-
-  async function handleAddFriend(receiverId) {
-    try {
-      setAddingUserId(receiverId);
-
-      const res = await fetch(`${API_URL}/api/buddies/request/${receiverId}`, {
-        method: "POST",
+      const res = await fetch(`${API_URL}/api/buddies/requests`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       const data = await res.json();
-
-      setAddedUsers((prev) => ({
-        ...prev,
-        [receiverId]: true,
-      }));
-
-      setResultMessage(data.message || "Friend request sent!");
+      setRequests(Array.isArray(data) ? data : []);
     } catch (error) {
-      setResultMessage("Could not send friend request.");
+      setResultMessage("Could not load buddy requests.");
     } finally {
-      setAddingUserId(null);
+      setLoading(false);
+    }
+  }
+
+  async function handleAccept(requestId) {
+    try {
+      setActionRequestId(requestId);
+
+      const res = await fetch(
+        `${API_URL}/api/buddies/requests/${requestId}/accept`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = await res.json();
+
+      setRequests((prev) =>
+        prev.filter((request) => request._id !== requestId),
+      );
+      setResultMessage(data.message || "Buddy request accepted!");
+    } catch (error) {
+      setResultMessage("Could not accept request.");
+    } finally {
+      setActionRequestId(null);
+    }
+  }
+
+  async function handleDecline(requestId) {
+    try {
+      setActionRequestId(requestId);
+
+      const res = await fetch(
+        `${API_URL}/api/buddies/requests/${requestId}/decline`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = await res.json();
+
+      setRequests((prev) =>
+        prev.filter((request) => request._id !== requestId),
+      );
+      setResultMessage(data.message || "Buddy request declined.");
+    } catch (error) {
+      setResultMessage("Could not decline request.");
+    } finally {
+      setActionRequestId(null);
     }
   }
 
@@ -97,91 +114,74 @@ export default function AddBuddyModal({ visible, onClose }) {
           style={styles.modalCard}
         >
           <View style={styles.header}>
-            <Text style={styles.title}>Add a Buddy</Text>
+            <Text style={styles.title}>Buddy Requests</Text>
+
             <View style={{ position: "absolute", right: -10, top: -10 }}>
               <Pressable onPress={onClose} style={styles.button}>
                 <MaterialIcons
                   name="cancel"
                   size={30}
                   color={COLORS.secondary}
-                />{" "}
+                />
               </Pressable>
             </View>
           </View>
+
           {loading ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+            <View style={styles.centerBox}>
               <ActivityIndicator size="large" color={COLORS.primary} />
             </View>
-          ) : (
-            <View style={styles.column}>
-              <View style={styles.searchBar}>
-                <TextInput
-                  placeholder="Enter a username..."
-                  style={styles.searchText}
-                  value={query}
-                  onChangeText={setQuery}
-                />
-              </View>
+          ) : resultMessage ? (
+            <View style={styles.messageBox}>
+              <Text style={styles.buttonText}>{resultMessage}</Text>
+
               <Pressable
-                style={[styles.orangeButton, { marginBottom: 15 }]}
-                onPress={() => handleSearch(query)}
+                style={styles.orangeButton}
+                onPress={() => setResultMessage("")}
               >
-                <Text style={styles.buttonText}>
-                  {searching ? "Searching..." : "Search"}
-                </Text>
+                <Text style={styles.buttonText}>OK</Text>
               </Pressable>
-              {resultMessage ? (
-                <View style={styles.messageBox}>
-                  <Text style={styles.buttonText}>{resultMessage}</Text>
-
-                  <Pressable
-                    style={styles.orangeButton}
-                    onPress={() => setResultMessage("")}
-                  >
-                    <Text style={styles.buttonText}>OK</Text>
-                  </Pressable>
+            </View>
+          ) : (
+            <FlatList
+              style={styles.list}
+              data={requests}
+              keyExtractor={(item) => item._id}
+              ListEmptyComponent={
+                <View style={styles.centerBox}>
+                  <Text style={styles.buttonText}>No buddy requests.</Text>
                 </View>
-              ) : (
-                <FlatList
-                  style={styles.list}
-                  data={users}
-                  keyExtractor={(item) => item._id}
-                  renderItem={({ item }) => (
-                    <View style={styles.row}>
-                      <View style={styles.spacer} />
+              }
+              renderItem={({ item }) => (
+                <View style={styles.row}>
+                  <View style={styles.userContainer}>
+                    <Text style={styles.usernameText}>
+                      {item.senderId?.username || "Unknown User"}
+                    </Text>
+                  </View>
 
-                      <View style={styles.userContainer}>
-                        <Text style={styles.usernameText}>{item.username}</Text>
-                      </View>
+                  {actionRequestId === item._id ? (
+                    <ActivityIndicator size="small" color={COLORS.primary} />
+                  ) : (
+                    <View style={styles.actionRow}>
+                      <Pressable
+                        style={styles.blueButton}
+                        onPress={() => handleAccept(item._id)}
+                      >
+                        <Text style={styles.buttonText}>Accept</Text>
+                      </Pressable>
 
-                      {addingUserId === item._id ? (
-                        <ActivityIndicator
-                          size="small"
-                          color={COLORS.primary}
-                        />
-                      ) : addedUsers[item._id] ? (
-                        <Pressable style={styles.blueButton} disabled>
-                          <Text style={styles.buttonText}>Sent!</Text>
-                        </Pressable>
-                      ) : (
-                        <Pressable
-                          style={styles.blueButton}
-                          onPress={() => handleAddFriend(item._id)}
-                        >
-                          <Text style={styles.buttonText}>Add</Text>
-                        </Pressable>
-                      )}
+                      <Pressable
+                        style={styles.orangeButton}
+                        onPress={() => handleDecline(item._id)}
+                      >
+                        <Text style={styles.buttonText}>Decline</Text>
+                      </Pressable>
                     </View>
                   )}
-                />
+                </View>
               )}
-            </View>
+            />
           )}
         </Pressable>
       </Pressable>
@@ -332,5 +332,35 @@ const styles = StyleSheet.create({
     fontFamily: "Jua",
     fontSize: 15,
     textAlign: "center",
+  },
+  centerBox: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  messageBox: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 15,
+  },
+
+  actionRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+
+  list: {
+    width: "100%",
+    marginTop: 15,
+  },
+
+  row: {
+    alignItems: "center",
+    paddingVertical: 12,
+    gap: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#dedede",
   },
 });

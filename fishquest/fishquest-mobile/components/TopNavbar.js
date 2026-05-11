@@ -54,11 +54,11 @@ export default function Topbar() {
   }, [menuOpen]);
   return (
     <View style={styles.topNavbar}>
+      <View style={styles.navSpacer} />
       <View style={styles.center}>
         <Text style={styles.rankText}>
           Lv {level} • {title}
         </Text>
-
         <View style={styles.progressTrack}>
           <View
             style={[styles.progressFill, { width: `${progressPercent}%` }]}
@@ -66,12 +66,20 @@ export default function Topbar() {
           <Text style={styles.progressLabel}>{xp} XP</Text>
         </View>
       </View>
-
-      <Pressable onPress={() => setMenuOpen((prev) => !prev)}>
+      <Pressable
+        style={styles.hamButton}
+        onPress={() => setMenuOpen((prev) => !prev)}
+      >
         <Ionicons name={menuOpen ? "close" : "menu"} size={30} color="#fff" />
       </Pressable>
-
+      {menuOpen && (
+        <Pressable
+          style={styles.backgroundOverlay}
+          onPress={() => setMenuOpen(false)}
+        />
+      )}
       <Animated.View
+        pointerEvents={menuOpen ? "auto" : "none"}
         style={[
           styles.dropdown,
           {
@@ -96,7 +104,6 @@ export default function Topbar() {
           <Text style={styles.dropdownItem}>Fishing Forecast</Text>
         </Pressable>
         <View style={styles.dropdownDivider} />
-
         <Link href="/shop" asChild>
           <Pressable onPress={() => setMenuOpen(false)}>
             <Text style={styles.dropdownItem}>Shop</Text>
@@ -104,12 +111,11 @@ export default function Topbar() {
         </Link>
         <View style={styles.dropdownDivider} />
         <Link href="/buddies" asChild>
-          <Pressable>
+          <Pressable onPress={() => setMenuOpen(false)}>
             <Text style={styles.dropdownItem}>Buddies</Text>
           </Pressable>
         </Link>
       </Animated.View>
-
       <ForecastModal
         visible={showForecast}
         onClose={() => setShowForecast(false)}
@@ -130,7 +136,25 @@ const styles = StyleSheet.create({
     width: "100%",
     zIndex: 1000,
   },
+  backgroundOverlay: {
+    position: "absolute",
+    top: 67,
+    left: -12,
+    right: -12,
+    height: 1000,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    zIndex: 998,
+    elevation: 7,
+  },
+  navSpacer: {
+    width: 40,
+  },
 
+  hamButton: {
+    width: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   left: {
     flexDirection: "row",
     alignItems: "center",
@@ -145,7 +169,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
 
     zIndex: 999,
-    elevation: 8,
   },
   dropdownDivider: {
     height: 1,
@@ -162,7 +185,7 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     alignItems: "center",
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
   },
   right: {
     flexDirection: "row",
@@ -182,7 +205,7 @@ const styles = StyleSheet.create({
     fontFamily: "Jua",
   },
   progressTrack: {
-    width: "100%",
+    width: "90%",
     height: 14,
     backgroundColor: "#d9d9d9",
     borderRadius: 999,
