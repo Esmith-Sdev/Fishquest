@@ -11,7 +11,6 @@ export async function sendFriendRequest(req, res) {
     }
 
     const receiver = await User.findById(receiverId);
-
     if (!receiver) {
       return res.status(404).json({ message: "User not found." });
     }
@@ -23,8 +22,8 @@ export async function sendFriendRequest(req, res) {
     }
 
     const existingRequest = await FriendRequest.findOne({
-      sender: senderId,
-      receiver: receiverId,
+      senderId,
+      receiverId,
       status: "pending",
     });
 
@@ -33,8 +32,8 @@ export async function sendFriendRequest(req, res) {
     }
 
     const friendRequest = await FriendRequest.create({
-      senderId: senderId,
-      receiverId: receiverId,
+      senderId,
+      receiverId,
     });
 
     res.status(201).json(friendRequest);
@@ -46,9 +45,9 @@ export async function sendFriendRequest(req, res) {
 export async function getFriendRequests(req, res) {
   try {
     const requests = await FriendRequest.find({
-      receiver: req.user.id,
+      receiverId: req.user.id,
       status: "pending",
-    }).populate("senderId", "username");
+    }).populate("senderId", "username email");
 
     res.json(requests);
   } catch (error) {
@@ -66,16 +65,16 @@ export async function acceptFriendRequest(req, res) {
       return res.status(404).json({ message: "Friend request not found." });
     }
 
-    if (request.receiver.toString() !== req.user.id) {
+    if (request.receiverId.toString() !== req.user.id) {
       return res.status(403).json({ message: "Not allowed." });
     }
 
-    await User.findByIdAndUpdate(request.sender, {
-      $addToSet: { friends: request.receiver },
+    await User.findByIdAndUpdate(request.senderId, {
+      $addToSet: { friends: request.receiverId },
     });
 
-    await User.findByIdAndUpdate(request.receiver, {
-      $addToSet: { friends: request.sender },
+    await User.findByIdAndUpdate(request.receiverId, {
+      $addToSet: { friends: request.senderId },
     });
 
     request.status = "accepted";
@@ -97,7 +96,7 @@ export async function declineFriendRequest(req, res) {
       return res.status(404).json({ message: "Friend request not found." });
     }
 
-    if (request.receiver.toString() !== req.user.id) {
+    if (request.receiverId.toString() !== req.user.id) {
       return res.status(403).json({ message: "Not allowed." });
     }
 
@@ -146,7 +145,6 @@ export async function searchUsers(req, res) {
   try {
     const { query } = req.query;
 
-    // prevent empty searches
     if (!query || query.trim().length < 2) {
       return res.json([]);
     }
@@ -156,8 +154,6 @@ export async function searchUsers(req, res) {
         $regex: query,
         $options: "i",
       },
-
-      // exclude current logged in user
       _id: {
         $ne: req.user.id,
       },
@@ -167,8 +163,6 @@ export async function searchUsers(req, res) {
 
     res.json(users);
   } catch (error) {
-    console.log("Search users error:", error);
-
     res.status(500).json({
       message: "Failed to search users.",
     });
