@@ -39,6 +39,8 @@ export default function BuddyRequestsModal({ visible, onClose }) {
       });
 
       const data = await res.json();
+      console.log("REQUEST STATUS:", res.status);
+      console.log("REQUEST DATA:", data);
       setRequests(Array.isArray(data) ? data : []);
     } catch (error) {
       setResultMessage("Could not load buddy requests.");

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import User from "../models/User.js";
 import FriendRequest from "../models/Buddies.js";
 
@@ -44,13 +45,18 @@ export async function sendFriendRequest(req, res) {
 
 export async function getFriendRequests(req, res) {
   try {
+    console.log("Checking requests for:", req.user.id);
+
     const requests = await FriendRequest.find({
-      receiverId: req.user.id,
+      receiverId: new mongoose.Types.ObjectId(req.user.id),
       status: "pending",
     }).populate("senderId", "username email");
 
+    console.log("Found requests:", requests);
+
     res.json(requests);
   } catch (error) {
+    console.log("Failed to fetch friend requests:", error);
     res.status(500).json({ message: "Failed to fetch friend requests." });
   }
 }
