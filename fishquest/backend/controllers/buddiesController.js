@@ -141,3 +141,36 @@ export async function removeFriend(req, res) {
     res.status(500).json({ message: "Failed to remove friend." });
   }
 }
+
+export async function searchUsers(req, res) {
+  try {
+    const { query } = req.query;
+
+    // prevent empty searches
+    if (!query || query.trim().length < 2) {
+      return res.json([]);
+    }
+
+    const users = await User.find({
+      username: {
+        $regex: query,
+        $options: "i",
+      },
+
+      // exclude current logged in user
+      _id: {
+        $ne: req.user.id,
+      },
+    })
+      .select("username profileImage")
+      .limit(10);
+
+    res.json(users);
+  } catch (error) {
+    console.log("Search users error:", error);
+
+    res.status(500).json({
+      message: "Failed to search users.",
+    });
+  }
+}

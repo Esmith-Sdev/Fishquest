@@ -6,6 +6,7 @@ import {
   declineFriendRequest,
   getFriends,
   removeFriend,
+  searchUsers,
 } from "../controllers/buddiesController.js";
 import { protect } from "../middleware/requireAuth.js";
 
@@ -17,4 +18,5 @@ router.patch("/requests/:requestId/accept", protect, acceptFriendRequest);
 router.patch("/requests/:requestId/decline", protect, declineFriendRequest);
 router.get("/", protect, getFriends);
 router.delete("/:friendId", protect, removeFriend);
+router.get("/search", protect, searchUsers);
 export default router;
