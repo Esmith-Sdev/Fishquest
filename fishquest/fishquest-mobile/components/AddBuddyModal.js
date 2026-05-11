@@ -30,21 +30,23 @@ export default function AddBuddyModal({ visible, onClose }) {
 
     if (searchText.trim().length < 2) {
       setUsers([]);
+      setSearching(false);
       return;
     }
-
     try {
       const res = await fetch(
-        `${API_URL}/api/friends/search?query=${encodeURIComponent(searchText)}`,
+        `${API_URL}/api/buddies/search?query=${encodeURIComponent(searchText)}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         },
       );
-
+      console.log("STATUS:", res.status);
       const data = await res.json();
+      console.log("DATA:", data);
 
+      setUsers(Array.isArray(data) ? data : []);
       setUsers(data);
     } catch (error) {
       console.log("Search users error:", error);
@@ -55,7 +57,7 @@ export default function AddBuddyModal({ visible, onClose }) {
   }
 
   async function handleAddFriend(receiverId) {
-    const res = await fetch(`${API_URL}/api/friends/request/${receiverId}`, {
+    const res = await fetch(`${API_URL}/api/buddies/request/${receiverId}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

@@ -18,4 +18,4 @@ const BuddiesSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("BuddiesSchema", BuddiesSchema);
+export default mongoose.model("Buddies", BuddiesSchema);

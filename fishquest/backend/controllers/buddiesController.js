@@ -33,8 +33,8 @@ export async function sendFriendRequest(req, res) {
     }
 
     const friendRequest = await FriendRequest.create({
-      sender: senderId,
-      receiver: receiverId,
+      senderId: senderId,
+      receiverId: receiverId,
     });
 
     res.status(201).json(friendRequest);
