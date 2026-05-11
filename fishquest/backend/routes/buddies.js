@@ -12,11 +12,12 @@ import { protect } from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
+router.get("/search", protect, searchUsers);
+
 router.post("/request/:receiverId", protect, sendFriendRequest);
 router.get("/requests", protect, getFriendRequests);
 router.patch("/requests/:requestId/accept", protect, acceptFriendRequest);
 router.patch("/requests/:requestId/decline", protect, declineFriendRequest);
 router.get("/", protect, getFriends);
 router.delete("/:friendId", protect, removeFriend);
-router.get("/search", protect, searchUsers);
 export default router;

@@ -13,16 +13,17 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { COLORS, RADIUS } from "../constants/theme";
 import { getCurrentLocation } from "../utils/getCurrentLocation";
 import { ActivityIndicator } from "react-native";
-import { getToken } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export default function AddBuddyModal({ visible, onClose }) {
-  const { token } = getToken();
+  const { token } = useAuth();
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [searching, setSearching] = useState(false);
   async function handleSearch(text = query) {
+    setSearching(true);
     const searchText = String(text || "");
 
     setQuery(searchText);
@@ -34,7 +35,7 @@ export default function AddBuddyModal({ visible, onClose }) {
 
     try {
       const res = await fetch(
-        `${API_URL}/api/users/search?query=${encodeURIComponent(searchText)}`,
+        `${API_URL}/api/friends/search?query=${encodeURIComponent(searchText)}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -43,10 +44,13 @@ export default function AddBuddyModal({ visible, onClose }) {
       );
 
       const data = await res.json();
+
       setUsers(data);
     } catch (error) {
       console.log("Search users error:", error);
       setMessage("Could not search users.");
+    } finally {
+      setSearching(false);
     }
   }
 
@@ -110,7 +114,9 @@ export default function AddBuddyModal({ visible, onClose }) {
                 style={styles.orangeButton}
                 onPress={() => handleSearch(query)}
               >
-                <Text style={styles.buttonText}>Search</Text>
+                <Text style={styles.buttonText}>
+                  {searching ? "Searching..." : "Search"}
+                </Text>
               </Pressable>
               {message ? <Text>{message}</Text> : null}
 
