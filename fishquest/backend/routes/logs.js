@@ -3,13 +3,13 @@ import jwt from "jsonwebtoken";
 import Logs from "../models/Logs.js";
 import RigStats from "../models/RigStats.js";
 import getTimeOfDay from "../utils/getTimeOfDay.js";
-import User from "../models/User.js";
-import UserSpeciesStats from "../models/UserSpeciesStats.js";
+
 import RigPreset from "../models/Rigs.js";
-import UserFishingStats from "../models/UserFishingStats.js";
+
 import { checkDailyChallengesForLog } from "../utils/checkDailyChallengesForLog.js";
 import { recalculateUserFishingStats } from "../utils/recalculateUserFishingStats.js";
 import { awardXp } from "../utils/awardXp.js";
+import { updateUserBadges } from "../utils/updateUserBadges.js";
 const router = express.Router();
 
 async function recalculateRigStats(userId, rigId) {
@@ -147,21 +147,24 @@ router.post("/", async (req, res) => {
     const result = await checkDailyChallengesForLog(decoded.sub, newLog);
 
     const completedChallenges = result.completedChallenges;
+
     let totalXpEarned = (result?.totalXp || 0) + 50;
 
     if (totalXpEarned > 0) {
       await awardXp(decoded.sub, totalXpEarned);
     }
+
     await recalculateUserFishingStats(decoded.sub);
     if (newLog.rigPresetId) {
       await recalculateRigStats(decoded.sub, newLog.rigPresetId.toString());
     }
-
+    const badges = await updateUserBadges(decoded.sub);
     res.status(201).json({
       log: newLog,
       completedChallenges,
       challengeXp: result?.totalXp || 0,
       totalXpEarned,
+      badges,
     });
   } catch (err) {
     console.error(err);
@@ -267,7 +270,7 @@ router.put("/:id", async (req, res) => {
       },
       { new: true, runValidators: true },
     );
-
+    const badges = await updateUserBadges(decoded.sub);
     const newRigId = updatedLog.rigPresetId?.toString();
 
     if (oldRigId) {
@@ -278,7 +281,10 @@ router.put("/:id", async (req, res) => {
       await recalculateRigStats(decoded.sub, newRigId);
     }
     await recalculateUserFishingStats(decoded.sub);
-    res.json(updatedLog);
+    res.json({
+      log: updatedLog,
+      badges,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to update log" });
@@ -311,9 +317,10 @@ router.delete("/:id", async (req, res) => {
       await recalculateRigStats(decoded.sub, oldRigId);
     }
 
+    const badges = await updateUserBadges(decoded.sub);
     await recalculateUserFishingStats(decoded.sub);
 
-    res.json({ message: "Log deleted" });
+    res.json({ message: "Log deleted", badges });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to delete log" });

@@ -1,7 +1,7 @@
 import * as Location from "expo-location";
 
 function getWeatherLabel(code) {
-  if (code === 0) return "clear";
+  if (code === 0) return "Clear";
 
   if ([1, 2, 3].includes(code)) {
     return "Cloudy";

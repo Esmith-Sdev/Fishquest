@@ -384,7 +384,7 @@ export default function CreateLog() {
             loading={saving}
           />
 
-          <LoadingIndicator text="Loading Logs" color="#fff" />
+          <LoadingIndicator text="Getting Things Setup" color="#fff" />
 
           <BottomNavbar />
         </View>

@@ -8,6 +8,7 @@ const CARD_GAP = 12;
 const CARD_SIZE = (screenWidth - 24 - CARD_GAP * 2) / 3;
 export default function BadgeCard({ badge, unlocked, onClick, preview }) {
   const [imageLoading, setImageLoading] = useState(true);
+
   return (
     <Pressable
       onPress={onClick}
