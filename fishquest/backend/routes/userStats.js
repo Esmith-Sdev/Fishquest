@@ -16,23 +16,26 @@ router.get("/", async (req, res) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id || decoded.sub;
 
-    const user = await User.findById(decoded.sub);
-    const speciesStats = await UserSpeciesStats.find({
-      userId: decoded.sub,
-    });
-    const fishingStats = await UserFishingStats.findOne({
-      userId: decoded.sub,
-    });
+    if (!userId) {
+      return res.status(401).json({ message: "Invalid token payload" });
+    }
+
+    const user = await User.findById(userId);
+    const speciesStats = await UserSpeciesStats.find({ userId });
+    const fishingStats = await UserFishingStats.findOne({ userId });
+
     const personalBestLog = await Log.findOne({
-      userId: decoded.sub,
+      userId,
       weight: { $gt: 0 },
     }).sort({ weight: -1 });
 
     const challengesCompleted = await UserChallenge.countDocuments({
-      userId: decoded.sub,
+      userId,
       isFinished: true,
     });
+
     res.json({
       xp: user?.xp || 0,
       level: user?.level || 1,
@@ -52,7 +55,6 @@ router.get("/", async (req, res) => {
       weights: fishingStats?.weights || {},
 
       bobberCount: fishingStats?.bobberCount || 0,
-
       species: speciesStats,
     });
   } catch (err) {
