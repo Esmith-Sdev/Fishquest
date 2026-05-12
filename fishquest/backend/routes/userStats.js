@@ -4,7 +4,7 @@ import User from "../models/User.js";
 import UserSpeciesStats from "../models/UserSpeciesStats.js";
 import UserFishingStats from "../models/UserFishingStats.js";
 import UserChallenge from "../models/UserChallenge.js";
-import Log from "../models/Log.js";
+import Log from "../models/Logs.js";
 const router = express.Router();
 router.get("/", async (req, res) => {
   try {
