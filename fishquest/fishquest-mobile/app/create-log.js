@@ -39,7 +39,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import SelectDropdown from "react-native-select-dropdown";
 import { useAuth } from "../context/AuthContext";
-import { ConfettiCannon } from "react-native-confetti-cannon";
+import ConfettiCannon from "react-native-confetti-cannon";
 import LoadingIndicator from "../components/LoadingIndicator";
 export default function CreateLog() {
   const params = useLocalSearchParams();
@@ -706,7 +706,7 @@ export default function CreateLog() {
                   renderItem={({ item }) => {
                     const isSelected = selectedWeather === item.id;
                     return (
-                      <View
+                      <Pressable
                         onPress={() => setSelectedWeather(item.id)}
                         style={[
                           styles.weatherOption,
@@ -726,7 +726,7 @@ export default function CreateLog() {
                         >
                           {item.label}
                         </Text>
-                      </View>
+                      </Pressable>
                     );
                   }}
                 />
@@ -840,8 +840,7 @@ export default function CreateLog() {
         )}
         {saving && (
           <View style={styles.savingOverlay}>
-            <ActivityIndicator size="large" color={COLORS.secondary} />
-            <Text style={styles.savingText}>Saving...</Text>
+            <LoadingIndicator text="Saving" color="#fff" />
           </View>
         )}
         {showConfetti && (

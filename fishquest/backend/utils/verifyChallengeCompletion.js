@@ -296,7 +296,13 @@ function verifyFishCountChallenge(log, template, previousLogs, userChallenge) {
     ? new Date(userChallenge.expiresAt)
     : new Date();
 
-  const validLogs = [...previousLogs, log].filter((entry) => {
+  const allLogs = [...previousLogs, log];
+
+  const uniqueLogs = Array.from(
+    new Map(allLogs.map((entry) => [String(entry._id), entry])).values(),
+  );
+
+  const validLogs = uniqueLogs.filter((entry) => {
     if (entry.skunked || !entry.speciesId) return false;
 
     const logTime = new Date(entry.createdAt || entry.date);
