@@ -1,4 +1,4 @@
-import Log from "../models/Log.js";
+import Log from "../models/Logs.js";
 import User from "../models/User.js";
 import { recalculateUserBadges } from "./recalculateUserBadges.js";
 
