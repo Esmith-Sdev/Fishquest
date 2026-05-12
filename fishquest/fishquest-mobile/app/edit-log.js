@@ -8,7 +8,6 @@ import {
   ScrollView,
   TextInput,
   Alert,
-  ActivityIndicator,
   FlatList,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
@@ -30,6 +29,7 @@ import { BAIT } from "../data/bait.config";
 import { HOOKS } from "../data/hooks.config";
 import { POLES } from "../data/poles.config";
 import { WEIGHTS } from "../data/weight.config";
+import LoadingIndicator from "../components/LoadingIndicator";
 import { STATE_ABBREVIATIONS } from "../data/states";
 import { COLORS, RADIUS } from "../constants/theme";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -60,11 +60,11 @@ export default function UpdateLog() {
   const [skunked, setSkunked] = useState(false);
   const [species, setSpecies] = useState(null);
   const [notes, setNotes] = useState("");
-  const [saving, setSaving] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [geoError, setGeoError] = useState("");
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [weight, setWeight] = useState("");
+  const dots = useLoadingDots();
   const [length, setLength] = useState("");
   const [rigsLoading, setRigsLoading] = useState(true);
   const [rigsError, setRigsError] = useState("");
@@ -75,6 +75,7 @@ export default function UpdateLog() {
   const [selectedWeather, setSelectedWeather] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [challenge, setChallenge] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [timeValue, setTimeValue] = useState(() => {
     const d = new Date();
     const h24 = d.getHours();
@@ -101,7 +102,7 @@ export default function UpdateLog() {
   const [rigs, setRigs] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const speciesDisabled = skunked || saving;
+  const speciesDisabled = skunked;
 
   useEffect(() => {
     if (skunked) setSpecies(null);
@@ -368,8 +369,6 @@ export default function UpdateLog() {
       return;
     }
 
-    setSaving(true);
-
     try {
       const token = await getToken();
       if (!token) {
@@ -413,11 +412,11 @@ export default function UpdateLog() {
       console.error("Update log failed:", err);
       Alert.alert("Error", err.message || "Update log failed");
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
   }
 
-  if (rigsLoading) {
+  if (rigsLoading || loading) {
     return (
       <View style={styles.screen}>
         <TopNavbarSecondary
@@ -428,10 +427,7 @@ export default function UpdateLog() {
           backRoute="/home"
         />
 
-        <View style={styles.centerState}>
-          <ActivityIndicator size="large" color={COLORS.secondary} />
-          <Text style={styles.loadingText}>Loading rig presets...</Text>
-        </View>
+        <LoadingIndicator text="Loading Log" color="#fff" />
 
         <BottomNavbar />
       </View>
@@ -443,7 +439,7 @@ export default function UpdateLog() {
   ];
   const isGridFull = allImages.length >= 4;
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.screen}>
         <TopNavbarSecondary
           title="Edit Log"
@@ -993,9 +989,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   loadingText: {
+    fontSize: 16,
     color: "#fff",
     fontFamily: "Jua",
-    fontSize: 18,
+    marginTop: 10,
   },
   orangeButton: {
     backgroundColor: COLORS.secondary,

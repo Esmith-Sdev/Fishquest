@@ -8,12 +8,12 @@ import {
   ScrollView,
   TextInput,
   Alert,
-  ActivityIndicator,
   FlatList,
   TouchableOpacity,
   Modal,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
+import useLoadingDots from "../components/LoadingIndicator";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -49,6 +49,7 @@ export default function ViewLog() {
   });
   const [aiLoading, setAiLoading] = useState(false);
   const [aiResult, setAiResult] = useState(null);
+  const dots = useLoadingDots();
   const [files, setFiles] = useState([]);
   const [skunked, setSkunked] = useState(false);
   const [species, setSpecies] = useState(null);
@@ -73,6 +74,7 @@ export default function ViewLog() {
   const [show, setShow] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [challenge, setChallenge] = useState(null);
+  const [loadingLog, setLoadingLog] = useState(true);
   const weatherOptions = [
     { id: "sunny", label: "Sunny", icon: "weather-sunny" },
     { id: "cloudy", label: "Cloudy", icon: "weather-cloudy" },
@@ -191,6 +193,8 @@ export default function ViewLog() {
         }
       } catch (err) {
         Alert.alert("Error", err.message || "Failed to load log");
+      } finally {
+        setLoadingLog(false);
       }
     }
 
@@ -205,29 +209,30 @@ export default function ViewLog() {
     return file;
   }
 
-  if (rigsLoading) {
+  if (rigsLoading || loadingLog) {
     return (
-      <View style={styles.screen}>
-        <TopNavbarSecondary
-          title="View Log"
-          buttonText="Edit"
-          onButtonPress={() =>
-            router.push({
-              pathname: "/edit-log",
-              params: { id },
-            })
-          }
-          showButton={true}
-          backRoute="/logs"
-        />
+      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+        <View style={styles.screen}>
+          <TopNavbarSecondary
+            title="View Log"
+            buttonText="Edit"
+            onButtonPress={() =>
+              router.push({
+                pathname: "/edit-log",
+                params: { id },
+              })
+            }
+            showButton={true}
+            backRoute="/logs"
+          />
 
-        <View style={styles.centerState}>
-          <ActivityIndicator size="large" color={COLORS.secondary} />
-          <Text style={styles.loadingText}>Loading rig presets...</Text>
+          <View style={styles.centerState}>
+            <LoadingIndicator text="Loading Log" color="#fff" />
+          </View>
+
+          <BottomNavbar />
         </View>
-
-        <BottomNavbar />
-      </View>
+      </SafeAreaView>
     );
   }
   const allImages = [
@@ -236,7 +241,7 @@ export default function ViewLog() {
   ];
   const isGridFull = allImages.length >= 4;
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.screen}>
         <TopNavbarSecondary
           title="View Log"
@@ -547,9 +552,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   loadingText: {
+    fontSize: 16,
     color: "#fff",
     fontFamily: "Jua",
-    fontSize: 18,
+    marginTop: 10,
   },
   orangeButton: {
     backgroundColor: COLORS.secondary,

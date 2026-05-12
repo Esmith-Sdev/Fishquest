@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import GradientBackground from "../components/GradientBackground";
 import {
   Alert,
-  ActivityIndicator,
+  Text,
   StyleSheet,
   View,
   Keyboard,
@@ -13,6 +13,7 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
+import LoadingIndicator from "../components/LoadingIndicator";
 import { COLORS } from "../constants/theme";
 const API_URL = "https://fishquest.onrender.com";
 export default function LoginScreen() {
@@ -34,7 +35,7 @@ export default function LoginScreen() {
       const data = await res.json();
 
       if (res.ok) {
-        login(data); // ✅ correct
+        login(data);
         router.replace("/home");
       } else {
         setError(true);
@@ -50,11 +51,9 @@ export default function LoginScreen() {
   return (
     <GradientBackground>
       {loading && (
-        <ActivityIndicator
-          size="large"
-          color={COLORS.primary}
-          style={styles.center}
-        />
+        <View style={styles.centerState}>
+          <LoadingIndicator text="Logging In" color="#fff" />
+        </View>
       )}
       {!loading && (
         <SafeAreaView style={{ flex: 1 }}>
@@ -95,5 +94,17 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  centerState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#fff",
+    fontFamily: "Jua",
+    marginTop: 10,
   },
 });

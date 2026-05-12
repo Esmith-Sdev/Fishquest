@@ -6,12 +6,12 @@ import {
   StyleSheet,
   Pressable,
   FlatList,
-  ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { COLORS, RADIUS } from "../constants/theme";
 import { useAuth } from "../context/AuthContext";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import LoadingIndicator from "./LoadingIndicator";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -132,7 +132,7 @@ export default function BuddyRequestsModal({ visible, onClose }) {
 
           {loading ? (
             <View style={styles.centerBox}>
-              <ActivityIndicator size="large" color={COLORS.primary} />
+              <LoadingIndicator text="Loading Requests" color="#fff" />
             </View>
           ) : resultMessage ? (
             <View style={styles.messageBox}>

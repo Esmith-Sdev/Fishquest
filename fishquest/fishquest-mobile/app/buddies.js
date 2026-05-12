@@ -18,6 +18,7 @@ import { ScrollView } from "react-native";
 import AddBuddyModal from "../components/AddBuddyModal";
 import { COLORS, RADIUS } from "../constants/theme";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import LoadingIndicator from "../components/LoadingIndicator";
 import BuddyRequestsModal from "../components/BuddyRequestsModal";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export default function Buddies() {
@@ -25,7 +26,7 @@ export default function Buddies() {
 
   const [openAddBuddyModal, setOpenAddBuddyModal] = useState(false);
   const [openBuddyRequestsModal, setOpenBuddyRequestsModal] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [requests, setRequests] = useState([]);
   async function fetchFriendRequests() {
@@ -59,7 +60,6 @@ export default function Buddies() {
   }
   async function fetchFriends() {
     try {
-      setLoading(true);
       const res = await fetch(`${API_URL}/api/buddies`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -77,8 +77,27 @@ export default function Buddies() {
     fetchFriendRequests();
     fetchFriends();
   }, []);
+  if (loading) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+        <View style={styles.screen}>
+          <TopNavbarSecondary
+            title="Buddies"
+            buttonText="Add Buddy"
+            showButton={true}
+            onButtonPress={() => setOpenAddBuddyModal(true)}
+            backRoute="/home"
+          />
+
+          <LoadingIndicator text="Loading Buddies" color="#fff" />
+
+          <BottomNavbar />
+        </View>
+      </SafeAreaView>
+    );
+  }
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <TopNavbarSecondary
         title="Buddies"
         buttonText="Add Buddy"
@@ -226,6 +245,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 15,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#fff",
+    fontFamily: "Jua",
+    marginTop: 10,
   },
   header: {
     paddingTop: 10,

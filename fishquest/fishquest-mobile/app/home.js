@@ -7,6 +7,7 @@ import DailyChallenges from "../components/DailyChallenges";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { ScrollView } from "react-native";
+import { COLORS } from "@/constants/theme";
 export default function HomeScreen() {
   const { user, logout } = useAuth();
 
@@ -16,7 +17,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.screen}>
         <TopNavbar />
         <ScrollView contentContainerStyle={styles.content}>

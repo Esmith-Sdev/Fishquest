@@ -23,7 +23,7 @@ import { POLES } from "../data/poles.config";
 import { WEIGHTS } from "../data/weight.config";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
-import { ActivityIndicator } from "react-native";
+import LoadingIndicator from "../components/LoadingIndicator";
 export default function Tacklebox() {
   const [rigs, setRigs] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -122,7 +122,7 @@ export default function Tacklebox() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.screen}>
         <TopNavbarSecondary
           title="Tacklebox"
@@ -142,12 +142,7 @@ export default function Tacklebox() {
                 alignItems: "center",
               }}
             >
-              <ActivityIndicator
-                size="large"
-                color={COLORS.primary}
-                style={styles.center}
-              ></ActivityIndicator>
-              <Text style={styles.loadingText}>Loading...</Text>
+              <LoadingIndicator text="Loading Rigs" color="#fff" />
             </View>
           </View>
         ) : (
@@ -299,6 +294,8 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 16,
     color: "#fff",
+    fontFamily: "Jua",
+    marginTop: 10,
   },
   header: {
     paddingTop: 10,

@@ -133,7 +133,7 @@ export default function CreateRig() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.screen}>
         <TopNavbarSecondary
           title="Create Rig"

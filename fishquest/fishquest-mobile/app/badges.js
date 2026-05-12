@@ -118,7 +118,7 @@ export default function BadgesPage() {
     return userStats[type] ?? 0;
   }
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.container}>
         <TopNavbarSecondary
           title="Badges"

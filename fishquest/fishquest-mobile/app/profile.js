@@ -9,12 +9,12 @@ import { COLORS, RADIUS } from "../constants/theme";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 import { useAuth } from "../context/AuthContext";
 import SettingsModal from "../components/SettingsModal";
+import LoadingIndicator from "../components/LoadingIndicator";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export default function Profile() {
   const [username, setUsername] = useState("");
-
+  const [loading, setLoading] = useState(true);
   const { user, token } = useAuth();
-
   const [stats, setStats] = useState({
     totalCatches: 0,
     favoriteBait: "None",
@@ -45,6 +45,8 @@ export default function Profile() {
         });
       } catch (err) {
         console.log("Failed to fetch profile stats", err);
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -89,8 +91,29 @@ export default function Profile() {
   function closeModal() {
     setShowModal(false);
   }
+  if (loading) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+        <View style={styles.screen}>
+          <TopNavbarSecondary
+            title="Profile"
+            buttonText="Settings"
+            onButtonPress={openModal}
+            showButton={true}
+            backRoute="/home"
+          />
+
+          <View style={styles.centerState}>
+            <LoadingIndicator text="Loading Profile" color="#fff" />
+          </View>
+
+          <BottomNavbar />
+        </View>
+      </SafeAreaView>
+    );
+  }
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.screen}>
         <SettingsModal
           visible={showModal}
@@ -321,6 +344,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     flexWrap: "wrap",
+  },
+  centerState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+  },
+  loadingText: {
+    color: "#fff",
+    fontFamily: "Jua",
+    fontSize: 18,
   },
   statLabel: {
     color: "#fff",

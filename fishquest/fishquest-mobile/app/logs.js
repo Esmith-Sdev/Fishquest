@@ -7,7 +7,6 @@ import {
   FlatList,
   Image,
   ScrollView,
-  ActivityIndicator,
 } from "react-native";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -19,6 +18,7 @@ import skunkImage from "../assets/images/Fish/skunked.png";
 import { COLORS, RADIUS } from "../constants/theme";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 import Entypo from "@expo/vector-icons/Entypo";
+import LoadingIndicator from "../components/LoadingIndicator";
 import ConfirmModal from "../components/ConfirmModal";
 export default function Logs() {
   const [logs, setLogs] = useState([]);
@@ -72,7 +72,7 @@ export default function Logs() {
     }
   }
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.screen}>
         <TopNavbarSecondary
           title="Logs"
@@ -82,24 +82,7 @@ export default function Logs() {
           backRoute="/home"
         />
         {loading ? (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <View
-              style={{
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <ActivityIndicator
-                size="large"
-                color={COLORS.primary}
-                style={styles.center}
-              ></ActivityIndicator>
-              <Text style={styles.loadingText}>Loading...</Text>
-            </View>
-          </View>
+          <LoadingIndicator text="Loading Logs" color="#fff" />
         ) : (
           <>
             <View style={styles.sortRow}>
@@ -228,6 +211,8 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 16,
     color: "#fff",
+    fontFamily: "Jua",
+    marginTop: 10,
   },
   header: {
     paddingTop: 10,

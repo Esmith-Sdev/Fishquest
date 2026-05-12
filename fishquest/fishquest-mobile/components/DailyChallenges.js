@@ -6,11 +6,12 @@ import TimedChallengeCard from "./TimedChallengeCard";
 import DisabledChallengeCard from "../components/DisabledChallengeCard";
 import { COLORS, RADIUS } from "../constants/theme";
 import { getToken } from "../api/auth";
-
+import LoadingIndicator from "./LoadingIndicator";
 const API_URL = "https://fishquest.onrender.com";
 
 export default function DailyChallenges() {
   const [challenges, setChallenges] = useState([]);
+  const [loading, setLoading] = useState(true);
   const difficultyOrder = {
     hard: 1,
     medium: 2,
@@ -44,6 +45,8 @@ export default function DailyChallenges() {
       setChallenges(Array.isArray(data) ? data : []);
     } catch (err) {
       console.log("fetch error:", err);
+    } finally {
+      setLoading(false);
     }
   }
   const sortedChallenges = [...challenges].sort((a, b) => {
@@ -52,6 +55,17 @@ export default function DailyChallenges() {
       (difficultyOrder[b.difficulty] ?? 999)
     );
   });
+  if (loading) {
+    return (
+      <View style={styles.wrapper}>
+        <View style={styles.card}>
+          <Text style={styles.title}>DAILY CHALLENGES</Text>
+
+          <LoadingIndicator text="Loading Challenges" color="#000" />
+        </View>
+      </View>
+    );
+  }
   return (
     <View style={styles.wrapper}>
       <View style={styles.card}>
@@ -96,6 +110,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     borderRadius: RADIUS.md,
+    minHeight: 420,
     padding: 12,
     gap: 12,
     alignItems: "center",
@@ -132,5 +147,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Jua",
     textAlign: "center",
+  },
+  centerState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+  },
+  loadingText: {
+    color: "#000",
+    fontFamily: "Jua",
+    fontSize: 18,
   },
 });

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, use } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,6 @@ import {
   ScrollView,
   TextInput,
   Alert,
-  ActivityIndicator,
   FlatList,
   Keyboard,
 } from "react-native";
@@ -40,6 +39,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import SelectDropdown from "react-native-select-dropdown";
 import { useAuth } from "../context/AuthContext";
+import { ConfettiCannon } from "react-native-confetti-cannon";
+import LoadingIndicator from "../components/LoadingIndicator";
 export default function CreateLog() {
   const params = useLocalSearchParams();
   const [stateValue, setStateValue] = useState("");
@@ -96,6 +97,7 @@ export default function CreateLog() {
   const templateKey = params.templateKey ?? "";
   const challengeTitle = params.challengeTitle ?? "";
   const { refreshUserStats } = useAuth();
+  const [showConfetti, setShowConfetti] = useState(false);
   useEffect(() => {
     if (skunked) setSpecies(null);
   }, [skunked]);
@@ -347,6 +349,7 @@ export default function CreateLog() {
       await refreshUserStats();
 
       if (result.completedChallenges?.length > 0) {
+        setShowConfetti(true);
         Alert.alert(
           "Challenge Complete!",
           `You completed ${result.completedChallenges.length} challenge(s) and earned ${result.challengeXp || 0} XP!`,
@@ -370,28 +373,27 @@ export default function CreateLog() {
 
   if (rigsLoading) {
     return (
-      <View style={styles.screen}>
-        <TopNavbarSecondary
-          title="Create Log"
-          buttonText="Save"
-          showButton={true}
-          onPress={handleSubmitLog}
-          disabled={saving}
-          loading={saving}
-        />
+      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+        <View style={styles.screen}>
+          <TopNavbarSecondary
+            title="Create Log"
+            buttonText="Save"
+            showButton={true}
+            onPress={handleSubmitLog}
+            disabled={saving}
+            loading={saving}
+          />
 
-        <View style={styles.centerState}>
-          <ActivityIndicator size="large" color={COLORS.secondary} />
-          <Text style={styles.loadingText}>Loading rig presets...</Text>
+          <LoadingIndicator text="Loading Logs" color="#fff" />
+
+          <BottomNavbar />
         </View>
-
-        <BottomNavbar />
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D1B1E" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.screen}>
         <TopNavbarSecondary
           title="Create Log"
@@ -695,16 +697,16 @@ export default function CreateLog() {
             <View style={styles.logRow}>
               <Text style={styles.logLabel}>Weather:</Text>
               <View style={styles.inlineField}>
-                <ScrollView
+                <FlatList
+                  data={weatherOptions}
                   horizontal
+                  keyExtractor={(item) => item.id}
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={{ gap: 8 }}
-                >
-                  {weatherOptions.map((item) => {
+                  renderItem={({ item }) => {
                     const isSelected = selectedWeather === item.id;
                     return (
-                      <Pressable
-                        key={item.id}
+                      <View
                         onPress={() => setSelectedWeather(item.id)}
                         style={[
                           styles.weatherOption,
@@ -724,10 +726,10 @@ export default function CreateLog() {
                         >
                           {item.label}
                         </Text>
-                      </Pressable>
+                      </View>
                     );
-                  })}
-                </ScrollView>
+                  }}
+                />
               </View>
             </View>
             <View style={styles.logColumn}>
@@ -842,6 +844,9 @@ export default function CreateLog() {
             <Text style={styles.savingText}>Saving...</Text>
           </View>
         )}
+        {showConfetti && (
+          <ConfettiCannon count={150} origin={{ x: -10, y: 0 }} fadeOut />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -899,9 +904,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   loadingText: {
+    fontSize: 16,
     color: "#fff",
     fontFamily: "Jua",
-    fontSize: 18,
+    marginTop: 10,
   },
   unitToggle: {
     flexDirection: "row",

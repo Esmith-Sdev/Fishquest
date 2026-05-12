@@ -4,6 +4,7 @@ import { useFonts } from "expo-font";
 import { View } from "react-native";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import GradientBackground from "../components/GradientBackground";
 export default function Layout() {
   const [fontsLoaded] = useFonts({
     Jua: require("../assets/fonts/Jua-Regular.ttf"),
@@ -12,9 +13,13 @@ export default function Layout() {
 
   if (!fontsLoaded) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
+      <GradientBackground>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" />
+        </View>
+      </GradientBackground>
     );
   }
 

@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Alert,
   Platform,
-  ActivityIndicator,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,6 +16,7 @@ import GradientBackground from "../components/GradientBackground";
 import { COLORS, RADIUS } from "../constants/theme";
 import LeftArrowCircle from "@expo/vector-icons/FontAwesome5";
 import { useAuth } from "../context/AuthContext";
+import LoadingIndicator from "../components/LoadingIndicator";
 const API_URL = "https://fishquest.onrender.com";
 
 export default function SignUp() {
@@ -28,14 +28,10 @@ export default function SignUp() {
     email: "",
     password: "",
   });
-
   if (loading) {
     return (
       <GradientBackground>
-        <View style={styles.centerState}>
-          <ActivityIndicator size="large" color={COLORS.secondary} />
-          <Text style={styles.loadingText}>Signing up...</Text>
-        </View>
+        <LoadingIndicator text="Signing Up" color="#fff" />
       </GradientBackground>
     );
   }

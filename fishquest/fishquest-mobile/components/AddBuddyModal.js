@@ -12,8 +12,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { COLORS, RADIUS } from "../constants/theme";
 import { getCurrentLocation } from "../utils/getCurrentLocation";
-import { ActivityIndicator } from "react-native";
 import { useAuth } from "../context/AuthContext";
+import LoadingIndicator from "./LoadingIndicator";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export default function AddBuddyModal({ visible, onClose }) {
   const { token } = useAuth();
@@ -109,15 +109,7 @@ export default function AddBuddyModal({ visible, onClose }) {
             </View>
           </View>
           {loading ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <ActivityIndicator size="large" color={COLORS.primary} />
-            </View>
+            <LoadingIndicator text="Searching" color="#fff" />
           ) : (
             <View style={styles.column}>
               <View style={styles.searchBar}>
