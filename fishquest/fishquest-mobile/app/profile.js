@@ -34,7 +34,8 @@ export default function Profile() {
 
         setStats({
           totalCatches: data.totalCatches || 0,
-
+          personalBest: data.personalBest || 0,
+          challengesCompleted: data.challengesCompleted || 0,
           favoriteBait:
             Object.entries(data.baits || {}).sort(
               (a, b) => b[1] - a[1],
