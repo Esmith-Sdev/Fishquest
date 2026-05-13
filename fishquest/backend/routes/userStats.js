@@ -5,6 +5,7 @@ import UserSpeciesStats from "../models/UserSpeciesStats.js";
 import UserFishingStats from "../models/UserFishingStats.js";
 import UserChallenge from "../models/UserChallenge.js";
 import Log from "../models/Logs.js";
+import { updateUserBadges } from "../utils/updateUserBadges.js";
 const router = express.Router();
 router.get("/", async (req, res) => {
   try {
@@ -35,6 +36,7 @@ router.get("/", async (req, res) => {
       userId,
       isFinished: true,
     });
+    const badges = await updateUserBadges(userId);
 
     res.json({
       xp: user?.xp || 0,
@@ -56,6 +58,7 @@ router.get("/", async (req, res) => {
 
       bobberCount: fishingStats?.bobberCount || 0,
       species: speciesStats,
+      badges,
     });
   } catch (err) {
     console.error("USER STATS ERROR:", err);
