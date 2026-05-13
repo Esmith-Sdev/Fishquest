@@ -85,12 +85,17 @@ export function getBadgeProgress(type, logs = []) {
     case "baitcaster_count":
     case "spinning_count":
     case "button_count":
-    case "fly_count":
-      return validLogs.filter(
-        (log) =>
-          isCaughtFish(log) &&
-          normalize(log.method) === type.replace("_count", ""),
-      ).length;
+    case "fly_count": {
+      const target = type.replace("_count", "");
+
+      return validLogs.filter((log) => {
+        if (!isCaughtFish(log)) return false;
+
+        const poleId = normalize(log.poleId || log.rigSnapshot?.poleId);
+
+        return poleId.includes(target);
+      }).length;
+    }
 
     case "bluegill_count":
     case "catfish_count":

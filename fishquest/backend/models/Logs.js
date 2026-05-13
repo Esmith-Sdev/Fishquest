@@ -30,10 +30,6 @@ const logsSchema = new mongoose.Schema(
       required: true,
       default: Date.now,
     },
-    method: {
-      type: String,
-      enum: ["baitcaster", "spinning", "button", "fly"],
-    },
     weight: { type: Number },
     length: { type: Number },
     skunked: { type: Boolean },
