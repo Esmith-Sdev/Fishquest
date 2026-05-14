@@ -7,11 +7,8 @@ import {
   Pressable,
   StyleSheet,
   FlatList,
-  TouchableWithoutFeedback,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import BottomBar from "../components/BottomNavbar";
 import { BADGES } from "../data/badges.config";
 import BadgeCard from "../components/BadgeCard";
@@ -19,13 +16,20 @@ import { COLORS } from "../constants/theme";
 import { RADIUS } from "../constants/theme";
 import Feather from "@expo/vector-icons/Feather";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToken } from "../api/auth";
 export default function BadgesPage() {
   const [show, setShow] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const [selectedBadge, setSelectedBadge] = useState(null);
-  const [userStats, setUserStats] = useState({});
+  const [userBadges, setUserBadges] = useState([]);
+  const selectedProgress = selectedBadge
+    ? getBadgeProgress(selectedBadge.id)
+    : null;
+
+  const current = selectedProgress?.progress || 0;
+  const needed = selectedProgress?.goal || 0;
+  const unlocked = selectedProgress?.earned || false;
+
   function handleClose() {
     setSelectedBadge(null);
     setShow(false);
@@ -36,15 +40,18 @@ export default function BadgesPage() {
     setShow(true);
   }
 
-  const current = selectedBadge
-    ? getProgressValue(selectedBadge.requirement.type)
-    : 0;
-
-  const needed = selectedBadge ? selectedBadge.requirement.value : 0;
-  const unlocked = selectedBadge ? current >= needed : false;
+  function getBadgeProgress(badgeId) {
+    return (
+      userBadges.find((badge) => badge.badgeId === badgeId) || {
+        progress: 0,
+        goal: 1,
+        earned: false,
+      }
+    );
+  }
   useFocusEffect(
     useCallback(() => {
-      async function fetchUserStats() {
+      async function fetchBadges() {
         try {
           const token = await getToken();
 
@@ -58,65 +65,18 @@ export default function BadgesPage() {
           );
 
           const data = await res.json();
-          console.log("badge stats response:", data);
 
-          const formattedStats = {
-            total_catches: data?.totalCatches || 0,
-          };
+          console.log("badge response:", data.badges);
 
-          const speciesStats = Array.isArray(data?.species) ? data.species : [];
-
-          speciesStats.forEach((species) => {
-            const normalizedId = species.speciesId.replace(/-/g, "_");
-            formattedStats[`${normalizedId}_count`] = species.catchCount;
-          });
-          // time of day
-          Object.entries(data?.timeOfDay || {}).forEach(([key, value]) => {
-            formattedStats[`${key}_count`] = value;
-          });
-
-          // weather
-          Object.entries(data?.weather || {}).forEach(([key, value]) => {
-            formattedStats[`${key}_count`] = value;
-          });
-
-          // baits
-          Object.entries(data?.baits || {}).forEach(([key, value]) => {
-            formattedStats[`${key}_count`] = value;
-          });
-
-          // poles
-          Object.entries(data?.poles || {}).forEach(([key, value]) => {
-            formattedStats[`${key}_count`] = value;
-          });
-
-          // hooks
-          Object.entries(data?.hooks || {}).forEach(([key, value]) => {
-            formattedStats[`${key}_count`] = value;
-          });
-
-          // weights
-          Object.entries(data?.weights || {}).forEach(([key, value]) => {
-            formattedStats[`${key}_count`] = value;
-          });
-
-          // bobber + skunked
-          formattedStats.bobber_count = data?.bobberCount || 0;
-          formattedStats.skunked_count = data?.skunkedCount || 0;
-          console.log("formatted badge stats:", formattedStats);
-
-          setUserStats(formattedStats);
+          setUserBadges(Array.isArray(data?.badges) ? data.badges : []);
         } catch (err) {
-          console.error("Failed to fetch badge stats:", err);
+          console.error("Failed to fetch badges:", err);
         }
       }
 
-      fetchUserStats();
+      fetchBadges();
     }, []),
   );
-  function getProgressValue(type) {
-    return userStats[type] ?? 0;
-  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.container}>
@@ -133,15 +93,14 @@ export default function BadgesPage() {
           columnWrapperStyle={styles.row}
           removeClippedSubviews={false}
           renderItem={({ item }) => {
-            const currentValue = getProgressValue(item.requirement.type);
-            const neededValue = item.requirement.value;
-            const isUnlocked = currentValue >= neededValue;
+            const progressData = getBadgeProgress(item.id);
+
             return (
               <BadgeCard
                 badge={item}
-                unlocked={isUnlocked}
-                current={currentValue}
-                needed={neededValue}
+                unlocked={progressData.earned}
+                current={progressData.progress}
+                needed={progressData.goal}
                 onClick={() => handleShow(item)}
               />
             );

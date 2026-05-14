@@ -164,7 +164,7 @@ export default function BuddyRequestsModal({ visible, onClose }) {
                   </View>
 
                   {actionRequestId === item._id ? (
-                    <ActivityIndicator size="small" color={COLORS.primary} />
+                    <LoadingIndicator text="" color="#fff" />
                   ) : (
                     <>
                       <Pressable

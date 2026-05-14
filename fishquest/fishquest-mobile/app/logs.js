@@ -82,7 +82,9 @@ export default function Logs() {
           backRoute="/home"
         />
         {loading ? (
-          <LoadingIndicator text="Loading Logs" color="#fff" />
+          <View style={styles.centerState}>
+            <LoadingIndicator text="Loading Logs" color="#fff" />
+          </View>
         ) : (
           <>
             <View style={styles.sortRow}>
@@ -241,8 +243,11 @@ const styles = StyleSheet.create({
     gap: 8,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 18,
+
     paddingHorizontal: 12,
+    paddingVertical: 18,
+    borderBottomWidth: 2,
+    borderColor: "#dedede",
   },
   deleteBtn: {
     position: "absolute",

@@ -82,7 +82,7 @@ export default function ForecastModal({ visible, onClose }) {
                   name="cancel"
                   size={30}
                   color={COLORS.secondary}
-                />{" "}
+                />
               </Pressable>
             </View>
           </View>
