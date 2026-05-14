@@ -29,7 +29,7 @@ export default function BugForm() {
     const room = 4 - files.length;
     setFiles((prev) => [...prev, ...picked.slice(0, room)]);
   }
-async function pickImages() {
+  async function pickImages() {
     if (isGridFull) return;
 
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -57,9 +57,7 @@ async function pickImages() {
       return;
     }
     setSaving(true);
-    try {
-      
-    }
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <TopNavbarSecondary
