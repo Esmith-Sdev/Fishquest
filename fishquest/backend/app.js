@@ -15,6 +15,7 @@ import logsRoutes from "./routes/logs.js";
 import identifyFishRoutes from "./routes/identifyFish.js";
 import userStatsRoutes from "./routes/userStats.js";
 import buddiesRoutes from "./routes/buddies.js";
+import BugSupport from "./models/BugSupport.js";
 const app = express();
 
 const allowedOrigins = new Set([
@@ -157,3 +158,4 @@ app.listen(PORT, "0.0.0.0", () => {
 });
 app.use("/api", identifyFishRoutes);
 app.use("/api/buddies", buddiesRoutes);
+app.use("/api/bugs", bugRoutes);
