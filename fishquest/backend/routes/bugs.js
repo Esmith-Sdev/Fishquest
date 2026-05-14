@@ -14,12 +14,20 @@ router.post("/", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.sub;
 
-    const { title, description, screen } = req.body;
+    const { title, description, screen, imageUrls, platform } = req.body;
+
+    if (!title || !description || !platform) {
+      return res.status(400).json({
+        message: "Missing required fields",
+      });
+    }
     const bugReport = new BugReport({
       title,
       description,
       screen,
       userId,
+      imageUrls,
+      platform,
     });
     await bugReport.save();
     res.status(201).json({ message: "Bug report submitted successfully" });

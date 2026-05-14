@@ -43,6 +43,11 @@ const bugReport = new mongoose.Schema(
       enum: ["low", "medium", "high"],
       default: "medium",
     },
+    platform: {
+      type: String,
+      required: true,
+      trim: true,
+    },
   },
   { timestamps: true },
 );
