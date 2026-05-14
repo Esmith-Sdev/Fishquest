@@ -26,7 +26,14 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
               </Pressable>
             </View>
           </View>
-
+          <View style={styles.body}>
+            <Pressable
+              onPress={() => router.push("/BugReport")}
+              style={styles.blueButton}
+            >
+              <Text style={styles.buttonText}>Report a Bug</Text>
+            </Pressable>
+          </View>
           <View style={styles.footer}>
             <Pressable onPress={onLogOut} style={styles.orangeButton}>
               <Text style={styles.buttonText}>Logout</Text>
@@ -50,6 +57,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 12,
+    height: 200,
+  },
+  body: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 10,
   },
   header: {
     flexDirection: "row",
@@ -61,10 +75,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontFamily: "Jua",
+    marginBottom: 10,
   },
   footer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     paddingTop: 15,
   },
@@ -73,6 +88,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
+    boxShadow: "0px 4px 0px #733800",
+
     paddingHorizontal: 12,
     shadowColor: COLORS.secondaryDropShadow,
     shadowOffset: { width: 0, height: 4 },
@@ -80,6 +97,22 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
     elevation: 4,
     zIndex: 10,
+  },
+  blueButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.pill,
+    paddingVertical: 6,
+    width: 150,
+    paddingHorizontal: 10,
+    boxShadow: "0px 4px 0px #003f73",
+    shadowColor: COLORS.primaryDropShadow,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 1,
+    elevation: 4,
   },
   buttonText: {
     color: "#000",

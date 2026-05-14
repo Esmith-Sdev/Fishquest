@@ -938,6 +938,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   orangeButton: {
+    boxShadow: "0px 4px 0px #733800",
+
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
