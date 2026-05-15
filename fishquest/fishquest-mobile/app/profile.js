@@ -169,7 +169,15 @@ export default function Profile() {
                 <View style={styles.statRow}>
                   <Text style={styles.statLabel}>Favorite Bait:</Text>
                   <Text style={styles.statValue}>
-                    {stats.favoriteBait.replaceAll("_", " ")}
+                    {stats.favoriteBait
+                      .replaceAll("_", " ")
+                      .toString()
+                      .charAt(0)
+                      .toUpperCase() +
+                      stats.favoriteBait
+                        .replaceAll("_", " ")
+                        .toString()
+                        .slice(1)}
                   </Text>
                 </View>
               </View>

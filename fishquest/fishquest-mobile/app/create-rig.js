@@ -12,6 +12,7 @@ import {
 import { router, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";
+import LoadingIndicator from "../components/LoadingIndicator";
 import BottomNavbar from "../components/BottomNavbar";
 import { BAIT } from "../data/bait.config";
 import { POLES } from "../data/poles.config";
@@ -37,7 +38,10 @@ export default function CreateRig() {
   const [baitIndex, setBaitIndex] = useState(0);
   const [weightIndex, setWeightIndex] = useState(0);
   const [hookIndex, setHookIndex] = useState(0);
-
+  const [poleImageLoading, setPoleImageLoading] = useState(false);
+  const [baitImageLoading, setBaitImageLoading] = useState(false);
+  const [hookImageLoading, setHookImageLoading] = useState(false);
+  const [weightImageLoading, setWeightImageLoading] = useState(false);
   const currentPole = POLES[polesIndex];
   const currentBait = BAIT[baitIndex];
   const currentWeight = WEIGHTS[weightIndex];
@@ -159,10 +163,17 @@ export default function CreateRig() {
               {renderArrow(prevPole, "left")}
               <View style={styles.optioncolumn}>
                 <View style={styles.rigImageContainer}>
+                  {poleImageLoading && (
+                    <View style={styles.loaderOverlay}>
+                      <LoadingIndicator size="small" color={COLORS.primary} />
+                    </View>
+                  )}
                   <Image
                     source={currentPole.image}
                     style={styles.rigImage}
                     resizeMode="contain"
+                    onLoadStart={() => setPoleImageLoading(true)}
+                    onLoadEnd={() => setPoleImageLoading(false)}
                   />
                 </View>
                 <Text style={styles.itemLabel}>{currentPole.name}</Text>
@@ -207,10 +218,17 @@ export default function CreateRig() {
                 {renderArrow(prevHook, "left")}
                 <View style={styles.optioncolumn}>
                   <View style={styles.mediumSquare}>
+                    {hookImageLoading && (
+                      <View style={styles.loaderOverlay}>
+                        <LoadingIndicator size="small" color={COLORS.primary} />
+                      </View>
+                    )}
                     <Image
                       source={currentHook.image}
                       style={styles.optionImage}
                       resizeMode="contain"
+                      onLoadStart={() => setHookImageLoading(true)}
+                      onLoadEnd={() => setHookImageLoading(false)}
                     />
                   </View>
                   <Text style={styles.itemLabel}>{currentHook.name}</Text>
@@ -225,10 +243,17 @@ export default function CreateRig() {
                 {renderArrow(prevBait, "left")}
                 <View style={styles.optioncolumn}>
                   <View style={styles.mediumSquare}>
+                    {baitImageLoading && (
+                      <View style={styles.loaderOverlay}>
+                        <LoadingIndicator size="small" color={COLORS.primary} />
+                      </View>
+                    )}
                     <Image
                       source={currentBait.image}
                       style={styles.optionImage}
                       resizeMode="contain"
+                      onLoadStart={() => setBaitImageLoading(true)}
+                      onLoadEnd={() => setBaitImageLoading(false)}
                     />
                   </View>
                   <Text style={styles.itemLabel}>{currentBait.name}</Text>
@@ -240,10 +265,17 @@ export default function CreateRig() {
                 {renderArrow(prevWeight, "left")}
                 <View style={styles.optioncolumn}>
                   <View style={styles.mediumSquare}>
+                    {weightImageLoading && (
+                      <View style={styles.loaderOverlay}>
+                        <LoadingIndicator size="small" color={COLORS.primary} />
+                      </View>
+                    )}
                     <Image
                       source={currentWeight.image}
                       style={styles.optionImage}
                       resizeMode="contain"
+                      onLoadStart={() => setWeightImageLoading(true)}
+                      onLoadEnd={() => setWeightImageLoading(false)}
                     />
                   </View>
                   <Text style={styles.itemLabel}>{currentWeight.name}</Text>
@@ -332,12 +364,24 @@ const styles = StyleSheet.create({
   },
   rigImageContainer: {
     width: 100,
-    minHeight: 100,
+    height: 100,
     borderRadius: 16,
     backgroundColor: "#f3f3f3",
     justifyContent: "center",
     alignItems: "center",
     padding: 5,
+    position: "relative",
+  },
+
+  mediumSquare: {
+    width: 80,
+    height: 80,
+    borderRadius: 16,
+    backgroundColor: "#f3f3f3",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 5,
+    position: "relative",
   },
   rigImage: {
     width: "100%",
@@ -366,14 +410,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
-  mediumSquare: {
-    width: 80,
-    minHeight: 80,
-    borderRadius: 16,
-    backgroundColor: "#f3f3f3",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 5,
+  loaderOverlay: {
+    position: "absolute",
+    zIndex: 2,
   },
   optionImage: {
     width: 60,

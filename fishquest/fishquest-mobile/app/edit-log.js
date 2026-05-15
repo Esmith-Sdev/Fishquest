@@ -76,6 +76,7 @@ export default function UpdateLog() {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [challenge, setChallenge] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const [timeValue, setTimeValue] = useState(() => {
     const d = new Date();
     const h24 = d.getHours();

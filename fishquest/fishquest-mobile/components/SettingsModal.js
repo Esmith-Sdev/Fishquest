@@ -2,6 +2,7 @@ import { Modal, View, Text, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { COLORS } from "../constants/theme";
+import { router } from "expo-router";
 import { RADIUS } from "../constants/theme";
 export default function SettingsModal({ visible, onClose, onLogOut }) {
   return (
@@ -28,7 +29,7 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
           </View>
           <View style={styles.body}>
             <Pressable
-              onPress={() => router.push("/BugReport")}
+              onPress={() => router.push("/BugForm")}
               style={styles.blueButton}
             >
               <Text style={styles.buttonText}>Report a Bug</Text>
