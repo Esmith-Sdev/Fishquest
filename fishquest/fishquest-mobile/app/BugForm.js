@@ -124,26 +124,27 @@ export default function BugForm() {
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <TopNavbarSecondary
         title="Report a Bug"
+        showButton={false}
         onButtonPress={() => handleSubmit()}
         backRoute="/profile"
       />
-      <BottomNavbar />
-      <KeyboardAwareScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={styles.content}
-        enableOnAndroid
-        extraScrollHeight={200}
-        scrollEnabled={!saving}
-        keyboardShouldPersistTaps="always"
-        nestedScrollEnabled={true}
-        keyboardDismissMode="on-drag"
-      >
-        <View style={styles.screen}>
+      <View style={styles.screen}>
+        <BottomNavbar />
+        <KeyboardAwareScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.content}
+          enableOnAndroid
+          extraScrollHeight={200}
+          scrollEnabled={!saving}
+          keyboardShouldPersistTaps="always"
+          nestedScrollEnabled={true}
+          keyboardDismissMode="on-drag"
+        >
           <View style={styles.inputColumn}>
             <Text style={styles.label}>Subject</Text>
             <View style={styles.inputRow}>
               <TextInput
-                placeholder="Subject"
+                placeholder="e.g. 'App crashes when I try to view my profile'"
                 value={form.title}
                 style={styles.input}
                 onChangeText={(text) => setForm((p) => ({ ...p, title: text }))}
@@ -154,9 +155,9 @@ export default function BugForm() {
             <Text style={styles.label}>Description</Text>
             <View style={styles.inputRow}>
               <TextInput
-                placeholder="Description"
+                placeholder="Write a detailed description of the bug"
                 value={form.description}
-                style={styles.input}
+                style={styles.descriptionInput}
                 onChangeText={(text) =>
                   setForm((p) => ({ ...p, description: text }))
                 }
@@ -177,29 +178,33 @@ export default function BugForm() {
             </View>
           </View>
           <View style={styles.inputColumn}>
-            <View style={styles.platformToggle}>
-              {["Android", "IOS"].map((text) => (
-                <Pressable
-                  key={text}
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    setPlatform(text);
-                  }}
-                  style={[
-                    styles.platformOption,
-                    platform === text && styles.platformOptionSelected,
-                  ]}
-                >
-                  <Text
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <View style={styles.platformToggle}>
+                {["Android", "IOS"].map((text) => (
+                  <Pressable
+                    key={text}
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      setPlatform(text);
+                    }}
                     style={[
-                      styles.platformText,
-                      platform === text && styles.platformTextSelected,
+                      styles.platformOption,
+                      platform === text && styles.platformOptionSelected,
                     ]}
                   >
-                    {text}
-                  </Text>
-                </Pressable>
-              ))}
+                    <Text
+                      style={[
+                        styles.platformText,
+                        platform === text && styles.platformTextSelected,
+                      ]}
+                    >
+                      {text}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
             </View>
           </View>
           {files.length === 0 ? (
@@ -238,8 +243,8 @@ export default function BugForm() {
               )}
             </View>
           )}
-        </View>
-      </KeyboardAwareScrollView>
+        </KeyboardAwareScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -258,7 +263,25 @@ const styles = StyleSheet.create({
     zIndex: 99999,
     elevation: 99999,
   },
-
+  inputColumn: {
+    flexDirection: "column",
+    gap: 6,
+  },
+  descriptionInput: {
+    height: 100,
+    textAlignVertical: "top",
+  },
+  inputRow: {
+    flexDirection: "row",
+    backgroundColor: "#dedede",
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+  },
+  label: {
+    color: "#fff",
+    fontFamily: "Jua",
+  },
   savingText: {
     marginTop: 12,
     color: "#fff",
@@ -301,6 +324,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     minWidth: 42,
     alignItems: "center",
+    width: 100,
   },
 
   platformOptionSelected: {
