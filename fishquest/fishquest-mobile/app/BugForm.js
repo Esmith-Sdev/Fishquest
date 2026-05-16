@@ -18,6 +18,7 @@ import LoadingIndicator from "../components/LoadingIndicator";
 import { uploadImages } from "../api/uploads";
 import { Keyboard } from "react-native";
 import { getToken } from "../api/auth";
+import { router } from "expo-router";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export default function BugForm() {
   const [saving, setSaving] = useState(false);
@@ -30,7 +31,7 @@ export default function BugForm() {
   const [platform, setPlatform] = useState("");
   const [files, setFiles] = useState([]);
   const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
-
+  const [message, setMessage] = useState("");
   const isGridFull = files.length >= 4;
 
   function handleRemoveImage(indexToRemove) {
@@ -102,7 +103,7 @@ export default function BugForm() {
         throw new Error("Failed to submit bug report");
       }
 
-      alert("Bug report submitted!");
+      setMessage("Bug report submitted!");
 
       setForm({
         title: "",
@@ -115,13 +116,20 @@ export default function BugForm() {
       setUploadedImageUrls([]);
       setPlatform("");
     } catch (err) {
+      setMessage("Failed to Submit Form");
       console.log("Failed to Submit Form", err);
     } finally {
       setSaving(false);
+      router.push("/profile");
     }
   }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+      {saving && (
+        <View style={styles.savingOverlay}>
+          <LoadingIndicator text={message} />
+        </View>
+      )}
       <TopNavbarSecondary
         title="Report a Bug"
         showButton={false}
@@ -157,7 +165,7 @@ export default function BugForm() {
               <TextInput
                 placeholder="Write a detailed description of the bug"
                 value={form.description}
-                style={styles.descriptionInput}
+                style={[styles.input, styles.descriptionInput]}
                 onChangeText={(text) =>
                   setForm((p) => ({ ...p, description: text }))
                 }
@@ -243,6 +251,9 @@ export default function BugForm() {
               )}
             </View>
           )}
+          <Pressable onPress={handleSubmit} style={styles.orangeButton}>
+            <Text style={styles.buttonText}>Submit</Text>
+          </Pressable>
         </KeyboardAwareScrollView>
       </View>
     </SafeAreaView>
@@ -254,6 +265,51 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0D1B1E",
     paddingBottom: 50,
+  },
+  imageGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 16,
+    justifyContent: "start",
+  },
+  imageTile: {
+    width: 100,
+    height: 100,
+    borderRadius: 15,
+    position: "relative",
+    overflow: "hidden",
+  },
+  removeImageBtn: {
+    position: "absolute",
+    top: 6,
+    right: 6,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "rgba(0,0,0,0.75)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 2,
+  },
+  largeSquare: {
+    width: 100,
+    height: 100,
+    backgroundColor: "#dedede",
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  gridImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 15,
+  },
+  addImageText: {
+    color: "#000",
+    fontFamily: "Jua",
+    fontSize: 14,
+    marginBottom: 4,
   },
   savingOverlay: {
     ...StyleSheet.absoluteFillObject,
