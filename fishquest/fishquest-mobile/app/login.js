@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import AuthForm from "../components/AuthForm";
 import { useAuth } from "../context/AuthContext";
+import { enableBiometrics, biometricLogin } from "../utils/AuthStorage";
 import GradientBackground from "../components/GradientBackground";
 import {
   Alert,
@@ -9,15 +10,18 @@ import {
   View,
   Keyboard,
   TouchableWithoutFeedback,
+  Modal,
 } from "react-native";
+import * as SecureStore from "expo-secure-store";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { COLORS } from "../constants/theme";
-
+import ConfirmModal from "../components/ConfirmModal";
 const API_URL = "https://fishquest.onrender.com";
 export default function LoginScreen() {
+  const [showBiometricPrompt, setShowBiometricPrompt] = useState(false);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const [error, setError] = useState(false);
@@ -35,10 +39,12 @@ export default function LoginScreen() {
       });
 
       const data = await res.json();
-
+      await SecureStore.setItemAsync("token", data.token);
+      await SecureStore.setItemAsync("userId", String(data.user.id));
+      await SecureStore.setItemAsync("username", data.user.username);
       if (res.ok) {
         login(data);
-        router.replace("/home");
+        setShowBiometricPrompt(true);
       } else {
         setError(true);
         Alert.alert("Error", data.message || "Login failed");
@@ -49,7 +55,29 @@ export default function LoginScreen() {
       setLoading(false);
     }
   }
+  async function handleEnableBiometrics() {
+    try {
+      await enableBiometrics();
+      alert("Biometric login enabled!");
+    } catch (err) {
+      Alert.alert("Error", err.message);
+    }
+  }
+  async function handleBiometricLogin() {
+    try {
+      const data = await biometricLogin();
 
+      if (!data) {
+        Alert.alert("Unavailable", "Biometric login is not enabled.");
+        return;
+      }
+
+      login(data);
+      router.replace("/home");
+    } catch (err) {
+      Alert.alert("Error", err.message);
+    }
+  }
   return (
     <GradientBackground>
       {loading && (
@@ -57,6 +85,7 @@ export default function LoginScreen() {
           <LoadingIndicator text="Logging In" color="#fff" />
         </View>
       )}
+
       {!loading && (
         <SafeAreaView style={{ flex: 1 }}>
           <TouchableWithoutFeedback
@@ -73,6 +102,7 @@ export default function LoginScreen() {
               <AuthForm
                 buttonText="Log In"
                 onSubmit={handleLogin}
+                onBiometricLogin={handleBiometricLogin}
                 footerText="Don't have an account?"
                 footerLinkText="Sign up"
                 footerHref="/signup"
@@ -80,6 +110,21 @@ export default function LoginScreen() {
               />
             </KeyboardAwareScrollView>
           </TouchableWithoutFeedback>
+          {showBiometricPrompt && (
+            <ConfirmModal
+              title="Enable Biometric Login?"
+              visible={showBiometricPrompt}
+              onConfirm={async () => {
+                await handleEnableBiometrics();
+                setShowBiometricPrompt(false);
+                router.replace("/home");
+              }}
+              onCancel={() => {
+                setShowBiometricPrompt(false);
+                router.replace("/home");
+              }}
+            />
+          )}
         </SafeAreaView>
       )}
     </GradientBackground>

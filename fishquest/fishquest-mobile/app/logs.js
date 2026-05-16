@@ -146,8 +146,9 @@ export default function Logs() {
                     onLongPress={() => setDeleteModeLogId(log._id)}
                   >
                     <ConfirmModal
+                      title="Are you sure?"
                       visible={confirmVisible}
-                      onClose={() => {
+                      onCancel={() => {
                         setConfirmVisible(false);
                         setSelectedLogId(null);
                       }}

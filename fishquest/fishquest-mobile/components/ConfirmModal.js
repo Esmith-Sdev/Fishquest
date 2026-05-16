@@ -2,25 +2,25 @@ import { Modal, View, Text, Pressable, StyleSheet } from "react-native";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { COLORS, RADIUS } from "../constants/theme";
-export default function ConfirmModal({ visible, onClose, onConfirm }) {
+export default function ConfirmModal({ visible, onCancel, onConfirm, title }) {
   return (
     <Modal
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={onClose}
+      onRequestClose={onCancel}
     >
       <View style={styles.overlay}>
         <View style={styles.box}>
           <View style={styles.header}>
-            <Text style={styles.title}>Are You Sure?</Text>
+            <Text style={styles.title}>{title}</Text>
           </View>
 
           <View style={styles.footer}>
             <Pressable style={styles.blueButton} onPress={onConfirm}>
               <Text style={styles.buttonText}>Yes</Text>
             </Pressable>
-            <Pressable style={styles.orangeButton} onPress={onClose}>
+            <Pressable style={styles.orangeButton} onPress={onCancel}>
               <Text style={styles.buttonText}>No</Text>
             </Pressable>
           </View>
@@ -62,6 +62,8 @@ const styles = StyleSheet.create({
   },
 
   orangeButton: {
+    boxShadow: "0px 4px 0px #733800",
+
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
@@ -74,6 +76,8 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   blueButton: {
+    boxShadow: "0px 4px 0px #004f73",
+
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.pill,
     paddingVertical: 6,

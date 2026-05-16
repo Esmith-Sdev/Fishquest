@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 
 const API_URL = "https://fishquest.onrender.com";
@@ -24,7 +23,7 @@ export async function login(username, password) {
   await SecureStore.setItemAsync("token", cleanToken);
   await SecureStore.setItemAsync("userId", String(data.user.id));
   await SecureStore.setItemAsync("username", data.user.username);
-
+  await SecureStore.setItemAsync("biometricEnabled", "false");
   return data;
 }
 
@@ -46,29 +45,30 @@ export async function signup(username, password, email) {
       ? data.token.replace(/^"|"$/g, "")
       : data.token;
 
-  await AsyncStorage.multiSet([
-    ["token", cleanToken],
-    ["userId", String(data.user.id)],
-    ["username", data.user.username],
-  ]);
+  await SecureStore.setItemAsync("token", cleanToken);
+  await SecureStore.setItemAsync("userId", String(data.user.id));
+  await SecureStore.setItemAsync("username", data.user.username);
+  await SecureStore.setItemAsync("biometricEnabled", "false");
 
   return data;
 }
 
 export async function getToken() {
-  const token = await AsyncStorage.getItem("token");
+  const token = await SecureStore.getItemAsync("token");
   return token ? token.replace(/^"|"$/g, "") : null;
 }
 
 export async function getAuth() {
-  return await AsyncStorage.getItem("username");
+  return await SecureStore.getItemAsync("username");
 }
 
 export async function isAuthenticated() {
-  const token = await AsyncStorage.getItem("token");
+  const token = await SecureStore.getItemAsync("token");
   return !!token;
 }
 
 export async function logout() {
-  await AsyncStorage.multiRemove(["token", "userId", "username"]);
+  await SecureStore.deleteItemAsync("token");
+  await SecureStore.deleteItemAsync("userId");
+  await SecureStore.deleteItemAsync("username");
 }

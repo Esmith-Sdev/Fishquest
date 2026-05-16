@@ -11,9 +11,7 @@ import {
 import { COLORS, RADIUS } from "../constants/theme";
 import { Image } from "react-native";
 import { Link } from "expo-router";
-import * as LocalAuthentication from "expo-local-authentication";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import * as SecureStore from "expo-secure-store";
 export default function AuthForm({
   buttonText,
   onSubmit,
@@ -21,53 +19,16 @@ export default function AuthForm({
   footerLinkText,
   footerHref,
   errorText,
+  onBiometricLogin,
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null);
-  async function biometricLogin() {
-    const compatible = await LocalAuthentication.hasHardwareAsync();
-    if (!compatible) {
-      Alert.alert(
-        "Error",
-        "Biometric authentication is not supported on this device.",
-      );
-      return;
-    }
-    const enrolled = await LocalAuthentication.isEnrolledAsync();
-    if (!enrolled) {
-      Alert.alert(
-        "Error",
-        "No biometric credentials found. Please set up biometrics and try again.",
-      );
-      return;
-    }
-    const result = await LocalAuthentication.authenticateAsync({
-      promptMessage: "Log in with Biometrics",
-      fallbackLabel: "Enter Password",
-    });
-    if (result.success) {
-      const savedToken = await SecureStore.getItemAsync("token");
-      const savedUser = await SecureStore.getItemAsync("username");
-      if (savedToken && savedUser) {
-        setToken(savedToken);
-        setUser(JSON);
-      } else {
-        Alert.alert(
-          "Error",
-          "No saved credentials found. Please log in with username and password first.",
-        );
-      }
-    }
-  }
+
   function handleSubmit() {
     if (!email.trim() || !password.trim()) return;
     onSubmit(email.trim(), password);
   }
-  useEffect(() => {
-    biometricLogin();
-  }, []);
+
   return (
     <View style={styles.card}>
       <Image
@@ -93,12 +54,14 @@ export default function AuthForm({
         onChangeText={setPassword}
       />
 
-      <Pressable style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>{buttonText}</Text>
-      </Pressable>
-      <Pressable style={styles.biometricButton} onPress={biometricLogin}>
-        <Ionicons name="fingerprint" size={20} color="#fff" />
-      </Pressable>
+      <View style={{ flexDirection: "column", gap: 12, alignItems: "center" }}>
+        <Pressable style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>{buttonText}</Text>
+        </Pressable>
+        <Pressable style={styles.biometricButton} onPress={onBiometricLogin}>
+          <Ionicons name="finger-print" size={50} color="black" />{" "}
+        </Pressable>
+      </View>
       <View style={styles.footerRow}>
         <Text style={styles.footerText}>{footerText} </Text>
         <Link href={footerHref} style={styles.link}>
@@ -138,10 +101,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   biometricButton: {
-    backgroundColor: "rgba(35, 169, 246, 0.5)",
-    borderRadius: 12,
-    padding: 5,
+    backgroundColor: COLORS.primary,
+    opacity: 0.8,
+    borderRadius: 9999,
+    padding: 15,
+    borderWidth: 1,
+    borderColor: "#ffffff",
+    boxShadow: "0px 0px 10px #3ea2ff",
   },
+
   input: {
     backgroundColor: "#FFFFFF",
     borderRadius: RADIUS.pill,
