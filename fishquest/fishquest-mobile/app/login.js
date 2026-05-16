@@ -15,11 +15,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { COLORS } from "../constants/theme";
+
 const API_URL = "https://fishquest.onrender.com";
 export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const [error, setError] = useState(false);
+
   async function handleLogin(username, password) {
     try {
       setLoading(true);

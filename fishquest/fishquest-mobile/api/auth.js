@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 
 const API_URL = "https://fishquest.onrender.com";
 
@@ -20,11 +21,9 @@ export async function login(username, password) {
       ? data.token.replace(/^"|"$/g, "")
       : data.token;
 
-  await AsyncStorage.multiSet([
-    ["token", cleanToken],
-    ["userId", String(data.user.id)],
-    ["username", data.user.username],
-  ]);
+  await SecureStore.setItemAsync("token", cleanToken);
+  await SecureStore.setItemAsync("userId", String(data.user.id));
+  await SecureStore.setItemAsync("username", data.user.username);
 
   return data;
 }
