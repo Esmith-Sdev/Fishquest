@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
 
         if (storedUser && storedToken) {
           setUser(JSON.parse(storedUser));
-          setToken(JSON.parse(storedToken));
+          setToken(storedToken);
         }
       } catch (err) {
         console.log("Error loading auth:", err);
@@ -39,11 +39,9 @@ export function AuthProvider({ children }) {
     const storedToken = await SecureStore.getItemAsync("token");
     if (!storedToken) return;
 
-    const parsedToken = JSON.parse(storedToken);
-
     const res = await fetch(`${API_URL}/api/user-stats`, {
       headers: {
-        Authorization: `Bearer ${parsedToken}`,
+        Authorization: `Bearer ${storedToken}`,
       },
     });
 
@@ -58,8 +56,8 @@ export function AuthProvider({ children }) {
   async function login(data) {
     setUser(data.user);
     setToken(data.token);
-    await SecureStore.getItemAsync("user", JSON.stringify(data.user));
-    await SecureStore.getItemAsync("token", JSON.stringify(data.token));
+    await SecureStore.setItemAsync("user", JSON.stringify(data.user));
+    await SecureStore.setItemAsync("token", data.token);
   }
 
   async function logout() {

@@ -13,7 +13,7 @@ import {
   Modal,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import useLoadingDots from "../components/LoadingIndicator";
+import LoadingIndicator from "../components/LoadingIndicator";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -49,7 +49,6 @@ export default function ViewLog() {
   });
   const [aiLoading, setAiLoading] = useState(false);
   const [aiResult, setAiResult] = useState(null);
-  const dots = useLoadingDots();
   const [files, setFiles] = useState([]);
   const [skunked, setSkunked] = useState(false);
   const [species, setSpecies] = useState(null);
@@ -209,32 +208,6 @@ export default function ViewLog() {
     return file;
   }
 
-  if (rigsLoading || loadingLog) {
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
-        <View style={styles.screen}>
-          <TopNavbarSecondary
-            title="View Log"
-            buttonText="Edit"
-            onButtonPress={() =>
-              router.push({
-                pathname: "/edit-log",
-                params: { id },
-              })
-            }
-            showButton={true}
-            backRoute="/logs"
-          />
-
-          <View style={styles.centerState}>
-            <LoadingIndicator text="Loading Log" color="#fff" />
-          </View>
-
-          <BottomNavbar />
-        </View>
-      </SafeAreaView>
-    );
-  }
   const allImages = [
     ...uploadedImageUrls.map((url) => ({ uri: url, isRemote: true })),
     ...files.map((file) => ({ ...file, isRemote: false })),
@@ -255,255 +228,288 @@ export default function ViewLog() {
           showButton={true}
           backRoute="/logs"
         />
-
-        <ScrollView contentContainerStyle={styles.content}>
-          <View style={styles.topArea}>
-            {selectedRig ? (
-              <>
-                <View style={styles.rigSection}>
-                  <View style={styles.previewColumn}>
-                    <View style={styles.rigTitleRow}>
-                      <Text style={styles.rigName}>{selectedRig.rigName}</Text>
-                    </View>
-                    <View style={styles.rigImageContainer}>
-                      {selectedRig.pole?.image ? (
-                        <Image
-                          source={selectedRig.pole.image}
-                          style={styles.rigImage}
-                          resizeMode="contain"
-                        />
-                      ) : null}
-                    </View>
-                  </View>
-                  <View style={styles.optionsGrid}>
-                    <View style={styles.optionColumn}>
-                      <View style={styles.smallSquare}>
-                        <Image
-                          source={selectedRig.bobber ? Bobber : NoBobber}
-                          style={styles.optionImage}
-                          resizeMode="contain"
-                        />
-                      </View>
-                      <View style={styles.smallSquare}>
-                        {selectedRig.bait?.image ? (
-                          <Image
-                            source={selectedRig.bait.image}
-                            style={styles.optionImage}
-                            resizeMode="contain"
-                          />
-                        ) : null}
-                      </View>
-                    </View>
-                    <View style={styles.optionColumn}>
-                      <View style={styles.smallSquare}>
-                        {selectedRig.hook?.image ? (
-                          <Image
-                            source={selectedRig.hook.image}
-                            style={styles.optionImage}
-                            resizeMode="contain"
-                          />
-                        ) : null}
-                      </View>
-                      <View style={styles.smallSquare}>
-                        {selectedRig.weight?.image ? (
-                          <Image
-                            source={selectedRig.weight.image}
-                            style={styles.optionImage}
-                            resizeMode="contain"
-                          />
-                        ) : null}
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </>
-            ) : (
-              <View style={styles.noRigBox}>
-                <Text style={styles.noRigText}>No rig preset selected</Text>
-                <Text style={styles.noRigText}>
-                  No rigs found. Create one before logging.
-                </Text>
-                <Pressable
-                  style={styles.orangeButton}
-                  onPress={handleCreateRig}
-                >
-                  <Text style={styles.buttonText}>Create Rig</Text>
-                </Pressable>
-              </View>
-            )}
+        {loadingLog ? (
+          <View style={styles.centerState}>
+            <LoadingIndicator text="Loading Log" color="#fff" />
           </View>
-
-          {allImages.length === 0 ? (
-            <View style={styles.noPhotoTile}>
-              <Text style={styles.noPhotoText}>No Photo Uploaded</Text>
-            </View>
-          ) : (
-            <View style={styles.imageGrid}>
-              {allImages.map((img, i) => (
-                <Pressable
-                  key={i}
-                  style={styles.imageTile}
-                  onPress={() => {
-                    setSelectedImageIndex(i);
-                    setShow(true);
-                  }}
-                >
-                  <Image source={{ uri: img.uri }} style={styles.gridImage} />
-                </Pressable>
-              ))}
-            </View>
-          )}
-
-          {aiResult?.speciesName ? (
-            <View style={{ marginTop: 8 }}>
-              <Text style={styles.logLabel}>
-                AI Suggestion: {aiResult.speciesName} (
-                {Math.round(aiResult.confidence * 100)}%)
-              </Text>
-
-              {aiResult.alternatives?.length > 0 ? (
-                <Text style={styles.challengeText}>
-                  Also possible:{" "}
-                  {aiResult.alternatives.map((a) => a.speciesName).join(", ")}
-                </Text>
-              ) : null}
-            </View>
-          ) : null}
-          <View style={styles.logForm}>
-            <View style={styles.checkboxRow}>
-              <Text style={styles.checkboxLabel}>Skunked (No fish caught)</Text>
-              <View
-                style={[styles.checkboxBox, skunked && styles.checkboxChecked]}
-              >
-                {skunked ? (
-                  <Ionicons name="checkmark" size={20} color="#000" />
-                ) : null}
-              </View>
-            </View>
-
-            <View style={styles.logRow}>
-              <Text style={styles.logLabel}>Fish Species:</Text>
-              <View style={styles.pillDisplay}>
-                <Text style={styles.displayText}>
-                  {skunked ? "None" : species?.label || "Unknown"}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.logRow}>
-              <Text style={styles.logLabel}>Est. Weight:</Text>
-              <View style={styles.pillDisplay}>
-                <Text style={styles.displayText}>
-                  {skunked ? "N/A" : weight ? `${weight} ${weightUnit}` : "N/A"}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.logRow}>
-              <Text style={styles.logLabel}>Est. Length:</Text>
-              <View style={styles.pillDisplay}>
-                <Text style={styles.displayText}>
-                  {skunked ? "N/A" : length ? `${length} ${lengthUnit}` : "N/A"}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.logRow}>
-              <Text style={styles.logLabel}>Date:</Text>
-              <View style={styles.fieldFlex}>
-                <View style={styles.pillDisplay}>
-                  <Text style={styles.displayText}>
-                    {selectedDate.toLocaleDateString()}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.logRow}>
-              <Text style={styles.logLabel}>Time:</Text>
-              <View style={styles.pillDisplay}>
-                <Text
-                  style={styles.displayText}
-                >{`${timeValue} ${period}`}</Text>
-              </View>
-            </View>
-            <View style={styles.logRow}>
-              <View style={styles.logColumn}>
-                <Text style={styles.logLabel}>Weather:</Text>
-
-                <FlatList
-                  data={weatherOptions}
-                  horizontal
-                  keyExtractor={(item) => item.id}
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={{ gap: 8 }}
-                  renderItem={({ item }) => {
-                    const isSelected = selectedWeather === item.id;
-                    return (
-                      <View
-                        onPress={() => setSelectedWeather(item.id)}
-                        style={[
-                          styles.weatherOption,
-                          isSelected && styles.weatherOptionSelected,
-                        ]}
-                      >
-                        <MaterialCommunityIcons
-                          name={item.icon}
-                          size={20}
-                          color={isSelected ? "#fff" : "#333"}
-                        />
-                        <Text
-                          style={[
-                            styles.weatherText,
-                            isSelected && styles.weatherTextSelected,
-                          ]}
-                        >
-                          {item.label}
-                        </Text>
+        ) : (
+          <>
+            <ScrollView contentContainerStyle={styles.content}>
+              <View style={styles.topArea}>
+                {selectedRig ? (
+                  <>
+                    <View style={styles.rigSection}>
+                      <View style={styles.previewColumn}>
+                        <View style={styles.rigTitleRow}>
+                          <Text style={styles.rigName}>
+                            {selectedRig.rigName}
+                          </Text>
+                        </View>
+                        <View style={styles.rigImageContainer}>
+                          {selectedRig.pole?.image ? (
+                            <Image
+                              source={selectedRig.pole.image}
+                              style={styles.rigImage}
+                              resizeMode="contain"
+                            />
+                          ) : null}
+                        </View>
                       </View>
-                    );
-                  }}
-                />
-              </View>
-            </View>
-            <View style={styles.logColumn}>
-              <Text style={styles.logLabel}>Location:</Text>
-
-              <View style={styles.logColumn}>
-                <View style={styles.logRow}>
-                  <View style={styles.pillDisplayLarge}>
-                    <Text style={styles.displayText}>
-                      {form.address || "No address"}
+                      <View style={styles.optionsGrid}>
+                        <View style={styles.optionColumn}>
+                          <View style={styles.smallSquare}>
+                            <Image
+                              source={selectedRig.bobber ? Bobber : NoBobber}
+                              style={styles.optionImage}
+                              resizeMode="contain"
+                            />
+                          </View>
+                          <View style={styles.smallSquare}>
+                            {selectedRig.bait?.image ? (
+                              <Image
+                                source={selectedRig.bait.image}
+                                style={styles.optionImage}
+                                resizeMode="contain"
+                              />
+                            ) : null}
+                          </View>
+                        </View>
+                        <View style={styles.optionColumn}>
+                          <View style={styles.smallSquare}>
+                            {selectedRig.hook?.image ? (
+                              <Image
+                                source={selectedRig.hook.image}
+                                style={styles.optionImage}
+                                resizeMode="contain"
+                              />
+                            ) : null}
+                          </View>
+                          <View style={styles.smallSquare}>
+                            {selectedRig.weight?.image ? (
+                              <Image
+                                source={selectedRig.weight.image}
+                                style={styles.optionImage}
+                                resizeMode="contain"
+                              />
+                            ) : null}
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+                  </>
+                ) : (
+                  <View style={styles.noRigBox}>
+                    <Text style={styles.noRigText}>No rig preset selected</Text>
+                    <Text style={styles.noRigText}>
+                      No rigs found. Create one before logging.
                     </Text>
+                    <Pressable
+                      style={styles.orangeButton}
+                      onPress={handleCreateRig}
+                    >
+                      <Text style={styles.buttonText}>Create Rig</Text>
+                    </Pressable>
+                  </View>
+                )}
+              </View>
+
+              {allImages.length === 0 ? (
+                <View style={styles.noPhotoTile}>
+                  <Text style={styles.noPhotoText}>No Photo Uploaded</Text>
+                </View>
+              ) : (
+                <View style={styles.imageGrid}>
+                  {allImages.map((img, i) => (
+                    <Pressable
+                      key={i}
+                      style={styles.imageTile}
+                      onPress={() => {
+                        setSelectedImageIndex(i);
+                        setShow(true);
+                      }}
+                    >
+                      <Image
+                        source={{ uri: img.uri }}
+                        style={styles.gridImage}
+                      />
+                    </Pressable>
+                  ))}
+                </View>
+              )}
+
+              {aiResult?.speciesName ? (
+                <View style={{ marginTop: 8 }}>
+                  <Text style={styles.logLabel}>
+                    AI Suggestion: {aiResult.speciesName} (
+                    {Math.round(aiResult.confidence * 100)}%)
+                  </Text>
+
+                  {aiResult.alternatives?.length > 0 ? (
+                    <Text style={styles.challengeText}>
+                      Also possible:{" "}
+                      {aiResult.alternatives
+                        .map((a) => a.speciesName)
+                        .join(", ")}
+                    </Text>
+                  ) : null}
+                </View>
+              ) : null}
+              <View style={styles.logForm}>
+                <View style={styles.checkboxRow}>
+                  <Text style={styles.checkboxLabel}>
+                    Skunked (No fish caught)
+                  </Text>
+                  <View
+                    style={[
+                      styles.checkboxBox,
+                      skunked && styles.checkboxChecked,
+                    ]}
+                  >
+                    {skunked ? (
+                      <Ionicons name="checkmark" size={20} color="#000" />
+                    ) : null}
                   </View>
                 </View>
+
                 <View style={styles.logRow}>
-                  <View style={styles.pillInputSmall}>
-                    <Text style={styles.displayText}>{form.state || "--"}</Text>
-                  </View>
+                  <Text style={styles.logLabel}>Fish Species:</Text>
                   <View style={styles.pillDisplay}>
                     <Text style={styles.displayText}>
-                      {form.city || "No city"}
+                      {skunked ? "None" : species?.label || "Unknown"}
                     </Text>
                   </View>
                 </View>
+
+                <View style={styles.logRow}>
+                  <Text style={styles.logLabel}>Est. Weight:</Text>
+                  <View style={styles.pillDisplay}>
+                    <Text style={styles.displayText}>
+                      {skunked
+                        ? "N/A"
+                        : weight
+                          ? `${weight} ${weightUnit}`
+                          : "N/A"}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.logRow}>
+                  <Text style={styles.logLabel}>Est. Length:</Text>
+                  <View style={styles.pillDisplay}>
+                    <Text style={styles.displayText}>
+                      {skunked
+                        ? "N/A"
+                        : length
+                          ? `${length} ${lengthUnit}`
+                          : "N/A"}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.logRow}>
+                  <Text style={styles.logLabel}>Date:</Text>
+                  <View style={styles.fieldFlex}>
+                    <View style={styles.pillDisplay}>
+                      <Text style={styles.displayText}>
+                        {selectedDate.toLocaleDateString()}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.logRow}>
+                  <Text style={styles.logLabel}>Time:</Text>
+                  <View style={styles.pillDisplay}>
+                    <Text
+                      style={styles.displayText}
+                    >{`${timeValue} ${period}`}</Text>
+                  </View>
+                </View>
+                <View style={styles.logRow}>
+                  <View style={styles.logColumn}>
+                    <Text style={styles.logLabel}>Weather:</Text>
+
+                    <FlatList
+                      data={weatherOptions}
+                      horizontal
+                      keyExtractor={(item) => item.id}
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={{ gap: 8 }}
+                      renderItem={({ item }) => {
+                        const isSelected = selectedWeather === item.id;
+                        return (
+                          <View
+                            onPress={() => setSelectedWeather(item.id)}
+                            style={[
+                              styles.weatherOption,
+                              isSelected && styles.weatherOptionSelected,
+                            ]}
+                          >
+                            <MaterialCommunityIcons
+                              name={item.icon}
+                              size={20}
+                              color={isSelected ? "#fff" : "#333"}
+                            />
+                            <Text
+                              style={[
+                                styles.weatherText,
+                                isSelected && styles.weatherTextSelected,
+                              ]}
+                            >
+                              {item.label}
+                            </Text>
+                          </View>
+                        );
+                      }}
+                    />
+                  </View>
+                </View>
+                <View style={styles.logColumn}>
+                  <Text style={styles.logLabel}>Location:</Text>
+
+                  <View style={styles.logColumn}>
+                    <View style={styles.logRow}>
+                      <View style={styles.pillDisplayLarge}>
+                        <Text style={styles.displayText}>
+                          {form.address || "No address"}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.logRow}>
+                      <View style={styles.pillInputSmall}>
+                        <Text style={styles.displayText}>
+                          {form.state || "--"}
+                        </Text>
+                      </View>
+                      <View style={styles.pillDisplay}>
+                        <Text style={styles.displayText}>
+                          {form.city || "No city"}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.logRow}>
+                  <Text style={styles.logLabel}>Challenge:</Text>
+                  <Text style={styles.challengeText}>
+                    {challenge?.title ||
+                      challenge?.templateKey ||
+                      "No Challenge"}
+                  </Text>
+                </View>
+
+                <View style={styles.notesBox}>
+                  <Text style={styles.notesText}>{notes || "No notes"}</Text>
+                </View>
               </View>
-            </View>
 
-            <View style={styles.logRow}>
-              <Text style={styles.logLabel}>Challenge:</Text>
-              <Text style={styles.challengeText}>
-                {challenge?.title || challenge?.templateKey || "No Challenge"}
-              </Text>
-            </View>
-
-            <View style={styles.notesBox}>
-              <Text style={styles.notesText}>{notes || "No notes"}</Text>
-            </View>
-          </View>
-
-          {rigsError ? <Text style={styles.rigsError}>{rigsError}</Text> : null}
-        </ScrollView>
+              {rigsError ? (
+                <Text style={styles.rigsError}>{rigsError}</Text>
+              ) : null}
+            </ScrollView>
+          </>
+        )}
         <ImagePreviewModal
           show={show}
           onHide={() => setShow(false)}

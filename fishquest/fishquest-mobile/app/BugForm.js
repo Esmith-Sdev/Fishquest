@@ -164,6 +164,8 @@ export default function BugForm() {
             <View style={styles.inputRow}>
               <TextInput
                 placeholder="Write a detailed description of the bug"
+                multiline
+                numberOfLines={4}
                 value={form.description}
                 style={[styles.input, styles.descriptionInput]}
                 onChangeText={(text) =>
@@ -300,6 +302,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
   },
+
   gridImage: {
     width: "100%",
     height: "100%",
@@ -324,8 +327,16 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   descriptionInput: {
-    height: 100,
+    backgroundColor: "#dedede",
+    paddingHorizontal: 15,
+    paddingVertical: 5,
     textAlignVertical: "top",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Jua",
+    borderRadius: 15,
+    width: "100%",
+    height: 150,
   },
   inputRow: {
     flexDirection: "row",

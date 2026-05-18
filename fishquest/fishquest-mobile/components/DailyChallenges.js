@@ -55,49 +55,46 @@ export default function DailyChallenges() {
       (difficultyOrder[b.difficulty] ?? 999)
     );
   });
-  if (loading) {
-    return (
-      <View style={styles.wrapper}>
-        <View style={styles.card}>
-          <Text style={styles.title}>DAILY CHALLENGES</Text>
 
-          <LoadingIndicator text="Loading Challenges" color="#000" />
-        </View>
-      </View>
-    );
-  }
   return (
     <View style={styles.wrapper}>
       <View style={styles.card}>
         <Text style={styles.title}>DAILY CHALLENGES</Text>
+        {loading ? (
+          <View style={styles.centerState}>
+            <LoadingIndicator text="Loading Challenges" color="#fff" />
+          </View>
+        ) : (
+          <>
+            {sortedChallenges.map((challenge) => {
+              if (challenge.isOnCooldown || challenge.isFinished) {
+                return (
+                  <DisabledChallengeCard
+                    key={challenge.userChallengeId}
+                    challenge={challenge}
+                  />
+                );
+              }
 
-        {sortedChallenges.map((challenge) => {
-          if (challenge.isOnCooldown || challenge.isFinished) {
-            return (
-              <DisabledChallengeCard
-                key={challenge.userChallengeId}
-                challenge={challenge}
-              />
-            );
-          }
+              if (challenge.type === "timed") {
+                return (
+                  <TimedChallengeCard
+                    key={challenge.userChallengeId}
+                    challenge={challenge}
+                    onRefresh={fetchChallenges}
+                  />
+                );
+              }
 
-          if (challenge.type === "timed") {
-            return (
-              <TimedChallengeCard
-                key={challenge.userChallengeId}
-                challenge={challenge}
-                onRefresh={fetchChallenges}
-              />
-            );
-          }
-
-          return (
-            <ChallengeCard
-              key={challenge.userChallengeId}
-              challenge={challenge}
-            />
-          );
-        })}
+              return (
+                <ChallengeCard
+                  key={challenge.userChallengeId}
+                  challenge={challenge}
+                />
+              );
+            })}
+          </>
+        )}
       </View>
     </View>
   );

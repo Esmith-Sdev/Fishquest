@@ -4,7 +4,6 @@ import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomNavbar from "../components/BottomNavbar";
-import { logout, getAuth } from "../api/auth";
 import { COLORS, RADIUS } from "../constants/theme";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 import { useAuth } from "../context/AuthContext";
@@ -20,6 +19,7 @@ export default function Profile() {
     favoriteBait: "None",
     skunkedCount: 0,
   });
+  const { logout: authLogout } = useAuth();
 
   useEffect(() => {
     async function fetchStats() {
@@ -90,6 +90,10 @@ export default function Profile() {
   }
   function closeModal() {
     setShowModal(false);
+  }
+  async function handleLogout() {
+    await authLogout();
+    router.replace("/login");
   }
   if (loading) {
     return (

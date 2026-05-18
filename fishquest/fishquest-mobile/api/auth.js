@@ -64,9 +64,3 @@ export async function isAuthenticated() {
   const token = await SecureStore.getItemAsync("token");
   return !!token;
 }
-
-export async function logout() {
-  await SecureStore.deleteItemAsync("token");
-  await SecureStore.deleteItemAsync("userId");
-  await SecureStore.deleteItemAsync("username");
-}

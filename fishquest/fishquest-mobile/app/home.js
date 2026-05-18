@@ -5,7 +5,6 @@ import TopNavbar from "../components/TopNavbar";
 import BottomNavbar from "../components/BottomNavbar";
 import DailyChallenges from "../components/DailyChallenges";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 import { ScrollView } from "react-native";
 import { COLORS } from "@/constants/theme";
 export default function HomeScreen() {
@@ -22,15 +21,17 @@ export default function HomeScreen() {
         <TopNavbar />
         <ScrollView contentContainerStyle={styles.content}>
           <DailyChallenges />
-          <Pressable
-            onPress={() => router.push("/versus")}
-            style={styles.horizontalCard}
-          >
-            <Image
-              style={styles.horizontalCardImage}
-              source={require("../assets/images/vs.png")}
-            ></Image>
-          </Pressable>
+          <View style={styles.horizontalCardContainer}>
+            <Pressable
+              onPress={() => router.push("/versus")}
+              style={styles.horizontalCard}
+            >
+              <Image
+                style={styles.horizontalCardImage}
+                source={require("../assets/images/vs.png")}
+              ></Image>
+            </Pressable>
+          </View>
         </ScrollView>
         <BottomNavbar />
       </View>
@@ -71,14 +72,20 @@ const styles = StyleSheet.create({
   cardPressable: {
     width: "90%",
   },
+  horizontalCardContainer: {
+    width: "100%",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
   horizontalCard: {
     width: "100%",
     height: 100,
     borderRadius: 15,
     overflow: "hidden",
+    boxShadow: "0 0px 16px rgb(255, 94, 0)",
     justifyContent: "center",
+
     alignItems: "center",
-    paddingHorizontal: 20,
   },
   horizontalCardImage: {
     width: "100%",

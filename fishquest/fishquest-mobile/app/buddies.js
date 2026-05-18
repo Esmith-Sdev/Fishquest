@@ -77,25 +77,7 @@ export default function Buddies() {
     fetchFriendRequests();
     fetchFriends();
   }, []);
-  if (loading) {
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
-        <View style={styles.screen}>
-          <TopNavbarSecondary
-            title="Buddies"
-            buttonText="Add Buddy"
-            showButton={true}
-            onButtonPress={() => setOpenAddBuddyModal(true)}
-            backRoute="/home"
-          />
 
-          <LoadingIndicator text="Loading Buddies" color="#fff" />
-
-          <BottomNavbar />
-        </View>
-      </SafeAreaView>
-    );
-  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <TopNavbarSecondary
@@ -105,77 +87,87 @@ export default function Buddies() {
         onButtonPress={() => setOpenAddBuddyModal(true)}
         backRoute="/home"
       />
-      <View style={styles.screen}>
-        <ScrollView contentContainerStyle={styles.content}>
-          <View style={styles.notificationContainer}>
-            <Pressable
-              style={styles.notificationButton}
-              onPress={() => setOpenBuddyRequestsModal(true)}
-            >
-              <View style={styles.notificationRow}>
-                <Ionicons
-                  name="notifications"
-                  size={30}
-                  color={COLORS.secondary}
-                />
-                <View
-                  style={{
-                    width: 25,
-                    height: 25,
-                    padding: 4,
-                    top: -10,
-                    borderRadius: 9999,
-                    backgroundColor: COLORS.secondary,
-                  }}
+      {loading ? (
+        <View style={styles.centerState}>
+          <LoadingIndicator text="Loading Buddies" color="#fff" />
+        </View>
+      ) : (
+        <>
+          <View style={styles.screen}>
+            <ScrollView contentContainerStyle={styles.content}>
+              <View style={styles.notificationContainer}>
+                <Pressable
+                  style={styles.notificationButton}
+                  onPress={() => setOpenBuddyRequestsModal(true)}
                 >
-                  <Text style={styles.notificationText}>{requests.length}</Text>
-                </View>
+                  <View style={styles.notificationRow}>
+                    <Ionicons
+                      name="notifications"
+                      size={30}
+                      color={COLORS.secondary}
+                    />
+                    <View
+                      style={{
+                        width: 25,
+                        height: 25,
+                        padding: 4,
+                        top: -10,
+                        borderRadius: 9999,
+                        backgroundColor: COLORS.secondary,
+                      }}
+                    >
+                      <Text style={styles.notificationText}>
+                        {requests.length}
+                      </Text>
+                    </View>
+                  </View>
+                </Pressable>
               </View>
-            </Pressable>
+              <FlatList
+                data={users}
+                keyExtractor={(item, index) => index.toString()}
+                numColumns={3}
+                columnWrapperStyle={styles.gridRow}
+                contentContainerStyle={styles.listContent}
+                ListEmptyComponent={
+                  <View style={styles.centerState}>
+                    <Text style={styles.stateText}>
+                      You don't have any buddies yet
+                    </Text>
+                    <Text style={styles.subText}>
+                      Add some buddies to see them here.
+                    </Text>
+                    <Pressable style={styles.orangeButton}>
+                      <Text style={styles.orangeButtonText}>Add Buddy</Text>
+                    </Pressable>
+                  </View>
+                }
+                renderItem={({ item }) => {
+                  return (
+                    <Pressable style={styles.card}>
+                      <View style={styles.cardBodyTop}>
+                        <Text style={styles.cardTitle} numberOfLines={2}>
+                          {item.username}
+                        </Text>
+                      </View>
+
+                      <View style={styles.cardImage}>
+                        <Entypo name="camera" size={24} color="black" />
+                        <Text style={{ textAlign: "center", fontSize: 10 }}>
+                          No Photo Available
+                        </Text>
+                      </View>
+
+                      <View style={styles.cardBodyBottom}></View>
+                    </Pressable>
+                  );
+                }}
+              />
+            </ScrollView>
+            <BottomNavbar />
           </View>
-          <FlatList
-            data={users}
-            keyExtractor={(item, index) => index.toString()}
-            numColumns={3}
-            columnWrapperStyle={styles.gridRow}
-            contentContainerStyle={styles.listContent}
-            ListEmptyComponent={
-              <View style={styles.centerState}>
-                <Text style={styles.stateText}>
-                  You don't have any buddies yet
-                </Text>
-                <Text style={styles.subText}>
-                  Add some buddies to see them here.
-                </Text>
-                <Pressable style={styles.orangeButton}>
-                  <Text style={styles.orangeButtonText}>Add Buddy</Text>
-                </Pressable>
-              </View>
-            }
-            renderItem={({ item }) => {
-              return (
-                <Pressable style={styles.card}>
-                  <View style={styles.cardBodyTop}>
-                    <Text style={styles.cardTitle} numberOfLines={2}>
-                      {item.username}
-                    </Text>
-                  </View>
-
-                  <View style={styles.cardImage}>
-                    <Entypo name="camera" size={24} color="black" />
-                    <Text style={{ textAlign: "center", fontSize: 10 }}>
-                      No Photo Available
-                    </Text>
-                  </View>
-
-                  <View style={styles.cardBodyBottom}></View>
-                </Pressable>
-              );
-            }}
-          />
-        </ScrollView>
-        <BottomNavbar />
-      </View>
+        </>
+      )}
       <AddBuddyModal
         visible={openAddBuddyModal}
         onClose={() => setOpenAddBuddyModal(false)}
@@ -305,7 +297,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   centerState: {
-    paddingVertical: 50,
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
