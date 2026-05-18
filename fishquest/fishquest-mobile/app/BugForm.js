@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Pressable,
   Image,
+  Alert,
 } from "react-native";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -19,7 +20,8 @@ import { uploadImages } from "../api/uploads";
 import { Keyboard } from "react-native";
 import { getToken } from "../api/auth";
 import { router } from "expo-router";
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+const API_URL =
+  process.env.EXPO_PUBLIC_API_URL || "https://fishquest.onrender.com";
 export default function BugForm() {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -31,7 +33,6 @@ export default function BugForm() {
   const [platform, setPlatform] = useState("");
   const [files, setFiles] = useState([]);
   const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
-  const [message, setMessage] = useState("");
   const isGridFull = files.length >= 4;
 
   function handleRemoveImage(indexToRemove) {
@@ -79,7 +80,8 @@ export default function BugForm() {
       const token = await getToken();
 
       if (!token) {
-        return "No auth token found.";
+        router.replace("/login");
+        return;
       }
 
       const urls = await ensureUploadedImages();
@@ -100,10 +102,9 @@ export default function BugForm() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to submit bug report");
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.message || "Failed to submit bug report");
       }
-
-      setMessage("Bug report submitted!");
 
       setForm({
         title: "",
@@ -115,19 +116,24 @@ export default function BugForm() {
       setFiles([]);
       setUploadedImageUrls([]);
       setPlatform("");
+      Alert.alert("Success", "Bug report submitted!", [
+        {
+          text: "OK",
+          onPress: () => router.push("/profile"),
+        },
+      ]);
     } catch (err) {
-      setMessage("Failed to Submit Form");
       console.log("Failed to Submit Form", err);
+      Alert.alert("Failed to Submit Form", err.message || "Please try again.");
     } finally {
       setSaving(false);
-      router.push("/profile");
     }
   }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       {saving && (
         <View style={styles.savingOverlay}>
-          <LoadingIndicator text={message} />
+          <LoadingIndicator text="Submitting Bug Report" />
         </View>
       )}
       <TopNavbarSecondary
@@ -167,7 +173,7 @@ export default function BugForm() {
                 multiline
                 numberOfLines={4}
                 value={form.description}
-                style={[styles.input, styles.descriptionInput]}
+                style={styles.input}
                 onChangeText={(text) =>
                   setForm((p) => ({ ...p, description: text }))
                 }
@@ -219,10 +225,10 @@ export default function BugForm() {
           </View>
           {files.length === 0 ? (
             <Pressable style={styles.uploadImageContainer} onPress={pickImages}>
-              <Ionicons name="camera" size={25} color="#000" />
-              <Text style={styles.uploadText}>Select Image to Upload</Text>
+              <Ionicons name="camera" size={50} color="#000" />
+
               <Pressable style={styles.blueButton} onPress={pickImages}>
-                <Text style={styles.buttonText}>Select Image</Text>
+                <Text style={styles.buttonText}>Upload Images</Text>
               </Pressable>
             </Pressable>
           ) : (
@@ -328,7 +334,7 @@ const styles = StyleSheet.create({
   },
   descriptionInput: {
     backgroundColor: "#dedede",
-    paddingHorizontal: 15,
+    paddingHorizontal: 5,
     paddingVertical: 5,
     textAlignVertical: "top",
     fontSize: 14,
@@ -338,11 +344,16 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 150,
   },
+  input: {
+    fontSize: 14,
+    fontFamily: "Jua",
+    width: "100%",
+  },
   inputRow: {
     flexDirection: "row",
     backgroundColor: "#dedede",
     borderRadius: 12,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     paddingVertical: 2,
   },
   label: {
@@ -458,6 +469,7 @@ const styles = StyleSheet.create({
     height: 140,
     borderRadius: 12,
     backgroundColor: "#dedede",
+
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 10,

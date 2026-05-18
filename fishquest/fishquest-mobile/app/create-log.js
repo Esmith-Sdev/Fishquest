@@ -488,10 +488,10 @@ export default function CreateLog() {
                   style={styles.uploadImageContainer}
                   onPress={pickImages}
                 >
-                  <Ionicons name="camera" size={25} color="#000" />
-                  <Text style={styles.uploadText}>Select Image to Upload</Text>
+                  <Ionicons name="camera" size={50} color="#000" />
+
                   <Pressable style={styles.blueButton} onPress={pickImages}>
-                    <Text style={styles.buttonText}>Select Image</Text>
+                    <Text style={styles.buttonText}>Upload Images</Text>
                   </Pressable>
                 </Pressable>
               ) : (

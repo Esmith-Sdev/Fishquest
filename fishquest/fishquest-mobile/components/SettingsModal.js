@@ -5,6 +5,10 @@ import { COLORS } from "../constants/theme";
 import { router } from "expo-router";
 import { RADIUS } from "../constants/theme";
 export default function SettingsModal({ visible, onClose, onLogOut }) {
+  function handleReportBugPressed() {
+    onClose();
+    router.push("/BugForm");
+  }
   return (
     <Modal
       visible={visible}
@@ -29,7 +33,7 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
           </View>
           <View style={styles.body}>
             <Pressable
-              onPress={() => router.push("/BugForm")}
+              onPress={handleReportBugPressed}
               style={styles.blueButton}
             >
               <Text style={styles.buttonText}>Report a Bug</Text>
