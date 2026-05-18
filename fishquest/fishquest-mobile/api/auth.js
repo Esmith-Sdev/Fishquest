@@ -23,7 +23,6 @@ export async function login(username, password) {
   await SecureStore.setItemAsync("token", cleanToken);
   await SecureStore.setItemAsync("userId", String(data.user.id));
   await SecureStore.setItemAsync("username", data.user.username);
-  await SecureStore.setItemAsync("biometricEnabled", "false");
   return data;
 }
 
@@ -48,7 +47,6 @@ export async function signup(username, password, email) {
   await SecureStore.setItemAsync("token", cleanToken);
   await SecureStore.setItemAsync("userId", String(data.user.id));
   await SecureStore.setItemAsync("username", data.user.username);
-  await SecureStore.setItemAsync("biometricEnabled", "false");
 
   return data;
 }

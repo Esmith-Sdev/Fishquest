@@ -1,7 +1,11 @@
 import { router } from "expo-router";
 import AuthForm from "../components/AuthForm";
 import { useAuth } from "../context/AuthContext";
-import { enableBiometrics, biometricLogin } from "../utils/AuthStorage";
+import {
+  enableBiometrics,
+  biometricLogin,
+  disableBiometrics,
+} from "../utils/AuthStorage";
 import GradientBackground from "../components/GradientBackground";
 import {
   Alert,
@@ -78,6 +82,14 @@ export default function LoginScreen() {
       Alert.alert("Error", err.message);
     }
   }
+  async function handleDisableBiometrics() {
+    try {
+      await disableBiometrics();
+      alert("Biometric login disabled");
+    } catch (err) {
+      Alert.alert("Error", err.message);
+    }
+  }
   return (
     <GradientBackground>
       {loading && (
@@ -119,7 +131,8 @@ export default function LoginScreen() {
                 setShowBiometricPrompt(false);
                 router.replace("/home");
               }}
-              onCancel={() => {
+              onCancel={async () => {
+                await disableBiometrics();
                 setShowBiometricPrompt(false);
                 router.replace("/home");
               }}

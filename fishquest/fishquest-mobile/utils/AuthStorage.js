@@ -30,7 +30,6 @@ export async function enableBiometrics() {
 }
 export async function biometricLogin() {
   const enabled = await SecureStore.getItemAsync("biometricEnabled");
-
   if (enabled !== "true") {
     return null;
   }
@@ -59,4 +58,10 @@ export async function biometricLogin() {
       username,
     },
   };
+}
+export async function disableBiometrics() {
+  await SecureStore.deleteItemAsync("token");
+  await SecureStore.deleteItemAsync("userId");
+  await SecureStore.deleteItemAsync("username");
+  await SecureStore.deleteItemAsync("biometricEnabled");
 }

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import * as LocalAuthentication from "expo-local-authentication";
+import * as SecureStore from "expo-secure-store";
 const AuthContext = createContext(null);
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -21,8 +21,8 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     async function loadStoredAuth() {
       try {
-        const storedUser = await AsyncStorage.getItem("user");
-        const storedToken = await AsyncStorage.getItem("token");
+        const storedUser = await SecureStore.getItemAsync("user");
+        const storedToken = await SecureStore.getItemAsync("token");
 
         if (storedUser && storedToken) {
           setUser(JSON.parse(storedUser));
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
     loadStoredAuth();
   }, []);
   async function refreshUserStats() {
-    const storedToken = await AsyncStorage.getItem("token");
+    const storedToken = await SecureStore.getItemAsync("token");
     if (!storedToken) return;
 
     const parsedToken = JSON.parse(storedToken);
@@ -58,15 +58,13 @@ export function AuthProvider({ children }) {
   async function login(data) {
     setUser(data.user);
     setToken(data.token);
-    await AsyncStorage.setItem("user", JSON.stringify(data.user));
-    await AsyncStorage.setItem("token", JSON.stringify(data.token));
+    await SecureStore.getItemAsync("user", JSON.stringify(data.user));
+    await SecureStore.getItemAsync("token", JSON.stringify(data.token));
   }
 
   async function logout() {
     setUser(null);
     setToken(null);
-    await AsyncStorage.removeItem("user");
-    await AsyncStorage.removeItem("token");
   }
 
   return (
