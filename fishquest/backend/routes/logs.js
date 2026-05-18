@@ -1,8 +1,11 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import Logs from "../models/Logs.js";
+import User from "../models/User.js";
+import { Expo } from "expo-server-sdk";
 import RigStats from "../models/RigStats.js";
 import getTimeOfDay from "../utils/getTimeOfDay.js";
+import UserChallenge from "../models/UserChallenge.js";
 
 import RigPreset from "../models/Rigs.js";
 
@@ -11,6 +14,55 @@ import { recalculateUserFishingStats } from "../utils/recalculateUserFishingStat
 import { awardXp } from "../utils/awardXp.js";
 import { updateUserBadges } from "../utils/updateUserBadges.js";
 const router = express.Router();
+const expo = new Expo();
+
+async function sendBuddyNotifications(userId, log) {
+  try {
+    const owner = await User.findById(userId).select("username friends");
+    if (!owner?.friends?.length) {
+      return;
+    }
+
+    const buddies = await User.find({
+      _id: { $in: owner.friends },
+      notificationsEnabled: true,
+      expoPushTokens: { $exists: true, $not: { $size: 0 } },
+    }).select("username expoPushTokens");
+
+    const messages = [];
+    const fishDesc = log.speciesName || "a fish";
+    buddies.forEach((buddy) => {
+      buddy.expoPushTokens.forEach((token) => {
+        if (!Expo.isExpoPushToken(token)) {
+          return;
+        }
+
+        messages.push({
+          to: token,
+          sound: "default",
+          title: `${owner.username} caught ${fishDesc}!`,
+          body: `Your buddy just logged a catch. Tap to view it.`,
+          data: {
+            type: "buddy-catch",
+            logId: log._id.toString(),
+            userId: owner._id.toString(),
+          },
+        });
+      });
+    });
+
+    const chunks = expo.chunkPushNotifications(messages);
+    for (const chunk of chunks) {
+      try {
+        await expo.sendPushNotificationsAsync(chunk);
+      } catch (error) {
+        console.error("Failed to send buddy notifications:", error);
+      }
+    }
+  } catch (error) {
+    console.error("Buddy notification dispatch failed:", error.message);
+  }
+}
 
 async function recalculateRigStats(userId, rigId) {
   if (!rigId) return;
@@ -22,7 +74,10 @@ async function recalculateRigStats(userId, rigId) {
   const fishLogs = rigLogs.filter((log) => !log.skunked);
 
   const fishCaught = fishLogs.length;
-  const challengesCompleted = 0; // replace later if you track this
+  const challengesCompleted = await UserChallenge.countDocuments({
+    userId,
+    isFinished: true,
+  });
   const bigFishCaught = fishLogs.filter(
     (log) => Number(log.weight) >= 5,
   ).length;
@@ -158,6 +213,9 @@ router.post("/", async (req, res) => {
     if (newLog.rigPresetId) {
       await recalculateRigStats(decoded.sub, newLog.rigPresetId.toString());
     }
+    if (!newLog.skunked) {
+      await sendBuddyNotifications(decoded.sub, newLog);
+    }
     const badges = await updateUserBadges(decoded.sub);
     res.status(201).json({
       log: newLog,
@@ -193,6 +251,73 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch logs" });
   }
 });
+router.get("/buddies", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+
+    if (!token) {
+      return res.status(401).json({ message: "Missing token" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id || decoded.sub;
+    const me = await User.findById(userId).select("friends");
+
+    if (!me) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const logs = await Logs.find({
+      userId: { $in: me.friends },
+    })
+      .sort({ createdAt: -1 })
+      .limit(100);
+
+    res.json(logs);
+  } catch (err) {
+    console.error("Fetch buddy logs failed:", err.message);
+    res.status(500).json({ message: "Failed to fetch buddy logs" });
+  }
+});
+
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+
+    if (!token) {
+      return res.status(401).json({ message: "Missing token" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const requesterId = decoded.id || decoded.sub;
+    const targetId = req.params.userId;
+
+    const me = await User.findById(requesterId).select("friends");
+    if (!me) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isBuddy = me.friends.some(
+      (friendId) => friendId.toString() === targetId,
+    );
+
+    if (!isBuddy && requesterId !== targetId) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to view this user's logs" });
+    }
+
+    const logs = await Logs.find({ userId: targetId }).sort({ createdAt: -1 });
+
+    res.json(logs);
+  } catch (err) {
+    console.error("Fetch user buddy logs failed:", err.message);
+    res.status(500).json({ message: "Failed to fetch user logs" });
+  }
+});
+
 router.get("/:id", async (req, res) => {
   try {
     const authHeader = req.headers.authorization || "";

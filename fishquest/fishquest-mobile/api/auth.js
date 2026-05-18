@@ -26,11 +26,18 @@ export async function login(username, password) {
   return data;
 }
 
-export async function signup(username, password, email) {
+export async function signup(username, password, email, preferences = {}) {
   const res = await fetch(`${API_URL}/api/auth/signup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password, email }),
+    body: JSON.stringify({
+      username,
+      password,
+      email,
+      notificationsEnabled: preferences.notificationsEnabled,
+      locationEnabled: preferences.locationEnabled,
+      expoPushToken: preferences.expoPushToken,
+    }),
   });
 
   const data = await res.json();

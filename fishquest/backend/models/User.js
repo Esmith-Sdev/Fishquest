@@ -39,6 +39,9 @@ const userSchema = new mongoose.Schema(
     },
     passwordHash: { type: String, required: true, select: false },
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    notificationsEnabled: { type: Boolean, default: false },
+    locationEnabled: { type: Boolean, default: false },
+    expoPushTokens: { type: [String], default: [] },
   },
   { timestamps: true },
 );

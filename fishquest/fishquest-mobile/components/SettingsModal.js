@@ -3,34 +3,55 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { COLORS } from "../constants/theme";
 import { router } from "expo-router";
+import { useAuth } from "../context/AuthContext";
 import { enableBiometrics } from "../utils/AuthStorage";
 import * as LocalAuthentication from "expo-local-authentication";
 import * as SecureStore from "expo-secure-store";
+import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { RADIUS } from "../constants/theme";
+import { fetchPreferences, updatePreferences } from "../api/users";
+import { registerForPushNotificationsAsync } from "../utils/pushNotifications";
 export default function SettingsModal({ visible, onClose, onLogOut }) {
+  const { token } = useAuth();
   const [supported, setSupported] = useState(false);
   const [enabled, setEnabled] = useState(false);
+  const [preferences, setPreferences] = useState({
+    notificationsEnabled: false,
+    locationEnabled: false,
+  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let mounted = true;
-    async function check() {
+    async function loadSettings() {
       try {
         const hasHardware = await LocalAuthentication.hasHardwareAsync();
         const enrolled = await LocalAuthentication.isEnrolledAsync();
         const bioEnabled = await SecureStore.getItemAsync("biometricEnabled");
+
         if (!mounted) return;
         setSupported(!!hasHardware && !!enrolled);
         setEnabled(bioEnabled === "true");
+
+        if (token) {
+          const prefs = await fetchPreferences(token);
+          if (!mounted) return;
+          setPreferences({
+            notificationsEnabled: !!prefs.notificationsEnabled,
+            locationEnabled: !!prefs.locationEnabled,
+          });
+        }
       } catch (err) {
-        // ignore
+        // ignore loading errors
       }
     }
-    if (visible) check();
+
+    if (visible) loadSettings();
     return () => {
       mounted = false;
     };
-  }, [visible]);
+  }, [visible, token]);
 
   function handleReportBugPressed() {
     onClose();
@@ -46,6 +67,78 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
       onClose();
     } catch (err) {
       Alert.alert("Error", err.message || "Could not enable biometrics");
+    }
+  }
+
+  async function handleToggleNotifications() {
+    if (!token) {
+      Alert.alert("Error", "No authenticated user.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      if (preferences.notificationsEnabled) {
+        await updatePreferences(token, {
+          notificationsEnabled: false,
+        });
+        setPreferences((prev) => ({ ...prev, notificationsEnabled: false }));
+        Alert.alert(
+          "Notifications Disabled",
+          "You will no longer receive push updates.",
+        );
+        return;
+      }
+
+      const expoPushToken = await registerForPushNotificationsAsync();
+      await updatePreferences(token, {
+        notificationsEnabled: true,
+        expoPushToken,
+      });
+      setPreferences((prev) => ({ ...prev, notificationsEnabled: true }));
+      Alert.alert("Success", "Notifications enabled.");
+    } catch (err) {
+      Alert.alert(
+        "Error",
+        err.message || "Could not update notification settings.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleToggleLocation() {
+    if (!token) {
+      Alert.alert("Error", "No authenticated user.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      if (preferences.locationEnabled) {
+        await updatePreferences(token, { locationEnabled: false });
+        setPreferences((prev) => ({ ...prev, locationEnabled: false }));
+        Alert.alert("Location Disabled", "Location services are now off.");
+        return;
+      }
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      const enabled = status === "granted";
+      await updatePreferences(token, { locationEnabled: enabled });
+      setPreferences((prev) => ({ ...prev, locationEnabled: enabled }));
+
+      if (enabled) {
+        Alert.alert("Success", "Location services enabled.");
+      } else {
+        Alert.alert("Permission denied", "Location permission not granted.");
+      }
+    } catch (err) {
+      Alert.alert(
+        "Error",
+        err.message || "Could not update location settings.",
+      );
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -88,6 +181,28 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
             >
               <Text style={styles.buttonText}>
                 {enabled ? "Biometrics Enabled" : "Enable Biometrics"}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={handleToggleNotifications}
+              style={[styles.blueButton, loading && { opacity: 0.6 }]}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>
+                {preferences.notificationsEnabled
+                  ? "Disable Notifications"
+                  : "Enable Notifications"}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={handleToggleLocation}
+              style={[styles.blueButton, loading && { opacity: 0.6 }]}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>
+                {preferences.locationEnabled
+                  ? "Disable Location Services"
+                  : "Enable Location Services"}
               </Text>
             </Pressable>
           </View>

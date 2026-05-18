@@ -16,6 +16,7 @@ import identifyFishRoutes from "./routes/identifyFish.js";
 import userStatsRoutes from "./routes/userStats.js";
 import buddiesRoutes from "./routes/buddies.js";
 import bugRoutes from "./routes/bugs.js";
+import usersRoutes from "./routes/users.js";
 const app = express();
 
 const allowedOrigins = new Set([
@@ -61,6 +62,7 @@ app.use("/api/uploads", uploadRoutes);
 app.use("/api/logs", logsRoutes);
 app.use("/api/auth", router);
 app.use("/api/user-stats", userStatsRoutes);
+app.use("/api/users", usersRoutes);
 const upload = multer({
   storage: multer.diskStorage({}),
   limits: { fileSize: 8 * 1024 * 1024 },
@@ -78,7 +80,14 @@ app.get("/api/debug-cors", (req, res) => {
 
 router.post("/signup", async (req, res) => {
   try {
-    let { username, password, email } = req.body;
+    let {
+      username,
+      password,
+      email,
+      notificationsEnabled,
+      locationEnabled,
+      expoPushToken,
+    } = req.body;
     if (!username || !password || !email) {
       return res.status(400).json({ message: "All fields Required" });
     }
@@ -97,7 +106,14 @@ router.post("/signup", async (req, res) => {
     }
 
     const passwordHash = await bcrypt.hash(String(password), 12);
-    const user = await User.create({ username, passwordHash, email });
+    const user = await User.create({
+      username,
+      passwordHash,
+      email,
+      notificationsEnabled: Boolean(notificationsEnabled),
+      locationEnabled: Boolean(locationEnabled),
+      expoPushTokens: expoPushToken ? [String(expoPushToken).trim()] : [],
+    });
 
     const token = jwt.sign({ sub: user._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,

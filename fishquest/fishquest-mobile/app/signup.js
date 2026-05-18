@@ -17,7 +17,10 @@ import { COLORS, RADIUS } from "../constants/theme";
 import LeftArrowCircle from "@expo/vector-icons/FontAwesome5";
 import { useAuth } from "../context/AuthContext";
 import LoadingIndicator from "../components/LoadingIndicator";
-const API_URL = "https://fishquest.onrender.com";
+import { signup } from "../api/auth";
+import { registerForPushNotificationsAsync } from "../utils/pushNotifications";
+import * as SecureStore from "expo-secure-store";
+import * as Location from "expo-location";
 
 export default function SignUp() {
   const { login } = useAuth();
@@ -28,6 +31,10 @@ export default function SignUp() {
     email: "",
     password: "",
   });
+  const [preferences, setPreferences] = useState({
+    notificationsEnabled: false,
+    locationEnabled: false,
+  });
   if (loading) {
     return (
       <GradientBackground>
@@ -36,42 +43,87 @@ export default function SignUp() {
     );
   }
 
+  async function handleEnableNotifications() {
+    try {
+      await SecureStore.setItemAsync("notificationsEnabled", "true");
+      setPreferences((prev) => ({ ...prev, notificationsEnabled: true }));
+      setIndex((i) => i + 1);
+    } catch (err) {
+      Alert.alert("Error", err.message);
+    }
+  }
+
+  async function handleDisableNotifications() {
+    try {
+      await SecureStore.setItemAsync("notificationsEnabled", "false");
+      setPreferences((prev) => ({ ...prev, notificationsEnabled: false }));
+      setIndex((i) => i + 1);
+    } catch (err) {
+      Alert.alert("Error", err.message);
+    }
+  }
+
+  async function handleEnableLocationServices() {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      const enabled = status === "granted";
+
+      if (!enabled) {
+        Alert.alert("Permission denied", "Location permission not granted");
+      }
+
+      await SecureStore.setItemAsync(
+        "locationEnabled",
+        enabled ? "true" : "false",
+      );
+      setPreferences((prev) => ({ ...prev, locationEnabled: enabled }));
+      await handleSubmit();
+    } catch (err) {
+      Alert.alert("Error", err.message);
+    }
+  }
+
+  async function handleDisableLocationServices() {
+    try {
+      await SecureStore.setItemAsync("locationEnabled", "false");
+      setPreferences((prev) => ({ ...prev, locationEnabled: false }));
+      await handleSubmit();
+    } catch (err) {
+      Alert.alert("Error", err.message);
+    }
+  }
+
   function handleChange(name, value) {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
   function handleButtonClick() {
-    const isLastSlide = index === 1;
-    if (!isLastSlide) setIndex(1);
+    const isLastSlide = index === 3;
+    if (!isLastSlide) setIndex(index + 1);
   }
 
   async function handleSubmit() {
     try {
       setLoading(true);
-      const res = await fetch(`${API_URL}/api/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: form.username.toLowerCase().trim(),
-          email: form.email.toLowerCase().trim(),
-          password: form.password,
-        }),
+
+      let expoPushToken = null;
+      if (preferences.notificationsEnabled) {
+        try {
+          expoPushToken = await registerForPushNotificationsAsync();
+        } catch (err) {
+          console.warn("Push registration failed", err.message);
+        }
+      }
+
+      const data = await signup(form.username, form.password, form.email, {
+        notificationsEnabled: preferences.notificationsEnabled,
+        locationEnabled: preferences.locationEnabled,
+        expoPushToken,
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        Alert.alert("Success", "Account Created!");
-        login(data);
-        router.replace("/login");
-      } else if (res.status === 409) {
-        Alert.alert(
-          "Error",
-          data.message || "That email is already registered",
-        );
-      } else {
-        Alert.alert("Error", data.error || data.message);
-      }
+      Alert.alert("Success", "Account Created!");
+      login(data);
+      router.replace("/home");
     } catch (err) {
       Alert.alert("Error", err.message);
     } finally {
@@ -104,7 +156,7 @@ export default function SignUp() {
                 <Text style={styles.buttonText}>Get Started</Text>
               </Pressable>
             </View>
-          ) : (
+          ) : index === 1 ? (
             <View style={styles.formContainer}>
               <Link href="/" asChild>
                 <Pressable style={styles.backButton}>
@@ -154,6 +206,58 @@ export default function SignUp() {
               <View style={styles.submitWrap}>
                 <Pressable style={styles.orangeButton} onPress={handleSubmit}>
                   <Text style={styles.buttonText}>Submit</Text>
+                </Pressable>
+              </View>
+            </View>
+          ) : index === 2 ? (
+            <View style={styles.welcomeContainer}>
+              <Image
+                source={require("../assets/images/FishQuest-Logo-only.png")}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text style={styles.header}>Enable Notifications?</Text>
+              <Text style={styles.subHeader}>
+                Stay updated on your buddies latest catches!
+              </Text>
+              <View style={{ flexDirection: "column", gap: 12, marginTop: 12 }}>
+                <Pressable
+                  style={styles.blueButton}
+                  onPress={handleEnableNotifications}
+                >
+                  <Text style={styles.buttonText}>Yes</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.orangeButton}
+                  onPress={handleDisableNotifications}
+                >
+                  <Text style={styles.buttonText}>No</Text>
+                </Pressable>
+              </View>
+            </View>
+          ) : (
+            <View style={styles.welcomeContainer}>
+              <Image
+                source={require("../assets/images/FishQuest-Logo-only.png")}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text style={styles.header}>Enable Location Services?</Text>
+              <Text style={styles.subHeader}>
+                Used to autofill your location
+              </Text>
+              <View style={{ flexDirection: "column", gap: 12, marginTop: 12 }}>
+                <Pressable
+                  style={styles.blueButton}
+                  onPress={handleEnableLocationServices}
+                >
+                  <Text style={styles.buttonText}>Yes</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.orangeButton}
+                  onPress={handleDisableLocationServices}
+                >
+                  <Text style={styles.buttonText}>No</Text>
                 </Pressable>
               </View>
             </View>
