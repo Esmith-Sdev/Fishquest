@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import { AuthProvider } from "../context/AuthContext";
 import { useFonts } from "expo-font";
 import { View } from "react-native";
-import { ActivityIndicator } from "react-native";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import GradientBackground from "../components/GradientBackground";
 export default function Layout() {
@@ -17,7 +17,7 @@ export default function Layout() {
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <ActivityIndicator size="large" />
+          <LoadingIndicator text="Loading Fonts" color="#fff" />
         </View>
       </GradientBackground>
     );

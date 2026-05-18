@@ -401,13 +401,13 @@ export default function CreateLog() {
                     <View style={styles.rigSection}>
                       <View style={styles.previewColumn}>
                         <View style={styles.rigTitleRow}>
-                          <Pressable onPress={prevRig}>
+                          <Pressable onPress={prevRig} hitSlop={20}>
                             <Text style={styles.caret}>◀</Text>
                           </Pressable>
                           <Text style={styles.rigName}>
                             {selectedRig.rigName}
                           </Text>
-                          <Pressable onPress={nextRig}>
+                          <Pressable onPress={nextRig} hitSlop={15}>
                             <Text style={styles.caret}>▶</Text>
                           </Pressable>
                         </View>

@@ -1,7 +1,8 @@
 import { Pressable, Image, StyleSheet, View, Text } from "react-native";
-import { ActivityIndicator } from "react-native";
+import LoadingIndicator from "./LoadingIndicator";
 import { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { COLORS } from "../constants/theme";
 import { Dimensions } from "react-native";
 const screenWidth = Dimensions.get("window").width;
 const CARD_GAP = 12;
@@ -24,13 +25,7 @@ export default function BadgeCard({ badge, unlocked, onClick, preview }) {
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.imageWrapper}>
-          {imageLoading && (
-            <ActivityIndicator
-              size="small"
-              color="#00b2ff"
-              style={styles.loader}
-            />
-          )}
+          {imageLoading && <LoadingIndicator color={COLORS.primary} />}
 
           {badge.icon ? (
             <Image

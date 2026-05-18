@@ -1,11 +1,8 @@
 import { router } from "expo-router";
 import AuthForm from "../components/AuthForm";
 import { useAuth } from "../context/AuthContext";
-import {
-  enableBiometrics,
-  biometricLogin,
-  disableBiometrics,
-} from "../utils/AuthStorage";
+import { enableBiometrics, biometricLogin } from "../utils/AuthStorage";
+import * as LocalAuthentication from "expo-local-authentication";
 import GradientBackground from "../components/GradientBackground";
 import {
   Alert,
@@ -48,7 +45,29 @@ export default function LoginScreen() {
       await SecureStore.setItemAsync("username", data.user.username);
       if (res.ok) {
         login(data);
-        setShowBiometricPrompt(true);
+
+        // Only show the biometric prompt if the device supports biometrics,
+        // the device has enrolled biometrics, and the prompt hasn't been
+        // shown before for this user/install.
+        const hasHardware = await LocalAuthentication.hasHardwareAsync();
+        const enrolled = await LocalAuthentication.isEnrolledAsync();
+        const biometricEnabled = await SecureStore.getItemAsync(
+          "biometricEnabled",
+        );
+        const biometricPromptShown = await SecureStore.getItemAsync(
+          "biometricPromptShown",
+        );
+
+        if (
+          hasHardware &&
+          enrolled &&
+          biometricEnabled !== "true" &&
+          biometricPromptShown !== "true"
+        ) {
+          setShowBiometricPrompt(true);
+        } else {
+          router.replace("/home");
+        }
       } else {
         setError(true);
         Alert.alert("Error", data.message || "Login failed");
@@ -62,6 +81,7 @@ export default function LoginScreen() {
   async function handleEnableBiometrics() {
     try {
       await enableBiometrics();
+      await SecureStore.setItemAsync("biometricPromptShown", "true");
       alert("Biometric login enabled!");
     } catch (err) {
       Alert.alert("Error", err.message);
@@ -82,14 +102,7 @@ export default function LoginScreen() {
       Alert.alert("Error", err.message);
     }
   }
-  async function handleDisableBiometrics() {
-    try {
-      await disableBiometrics();
-      alert("Biometric login disabled");
-    } catch (err) {
-      Alert.alert("Error", err.message);
-    }
-  }
+  // No-op here: settings modal provides control to enable/disable biometrics.
   return (
     <GradientBackground>
       {loading && (
@@ -132,7 +145,10 @@ export default function LoginScreen() {
                 router.replace("/home");
               }}
               onCancel={async () => {
-                await disableBiometrics();
+                await SecureStore.setItemAsync(
+                  "biometricPromptShown",
+                  "true",
+                );
                 setShowBiometricPrompt(false);
                 router.replace("/home");
               }}

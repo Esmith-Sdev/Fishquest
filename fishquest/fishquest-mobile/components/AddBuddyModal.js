@@ -148,10 +148,7 @@ export default function AddBuddyModal({ visible, onClose }) {
                       </View>
 
                       {addingUserId === item._id ? (
-                        <ActivityIndicator
-                          size="small"
-                          color={COLORS.primary}
-                        />
+                        <LoadingIndicator text="Adding" color="#fff" />
                       ) : addedUsers[item._id] ? (
                         <Pressable style={styles.blueButton} disabled>
                           <Text style={styles.buttonText}>Sent!</Text>

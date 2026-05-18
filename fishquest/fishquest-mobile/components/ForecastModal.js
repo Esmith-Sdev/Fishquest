@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { COLORS, RADIUS } from "../constants/theme";
 import { getCurrentLocation } from "../utils/getCurrentLocation";
-import { ActivityIndicator } from "react-native";
+import LoadingIndicator from "./LoadingIndicator";
 
 export default function ForecastModal({ visible, onClose }) {
   const [loading, setLoading] = useState(true);
@@ -94,7 +94,10 @@ export default function ForecastModal({ visible, onClose }) {
                 alignItems: "center",
               }}
             >
-              <ActivityIndicator size="large" color={COLORS.primary} />
+              <LoadingIndicator
+                text="Loading Forecast"
+                color={COLORS.primary}
+              />
             </View>
           ) : (
             <View style={styles.column}>
