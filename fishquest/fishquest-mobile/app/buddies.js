@@ -137,14 +137,28 @@ export default function Buddies() {
                     <Text style={styles.subText}>
                       Add some buddies to see them here.
                     </Text>
-                    <Pressable style={styles.orangeButton}>
+                    <Pressable
+                      style={styles.orangeButton}
+                      onPress={() => setOpenAddBuddyModal(true)}
+                    >
                       <Text style={styles.orangeButtonText}>Add Buddy</Text>
                     </Pressable>
                   </View>
                 }
                 renderItem={({ item }) => {
                   return (
-                    <Pressable style={styles.card}>
+                    <Pressable
+                      style={styles.card}
+                      onPress={() =>
+                        router.push({
+                          pathname: "/buddyProfile",
+                          params: {
+                            buddyId: item._id,
+                            username: item.username,
+                          },
+                        })
+                      }
+                    >
                       <View style={styles.cardBodyTop}>
                         <Text style={styles.cardTitle} numberOfLines={2}>
                           {item.username}

@@ -38,7 +38,9 @@ export default function SignUp() {
   if (loading) {
     return (
       <GradientBackground>
-        <LoadingIndicator text="Signing Up" color="#fff" />
+        <View style={styles.centerState}>
+          <LoadingIndicator text="Signing Up" color="#fff" />
+        </View>
       </GradientBackground>
     );
   }
@@ -78,6 +80,7 @@ export default function SignUp() {
       );
       setPreferences((prev) => ({ ...prev, locationEnabled: enabled }));
       await handleSubmit();
+      router.replace("/home");
     } catch (err) {
       Alert.alert("Error", err.message);
     }
@@ -88,6 +91,7 @@ export default function SignUp() {
       await SecureStore.setItemAsync("locationEnabled", "false");
       setPreferences((prev) => ({ ...prev, locationEnabled: false }));
       await handleSubmit();
+      router.replace("/home");
     } catch (err) {
       Alert.alert("Error", err.message);
     }
@@ -123,7 +127,7 @@ export default function SignUp() {
 
       Alert.alert("Success", "Account Created!");
       login(data);
-      router.replace("/home");
+      handleButtonClick();
     } catch (err) {
       Alert.alert("Error", err.message);
     } finally {
@@ -274,6 +278,22 @@ const styles = StyleSheet.create({
 
     justifyContent: "center",
   },
+  blueButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.pill,
+    paddingVertical: 6,
+    width: 250,
+    paddingHorizontal: 30,
+    boxShadow: "0px 4px 0px #003f73",
+    shadowColor: COLORS.primaryDropShadow,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 1,
+    elevation: 4,
+  },
   centerState: {
     flex: 1,
     justifyContent: "center",
@@ -354,6 +374,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "400",
     fontFamily: "Jua",
+    textAlign: "center",
   },
   submitWrap: {
     alignItems: "center",

@@ -27,6 +27,7 @@ async function sendBuddyNotifications(userId, log) {
       _id: { $in: owner.friends },
       notificationsEnabled: true,
       expoPushTokens: { $exists: true, $not: { $size: 0 } },
+      trackedBuddies: owner._id,
     }).select("username expoPushTokens");
 
     const messages = [];

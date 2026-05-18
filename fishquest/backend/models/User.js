@@ -41,6 +41,7 @@ const userSchema = new mongoose.Schema(
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     notificationsEnabled: { type: Boolean, default: false },
     locationEnabled: { type: Boolean, default: false },
+    trackedBuddies: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     expoPushTokens: { type: [String], default: [] },
   },
   { timestamps: true },

@@ -25,6 +25,18 @@ export async function fetchLogs(token) {
   if (!res.ok) throw new Error(data.message || "Failed to fetch logs");
   return data;
 }
+
+export async function fetchBuddyLogs(buddyId, token) {
+  const res = await fetch(`${API_URL}/api/logs/user/${buddyId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await res.json().catch(() => []);
+  if (!res.ok) throw new Error(data.message || "Failed to fetch buddy logs");
+  return data;
+}
 export async function updateCatchLog(id, payload, token) {
   const res = await fetch(`${API_URL}/api/logs/${id}`, {
     method: "PUT",

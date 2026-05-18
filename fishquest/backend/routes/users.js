@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/preferences", protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id || req.user.id).select(
-      "notificationsEnabled locationEnabled expoPushTokens",
+      "notificationsEnabled locationEnabled expoPushTokens trackedBuddies",
     );
     if (!user) {
       return res.status(404).json({ message: "User not found." });
@@ -17,6 +17,53 @@ router.get("/preferences", protect, async (req, res) => {
   } catch (error) {
     console.error("Failed to fetch user preferences:", error.message);
     res.status(500).json({ message: "Failed to fetch user preferences." });
+  }
+});
+
+router.patch("/tracked-buddies/:buddyId", protect, async (req, res) => {
+  try {
+    const { buddyId } = req.params;
+    const { enabled } = req.body;
+
+    if (!buddyId) {
+      return res.status(400).json({ message: "Missing buddyId." });
+    }
+
+    const update = enabled
+      ? { $addToSet: { trackedBuddies: buddyId } }
+      : { $pull: { trackedBuddies: buddyId } };
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id || req.user.id,
+      update,
+      { new: true },
+    ).select("trackedBuddies");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.json({ trackedBuddies: user.trackedBuddies });
+  } catch (error) {
+    console.error("Failed to update tracked buddies:", error.message);
+    res.status(500).json({ message: "Failed to update tracked buddies." });
+  }
+});
+
+router.get("/profile/:userId", protect, async (req, res) => {
+  try {
+    const buddy = await User.findById(req.params.userId).select(
+      "username xp level levelTitle",
+    );
+
+    if (!buddy) {
+      return res.status(404).json({ message: "Buddy not found." });
+    }
+
+    res.json(buddy);
+  } catch (error) {
+    console.error("Failed to fetch buddy profile:", error.message);
+    res.status(500).json({ message: "Failed to fetch buddy profile." });
   }
 });
 

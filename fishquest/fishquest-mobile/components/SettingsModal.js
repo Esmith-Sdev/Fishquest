@@ -81,16 +81,24 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
       if (preferences.notificationsEnabled) {
         await updatePreferences(token, {
           notificationsEnabled: false,
+          expoPushToken: null,
         });
-        setPreferences((prev) => ({ ...prev, notificationsEnabled: false }));
+
+        setPreferences((prev) => ({
+          ...prev,
+          notificationsEnabled: false,
+        }));
+
         Alert.alert(
           "Notifications Disabled",
-          "You will no longer receive push updates.",
+          "Push notifications are disabled in FishQuest. To revoke system permission, turn them off in your phone settings.",
         );
+
         return;
       }
 
       const expoPushToken = await registerForPushNotificationsAsync();
+      console.log("Expo Push Token:", expoPushToken);
       await updatePreferences(token, {
         notificationsEnabled: true,
         expoPushToken,
@@ -185,8 +193,7 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
             </Pressable>
             <Pressable
               onPress={handleToggleNotifications}
-              style={[styles.blueButton, loading && { opacity: 0.6 }]}
-              disabled={loading}
+              style={styles.blueButton}
             >
               <Text style={styles.buttonText}>
                 {preferences.notificationsEnabled
@@ -194,11 +201,7 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
                   : "Enable Notifications"}
               </Text>
             </Pressable>
-            <Pressable
-              onPress={handleToggleLocation}
-              style={[styles.blueButton, loading && { opacity: 0.6 }]}
-              disabled={loading}
-            >
+            <Pressable onPress={handleToggleLocation} style={styles.blueButton}>
               <Text style={styles.buttonText}>
                 {preferences.locationEnabled
                   ? "Disable Location Services"
