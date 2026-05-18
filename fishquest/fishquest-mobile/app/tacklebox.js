@@ -46,14 +46,12 @@ export default function Tacklebox() {
       try {
         setLoading(true);
         const token = await getToken();
-        console.log("TOKEN FROM STORAGE:", token);
         if (!token) return;
 
         const data = await fetchRigPresets(token);
         setRigs(Array.isArray(data) ? data : []);
         setSelectedIndex(0);
-      } catch (error) {
-        console.error("Failed to fetch rigs:", error);
+      } catch {
         setRigs([]);
       } finally {
         setLoading(false);
@@ -87,8 +85,7 @@ export default function Tacklebox() {
 
         const data = await fetchRigStats(selectedRig._id, token);
         setRigStats(data);
-      } catch (error) {
-        console.error("Failed to fetch rig stats:", error);
+      } catch {
         setRigStats(null);
       }
     }

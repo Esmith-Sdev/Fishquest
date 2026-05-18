@@ -117,7 +117,6 @@ export default function CreateLog() {
         setRigs(Array.isArray(data) ? data : []);
         setSelectedIndex(0);
       } catch (err) {
-        console.error("Rig preset load failed:", err);
         setRigsError(err.message || "Failed to load rig presets.");
         setRigs([]);
       } finally {
@@ -207,8 +206,6 @@ export default function CreateLog() {
 
       const result = await identifyFish(imageUrl, form.state, token);
 
-      console.log("AI raw result:", JSON.stringify(result, null, 2));
-
       setAiResult(result);
 
       if (!result?.isFishVisible) {
@@ -227,7 +224,6 @@ export default function CreateLog() {
         });
       }
     } catch (err) {
-      console.error("AI identify failed:", err);
       Alert.alert("AI Error", err.message || "Failed to identify fish");
     } finally {
       setAiLoading(false);
@@ -364,7 +360,6 @@ export default function CreateLog() {
         router.replace("/logs");
       }
     } catch (err) {
-      console.error("Create log failed:", err);
       Alert.alert("Error", err.message || "Create log failed");
     } finally {
       setSaving(false);
@@ -385,7 +380,7 @@ export default function CreateLog() {
         />
         {loading || rigsLoading ? (
           <View style={styles.centerState}>
-            <LoadingIndicator text="Loading Logs" color="#fff" />
+            <LoadingIndicator text="Loading Log" color="#fff" />
           </View>
         ) : (
           <>

@@ -20,8 +20,8 @@ export default function TimedChallengeModal({
       await startChallengeCooldown(challenge.userChallengeId);
       setStart(true);
       await onRefresh();
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setStart(false);
     }
   }
 

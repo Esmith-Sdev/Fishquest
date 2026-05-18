@@ -1,6 +1,5 @@
-import { View, Text, Pressable, StyleSheet, Image } from "react-native";
-import { useAuth } from "../context/AuthContext";
-import { router } from "expo-router";
+import { View, Text, Pressable, StyleSheet, Image, Alert } from "react-native";
+
 import TopNavbar from "../components/TopNavbar";
 import BottomNavbar from "../components/BottomNavbar";
 import DailyChallenges from "../components/DailyChallenges";
@@ -8,13 +7,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native";
 import { COLORS } from "@/constants/theme";
 export default function HomeScreen() {
-  const { user, logout } = useAuth();
-
-  function handleLogout() {
-    logout();
-    router.replace("/login");
-  }
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.screen}>
@@ -23,7 +15,9 @@ export default function HomeScreen() {
           <DailyChallenges />
           <View style={styles.horizontalCardContainer}>
             <Pressable
-              onPress={() => router.push("/versus")}
+              onPress={() =>
+                Alert.alert("PvP coming soon!", "Feature not available in Beta")
+              }
               style={styles.horizontalCard}
             >
               <Image

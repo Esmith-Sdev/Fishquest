@@ -32,7 +32,7 @@ router.post("/", async (req, res) => {
     await bugReport.save();
     res.status(201).json({ message: "Bug report submitted successfully" });
   } catch (error) {
-    console.error("Error submitting bug report:", error);
+    console.error("Error submitting bug report:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 });

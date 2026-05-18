@@ -61,7 +61,7 @@ router.get("/", async (req, res) => {
       badges,
     });
   } catch (err) {
-    console.error("USER STATS ERROR:", err);
+    console.error("User stats failed:", err.message);
     res.status(500).json({ message: "Failed to fetch user stats" });
   }
 });

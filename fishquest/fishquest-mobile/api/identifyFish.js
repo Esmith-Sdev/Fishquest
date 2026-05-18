@@ -12,9 +12,6 @@ export async function identifyFish(imageUrl, state, token) {
   });
 
   const text = await res.text();
-  console.log("identifyFish status:", res.status);
-  console.log("identifyFish raw response:", text);
-
   let data;
   try {
     data = text ? JSON.parse(text) : {};

@@ -1,7 +1,14 @@
-import { useState } from "react";
-import { View, Text, Pressable, FlatList, StyleSheet } from "react-native";
+import { useRef, useState } from "react";
+import {
+  View,
+  Text,
+  Pressable,
+  FlatList,
+  StyleSheet,
+  Modal,
+  Dimensions,
+} from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
-import SelectDropdown from "react-native-select-dropdown";
 import { COLORS } from "../constants/theme";
 const STATES = [
   { label: "AL", value: "AL" },
@@ -57,66 +64,113 @@ const STATES = [
 ];
 
 export default function StateDropdown({ value, onChange }) {
+  const buttonRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const [selectedState, setSelectedState] = useState("");
+  const [dropdownPosition, setDropdownPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 96,
+  });
+
+  function openDropdown() {
+    buttonRef.current?.measureInWindow((x, y, width, height) => {
+      const screenHeight = Dimensions.get("window").height;
+      const dropdownHeight = 280;
+      const top = Math.min(y + height + 6, screenHeight - dropdownHeight - 16);
+
+      setDropdownPosition({
+        top: Math.max(16, top),
+        left: x,
+        width: Math.max(width, 96),
+      });
+      setOpen(true);
+    });
+  }
+
+  function handleSelect(item) {
+    onChange(item.value);
+    setOpen(false);
+  }
 
   return (
     <View style={styles.container}>
-      <SelectDropdown
-        statusBarTranslucent={true}
-        data={STATES}
-        defaultValue={STATES.find((s) => s.value === value)}
-        dropdownStyle={{
-          height: 250,
-        }}
-        onSelect={(item) => onChange(item.value)}
-        dropdownOverlayColor="transparent"
-        renderButton={(selectedItem, isOpened) => (
-          <View style={styles.pillSelectSmall}>
-            <View style={styles.logRow}>
-              <Text style={styles.selectText}>{value || "State"}</Text>
-              <FontAwesome6
-                name={isOpened ? "caret-up" : "caret-down"}
-                size={20}
-                color="black"
-              />
-            </View>
-          </View>
-        )}
-        renderItem={(item, index, isSelected) => (
+      <Pressable
+        ref={buttonRef}
+        style={styles.pillSelectSmall}
+        onPress={openDropdown}
+        accessibilityRole="button"
+      >
+        <View style={styles.logRow}>
+          <Text style={styles.selectText}>{value || "State"}</Text>
+          <FontAwesome6
+            name={open ? "caret-up" : "caret-down"}
+            size={20}
+            color="black"
+          />
+        </View>
+      </Pressable>
+
+      <Modal
+        visible={open}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setOpen(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={() => setOpen(false)}
+          />
           <View
             style={[
-              styles.dropdownItem,
-              isSelected && styles.dropdownItemSelected,
+              styles.dropdownPanel,
+              {
+                top: dropdownPosition.top,
+                left: dropdownPosition.left,
+                width: dropdownPosition.width,
+              },
             ]}
           >
-            <Text style={styles.selectText}>{item.label}</Text>
+            <FlatList
+              data={STATES}
+              keyExtractor={(item) => item.value}
+              showsVerticalScrollIndicator={true}
+              keyboardShouldPersistTaps="handled"
+              renderItem={({ item }) => {
+                const isSelected = item.value === value;
+
+                return (
+                  <Pressable
+                    style={[
+                      styles.dropdownItem,
+                      isSelected && styles.dropdownItemSelected,
+                    ]}
+                    onPress={() => handleSelect(item)}
+                  >
+                    <Text
+                      style={[
+                        styles.dropdownItemText,
+                        isSelected && styles.dropdownItemTextSelected,
+                      ]}
+                    >
+                      {item.label}
+                    </Text>
+                  </Pressable>
+                );
+              }}
+            />
           </View>
-        )}
-      />
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: 70,
+    width: 80,
     position: "relative",
     zIndex: 9999,
-  },
-  dropdown: {
-    position: "absolute",
-    top: 10,
-    left: 0,
-    width: 90,
-    backgroundColor: "#dedede",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-
-    maxHeight: 100,
-    zIndex: 10000,
-    elevation: 30,
   },
   pillSelectSmall: {
     width: 80,
@@ -127,25 +181,47 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     alignItems: "center",
   },
-
   selectText: {
     fontFamily: "Jua",
     textAlign: "center",
   },
-
   logRow: {
     gap: 8,
     flexDirection: "row",
-
     alignItems: "center",
   },
-  dropdownItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    backgroundColor: "#dedede",
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "transparent",
   },
-
+  dropdownPanel: {
+    position: "absolute",
+    maxHeight: 280,
+    backgroundColor: "#dedede",
+    borderRadius: 12,
+    overflow: "hidden",
+    elevation: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+  },
+  dropdownItem: {
+    minHeight: 42,
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "rgba(0,0,0,0.12)",
+  },
   dropdownItemSelected: {
     backgroundColor: COLORS.secondary,
+  },
+  dropdownItemText: {
+    color: "#000",
+    fontFamily: "Jua",
+    fontSize: 15,
+  },
+  dropdownItemTextSelected: {
+    color: "#fff",
   },
 });

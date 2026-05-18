@@ -78,8 +78,6 @@ export async function initializeChallengesForUser(userId) {
     "templateId",
   );
 
-  console.log("USER CHALLENGES:", challenges);
-
   return challenges.map((c) => ({
     id: c.templateId.id,
     userChallengeId: c._id,

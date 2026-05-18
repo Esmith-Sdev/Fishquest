@@ -101,17 +101,9 @@ router.get("/", async (req, res) => {
         expiresAt: challenge.expiresAt,
       };
     });
-    console.log(
-      "CHALLENGE API RESPONSE:",
-      response.map((c) => ({
-        id: c.id,
-        title: c.title,
-        difficulty: c.difficulty,
-      })),
-    );
     res.json(response);
   } catch (err) {
-    console.error("Fetch daily challenges failed:", err);
+    console.error("Fetch daily challenges failed:", err.message);
     res.status(500).json({ message: "Failed to fetch daily challenges" });
   }
 });
@@ -141,7 +133,7 @@ router.post("/:userChallengeId/start", async (req, res) => {
 
     res.json({ message: "Challenge started", startedAt: challenge.startedAt });
   } catch (err) {
-    console.error("Start challenge failed:", err);
+    console.error("Start challenge failed:", err.message);
     res.status(500).json({ message: "Failed to start challenge" });
   }
 });
@@ -173,7 +165,7 @@ router.post("/:userChallengeId/forfeit", async (req, res) => {
       cooldownEndsAt: cooldownEnd,
     });
   } catch (err) {
-    console.error(err);
+    console.error("Forfeit challenge failed:", err.message);
     res.status(500).json({ message: "Failed to forfeit challenge" });
   }
 });

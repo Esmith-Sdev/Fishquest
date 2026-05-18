@@ -41,7 +41,6 @@ import { FontAwesome6 } from "@expo/vector-icons";
 export default function UpdateLog() {
   const params = useLocalSearchParams();
   const { id } = useLocalSearchParams();
-  console.log("EDIT PAGE ID:", id);
   const [stateValue, setStateValue] = useState("");
   const [form, setForm] = useState({
     address: "",
@@ -123,7 +122,6 @@ export default function UpdateLog() {
         setRigs(Array.isArray(data) ? data : []);
         setSelectedIndex(0);
       } catch (err) {
-        console.error("Rig preset load failed:", err);
         setRigsError(err.message || "Failed to load rig presets.");
         setRigs([]);
       } finally {
@@ -184,18 +182,14 @@ export default function UpdateLog() {
   }
   async function handleIdentifyFish() {
     try {
-      console.log("1. handleIdentifyFish started");
-
       if (!files.length) {
         Alert.alert("No image", "Please upload or take a fish photo first.");
         return;
       }
 
       setAiLoading(true);
-      console.log("2. passed file check");
 
       const token = await getToken();
-      console.log("3. token loaded?", !!token);
 
       if (!token) {
         router.replace("/login");
@@ -203,21 +197,13 @@ export default function UpdateLog() {
       }
 
       const urls = await ensureUploadedImages();
-      console.log("4. uploaded urls:", urls);
-      console.log("uploaded urls raw:", JSON.stringify(urls, null, 2));
       const imageUrl = urls[0];
-      console.log("5. first imageUrl:", imageUrl);
 
       if (!imageUrl) {
         throw new Error("Image upload failed");
       }
 
-      console.log("6. about to call identifyFish");
-
       const result = await identifyFish(imageUrl, form.state, token);
-
-      console.log("7. identifyFish returned");
-      console.log("AI raw result:", JSON.stringify(result, null, 2));
 
       setAiResult(result);
 
@@ -237,10 +223,8 @@ export default function UpdateLog() {
         });
       }
     } catch (err) {
-      console.error("AI identify failed:", err);
       Alert.alert("AI Error", err.message || "Failed to identify fish");
     } finally {
-      console.log("8. finally block reached");
       setAiLoading(false);
     }
   }
@@ -409,7 +393,6 @@ export default function UpdateLog() {
       await updateCatchLog(id, payload, token);
       router.replace("/logs");
     } catch (err) {
-      console.error("Update log failed:", err);
       Alert.alert("Error", err.message || "Update log failed");
     } finally {
       setLoading(false);

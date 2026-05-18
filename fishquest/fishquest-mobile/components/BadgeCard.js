@@ -41,7 +41,6 @@ export default function BadgeCard({ badge, unlocked, onClick, preview }) {
               onLoadEnd={() => setImageLoading(false)}
               onError={(e) => {
                 setImageLoading(false);
-                console.log("Badge image failed:", badge.id, e.nativeEvent);
               }}
             />
           ) : (

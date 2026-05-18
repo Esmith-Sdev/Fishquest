@@ -40,10 +40,8 @@ export default function BuddyRequestsModal({ visible, onClose }) {
       });
 
       const data = await res.json();
-      console.log("REQUEST STATUS:", res.status);
-      console.log("REQUEST DATA:", data);
       setRequests(Array.isArray(data) ? data : []);
-    } catch (error) {
+    } catch {
       setResultMessage("Could not load buddy requests.");
     } finally {
       setLoading(false);
@@ -70,7 +68,7 @@ export default function BuddyRequestsModal({ visible, onClose }) {
         prev.filter((request) => request._id !== requestId),
       );
       setResultMessage(data.message || "Buddy request accepted!");
-    } catch (error) {
+    } catch {
       setResultMessage("Could not accept request.");
     } finally {
       setActionRequestId(null);
@@ -97,7 +95,7 @@ export default function BuddyRequestsModal({ visible, onClose }) {
         prev.filter((request) => request._id !== requestId),
       );
       setResultMessage(data.message || "Buddy request declined.");
-    } catch (error) {
+    } catch {
       setResultMessage("Could not decline request.");
     } finally {
       setActionRequestId(null);

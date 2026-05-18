@@ -70,18 +70,17 @@ Rules:
     try {
       parsed = JSON.parse(text);
     } catch (err) {
-      console.error("AI returned non-JSON:", text);
+      console.error("AI returned non-JSON");
       return res.status(500).json({
         error: "AI returned invalid JSON",
-        raw: text,
       });
     }
 
     return res.json(parsed);
   } catch (error) {
-    console.error("identify-fish failed:", error);
+    console.error("identify-fish failed:", error.message);
     return res.status(500).json({
-      error: error.message || "Fish identification failed",
+      error: "Fish identification failed",
     });
   }
 });

@@ -8,9 +8,6 @@ export async function fetchRigPresets(token) {
   });
 
   const text = await res.text();
-  console.log("rig-presets status:", res.status);
-  console.log("rig-presets raw body:", text);
-
   let data;
   try {
     data = text ? JSON.parse(text) : null;

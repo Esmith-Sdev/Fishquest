@@ -40,7 +40,6 @@ export default function Logs() {
         const data = await fetchLogs(token);
         setLogs(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Failed to load logs:", err);
         setError(err.message || "Failed to load logs");
       } finally {
         setLoading(false);
@@ -67,7 +66,6 @@ export default function Logs() {
       setLogs((prev) => prev.filter((log) => log._id !== logId));
       setDeleteModeLogId(null);
     } catch (err) {
-      console.error("Delete log failed:", err);
       setError(err.message || "Failed to delete log");
     }
   }
@@ -273,7 +271,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   centerState: {
-    paddingVertical: 50,
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     gap: 10,

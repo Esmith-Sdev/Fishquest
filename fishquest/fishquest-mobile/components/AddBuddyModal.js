@@ -45,13 +45,10 @@ export default function AddBuddyModal({ visible, onClose }) {
           },
         },
       );
-      console.log("STATUS:", res.status);
       const data = await res.json();
-      console.log("DATA:", data);
 
       setUsers(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.log("Search users error:", error);
+    } catch {
       setMessage("Could not search users.");
     } finally {
       setSearching(false);
@@ -77,7 +74,7 @@ export default function AddBuddyModal({ visible, onClose }) {
       }));
 
       setResultMessage(data.message || "Friend request sent!");
-    } catch (error) {
+    } catch {
       setResultMessage("Could not send friend request.");
     } finally {
       setAddingUserId(null);

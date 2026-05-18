@@ -20,8 +20,7 @@ router.post("/images", upload.array("images", 5), async (req, res) => {
       urls: uploads.map((u) => u.secure_url),
     });
   } catch (error) {
-    console.error(error);
-    console.log("Upload Failed", error);
+    console.error("Upload failed:", error.message);
     res.status(500).json({ message: "Upload failed" });
   }
 });

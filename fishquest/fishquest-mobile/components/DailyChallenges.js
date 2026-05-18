@@ -43,8 +43,8 @@ export default function DailyChallenges() {
       }
 
       setChallenges(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.log("fetch error:", err);
+    } catch {
+      setChallenges([]);
     } finally {
       setLoading(false);
     }
@@ -62,7 +62,7 @@ export default function DailyChallenges() {
         <Text style={styles.title}>DAILY CHALLENGES</Text>
         {loading ? (
           <View style={styles.centerState}>
-            <LoadingIndicator text="Loading Challenges" color="#fff" />
+            <LoadingIndicator text="Loading Challenges" color="#000" />
           </View>
         ) : (
           <>

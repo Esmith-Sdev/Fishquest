@@ -167,8 +167,8 @@ router.post("/", async (req, res) => {
       badges,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: err.message });
+    console.error("Create log failed:", err.message);
+    res.status(500).json({ message: "Failed to create log" });
   }
 });
 
@@ -189,7 +189,7 @@ router.get("/", async (req, res) => {
 
     res.json(logs);
   } catch (err) {
-    console.error(err);
+    console.error("Fetch logs failed:", err.message);
     res.status(500).json({ message: "Failed to fetch logs" });
   }
 });
@@ -215,7 +215,7 @@ router.get("/:id", async (req, res) => {
 
     res.json(log);
   } catch (err) {
-    console.error(err);
+    console.error("Fetch log failed:", err.message);
     res.status(500).json({ message: "Failed to fetch log" });
   }
 });
@@ -286,7 +286,7 @@ router.put("/:id", async (req, res) => {
       badges,
     });
   } catch (err) {
-    console.error(err);
+    console.error("Update log failed:", err.message);
     res.status(500).json({ message: "Failed to update log" });
   }
 });
@@ -322,7 +322,7 @@ router.delete("/:id", async (req, res) => {
 
     res.json({ message: "Log deleted", badges });
   } catch (err) {
-    console.error(err);
+    console.error("Delete log failed:", err.message);
     res.status(500).json({ message: "Failed to delete log" });
   }
 });

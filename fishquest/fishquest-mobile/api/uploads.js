@@ -20,8 +20,6 @@ export async function uploadImages(files, token) {
   });
 
   const data = await res.json();
-  console.log("uploadImages response:", data);
-
   if (!res.ok) {
     throw new Error(data.error || "Upload failed");
   }

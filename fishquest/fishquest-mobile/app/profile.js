@@ -43,8 +43,8 @@ export default function Profile() {
 
           skunkedCount: data.skunkedCount || 0,
         });
-      } catch (err) {
-        console.log("Failed to fetch profile stats", err);
+      } catch {
+        setStats((prev) => prev);
       } finally {
         setLoading(false);
       }

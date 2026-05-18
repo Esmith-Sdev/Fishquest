@@ -27,8 +27,6 @@ const allowedOrigins = new Set([
 
 const corsOptions = {
   origin(origin, callback) {
-    console.log("CORS origin raw:", JSON.stringify(origin));
-
     if (!origin) return callback(null, true);
 
     const normalized = String(origin).replace(/\/$/, "").trim();
@@ -110,17 +108,15 @@ router.post("/signup", async (req, res) => {
       user: { id: user._id, username: user.username },
     });
   } catch (err) {
-    console.log("SIGNUP ERROR:", err);
+    console.error("Signup failed:", err.message);
     return res.status(500).json({
       message: "Signup failed",
-      error: err.message,
     });
   }
 });
 
 router.post("/login", async (req, res) => {
   try {
-    console.log("JWT_SECRET (login):", JWT_SECRET);
     let { username, password } = req.body;
     if (!username || !password) {
       return res
@@ -147,9 +143,8 @@ router.post("/login", async (req, res) => {
       user: { id: user._id, username: user.username },
     });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Login failed", error: err.message });
+    console.error("Login failed:", err.message);
+    return res.status(500).json({ message: "Login failed" });
   }
 });
 

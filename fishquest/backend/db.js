@@ -4,7 +4,7 @@ mongoose
   .connect(uri, {})
   .then(() => console.log("Mongo Connected"))
   .catch((err) => {
-    console.error("Mongo Error", err);
+    console.error("Mongo Error", err.message);
     process.exit(1);
   });
 export default mongoose;

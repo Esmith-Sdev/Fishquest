@@ -123,7 +123,6 @@ export default function BugForm() {
         },
       ]);
     } catch (err) {
-      console.log("Failed to Submit Form", err);
       Alert.alert("Failed to Submit Form", err.message || "Please try again.");
     } finally {
       setSaving(false);

@@ -66,11 +66,9 @@ export default function BadgesPage() {
 
           const data = await res.json();
 
-          console.log("badge response:", data.badges);
-
           setUserBadges(Array.isArray(data?.badges) ? data.badges : []);
-        } catch (err) {
-          console.error("Failed to fetch badges:", err);
+        } catch {
+          setUserBadges([]);
         }
       }
 

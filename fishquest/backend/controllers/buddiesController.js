@@ -45,18 +45,14 @@ export async function sendFriendRequest(req, res) {
 
 export async function getFriendRequests(req, res) {
   try {
-    console.log("Checking requests for:", req.user.id);
-
     const requests = await FriendRequest.find({
       receiverId: new mongoose.Types.ObjectId(req.user.id),
       status: "pending",
     }).populate("senderId", "username email");
 
-    console.log("Found requests:", requests);
-
     res.json(requests);
   } catch (error) {
-    console.log("Failed to fetch friend requests:", error);
+    console.error("Failed to fetch friend requests:", error.message);
     res.status(500).json({ message: "Failed to fetch friend requests." });
   }
 }

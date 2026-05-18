@@ -28,8 +28,9 @@ export function AuthProvider({ children }) {
           setUser(JSON.parse(storedUser));
           setToken(storedToken);
         }
-      } catch (err) {
-        console.log("Error loading auth:", err);
+      } catch {
+        setUser(null);
+        setToken(null);
       }
     }
 

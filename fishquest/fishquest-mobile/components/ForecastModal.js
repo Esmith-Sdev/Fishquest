@@ -30,8 +30,8 @@ export default function ForecastModal({ visible, onClose }) {
         setWeather(data.weather);
         setWind(data.wind);
         setWeatherIcon(getWeatherIcon(data.weather));
-      } catch (err) {
-        console.log("Fetch weather failed", err);
+      } catch {
+        setWeather("");
       } finally {
         setLoading(false);
       }

@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, Pressable } from "react-native";
+import { View, Text, Image, StyleSheet, Pressable, Alert } from "react-native";
 import { Link } from "expo-router";
 
 import { Animated } from "react-native";
@@ -104,11 +104,15 @@ export default function Topbar() {
           <Text style={styles.dropdownItem}>Fishing Forecast</Text>
         </Pressable>
         <View style={styles.dropdownDivider} />
-        <Link href="/shop" asChild>
-          <Pressable onPress={() => setMenuOpen(false)}>
-            <Text style={styles.dropdownItem}>Shop</Text>
-          </Pressable>
-        </Link>
+
+        <Pressable
+          onPress={() =>
+            Alert.alert("Shop coming soon!", "Feature not available in Beta")
+          }
+        >
+          <Text style={styles.dropdownItem}>Shop</Text>
+        </Pressable>
+
         <View style={styles.dropdownDivider} />
         <Link href="/buddies" asChild>
           <Pressable onPress={() => setMenuOpen(false)}>

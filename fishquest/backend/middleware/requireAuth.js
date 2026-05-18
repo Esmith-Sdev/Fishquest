@@ -50,7 +50,6 @@ export default function requireAuth(req, res, next) {
 
     next();
   } catch (err) {
-    console.log("JWT VERIFY ERROR:", err.message);
     res.status(401).json({ error: "Invalid token" });
   }
 }

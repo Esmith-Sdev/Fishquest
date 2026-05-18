@@ -40,7 +40,6 @@ import StateDropdown from "../components/StateDropdown";
 export default function ViewLog() {
   const params = useLocalSearchParams();
   const { id } = useLocalSearchParams();
-  console.log("EDIT PAGE ID:", id);
   const [stateValue, setStateValue] = useState("");
   const [form, setForm] = useState({
     address: "",
@@ -99,7 +98,6 @@ export default function ViewLog() {
         setRigs(Array.isArray(data) ? data : []);
         setSelectedIndex(0);
       } catch (err) {
-        console.error("Rig preset load failed:", err);
         setRigsError(err.message || "Failed to load rig presets.");
         setRigs([]);
       } finally {

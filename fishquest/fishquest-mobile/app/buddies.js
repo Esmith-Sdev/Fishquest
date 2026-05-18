@@ -40,8 +40,8 @@ export default function Buddies() {
       const data = await res.json();
 
       setRequests(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.log("Failed to fetch requests", err);
+    } catch {
+      setRequests([]);
     }
   }
   async function acceptFriendRequest(requestId) {
@@ -67,8 +67,8 @@ export default function Buddies() {
       });
       const data = await res.json();
       setUsers(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.log("Failed to fetch buddies", err);
+    } catch {
+      setUsers([]);
     } finally {
       setLoading(false);
     }
