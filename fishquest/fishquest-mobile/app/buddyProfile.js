@@ -7,7 +7,7 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useAuth } from "../context/AuthContext";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 import BottomNavbar from "../components/BottomNavbar";
@@ -16,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, RADIUS } from "../constants/theme";
 import {
   fetchBuddyProfile,
+  fetchBuddyStats,
   fetchPreferences,
   toggleTrackedBuddy,
 } from "../api/users";
@@ -36,6 +37,8 @@ export default function BuddyProfile() {
     totalCatches: 0,
     skunkedCount: 0,
     personalBest: 0,
+    favoriteBait: "None",
+    challengesCompleted: 0,
   });
 
   useEffect(() => {
@@ -172,13 +175,17 @@ export default function BuddyProfile() {
               <View style={styles.detailRow}>
                 <Text style={styles.detailLabel}>Favorite Bait</Text>
                 <Text style={styles.detailValue}>
-                  {buddy.favoriteBait || "Not specified"}
+                  {stats.favoriteBait
+                    .replaceAll("_", " ")
+                    .charAt(0)
+                    .toUpperCase() +
+                    stats.favoriteBait.replaceAll("_", " ").slice(1)}
                 </Text>
               </View>
               <View style={styles.detailRow}>
                 <Text style={styles.detailLabel}>Challenges Completed</Text>
                 <Text style={styles.detailValue}>
-                  {buddy.challengesCompleted || 0}
+                  {stats.challengesCompleted || 0}
                 </Text>
               </View>
               <View style={styles.detailRow}>
@@ -248,13 +255,15 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   username: {
+    fontFamily: "Jua",
     color: "#fff",
     fontSize: 28,
     fontWeight: "700",
     marginBottom: 6,
   },
   subtitle: {
-    color: "#d3d3d3",
+    fontFamily: "Jua",
+    color: "#dedede",
     fontSize: 16,
   },
   statsContainer: {
@@ -315,8 +324,8 @@ const styles = StyleSheet.create({
   },
   trackButtonText: {
     color: "#000",
-    fontSize: 16,
-    fontWeight: "700",
     fontFamily: "Jua",
+    fontSize: 18,
+    textAlign: "center",
   },
 });

@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
 export default function useLoadingDots(maxDots = 3, speed = 400) {
   const [dots, setDots] = useState("");
+  const count = useRef(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setDots((prev) => (prev.length >= maxDots ? "" : prev + "."));
+      count.current = (count.current + 1) % (maxDots + 1);
+
+      setDots(".".repeat(count.current));
     }, speed);
 
     return () => clearInterval(interval);

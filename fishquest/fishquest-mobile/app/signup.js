@@ -7,7 +7,6 @@ import {
   Pressable,
   StyleSheet,
   Alert,
-  Platform,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -18,7 +17,6 @@ import LeftArrowCircle from "@expo/vector-icons/FontAwesome5";
 import { useAuth } from "../context/AuthContext";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { signup } from "../api/auth";
-import { registerForPushNotificationsAsync } from "../utils/pushNotifications";
 import * as SecureStore from "expo-secure-store";
 import * as Location from "expo-location";
 
@@ -45,41 +43,16 @@ export default function SignUp() {
     );
   }
 
-  async function handleEnableNotifications() {
-    try {
-      await SecureStore.setItemAsync("notificationsEnabled", "true");
-      setPreferences((prev) => ({ ...prev, notificationsEnabled: true }));
-      setIndex((i) => i + 1);
-    } catch (err) {
-      Alert.alert("Error", err.message);
-    }
-  }
-
-  async function handleDisableNotifications() {
-    try {
-      await SecureStore.setItemAsync("notificationsEnabled", "false");
-      setPreferences((prev) => ({ ...prev, notificationsEnabled: false }));
-      setIndex((i) => i + 1);
-    } catch (err) {
-      Alert.alert("Error", err.message);
-    }
-  }
-
   async function handleEnableLocationServices() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       const enabled = status === "granted";
 
-      if (!enabled) {
-        Alert.alert("Permission denied", "Location permission not granted");
-      }
-
       await SecureStore.setItemAsync(
         "locationEnabled",
         enabled ? "true" : "false",
       );
-      setPreferences((prev) => ({ ...prev, locationEnabled: enabled }));
-      await handleSubmit();
+
       router.replace("/home");
     } catch (err) {
       Alert.alert("Error", err.message);
@@ -89,14 +62,42 @@ export default function SignUp() {
   async function handleDisableLocationServices() {
     try {
       await SecureStore.setItemAsync("locationEnabled", "false");
-      setPreferences((prev) => ({ ...prev, locationEnabled: false }));
-      await handleSubmit();
+
       router.replace("/home");
     } catch (err) {
       Alert.alert("Error", err.message);
     }
   }
 
+  async function handleEnableNotifications() {
+    try {
+      await SecureStore.setItemAsync("notificationsEnabled", "true");
+
+      setPreferences((prev) => ({
+        ...prev,
+        notificationsEnabled: true,
+      }));
+
+      setIndex(3);
+    } catch (err) {
+      Alert.alert("Error", err.message);
+    }
+  }
+
+  async function handleDisableNotifications() {
+    try {
+      await SecureStore.setItemAsync("notificationsEnabled", "false");
+
+      setPreferences((prev) => ({
+        ...prev,
+        notificationsEnabled: false,
+      }));
+
+      setIndex(3);
+    } catch (err) {
+      Alert.alert("Error", err.message);
+    }
+  }
   function handleChange(name, value) {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
@@ -107,27 +108,19 @@ export default function SignUp() {
   }
 
   async function handleSubmit() {
+    if (loading) return;
+
     try {
       setLoading(true);
 
-      let expoPushToken = null;
-      if (preferences.notificationsEnabled) {
-        try {
-          expoPushToken = await registerForPushNotificationsAsync();
-        } catch (err) {
-          console.warn("Push registration failed", err.message);
-        }
-      }
-
       const data = await signup(form.username, form.password, form.email, {
-        notificationsEnabled: preferences.notificationsEnabled,
-        locationEnabled: preferences.locationEnabled,
-        expoPushToken,
+        notificationsEnabled: false,
+        locationEnabled: false,
+        expoPushToken: null,
       });
 
-      Alert.alert("Success", "Account Created!");
       login(data);
-      handleButtonClick();
+      setIndex(2);
     } catch (err) {
       Alert.alert("Error", err.message);
     } finally {
@@ -359,6 +352,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   orangeButton: {
+    boxShadow: "0px 4px 0px #733800",
+
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 8,

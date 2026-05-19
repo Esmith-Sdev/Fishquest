@@ -91,7 +91,11 @@ router.post("/signup", async (req, res) => {
     if (!username || !password || !email) {
       return res.status(400).json({ message: "All fields Required" });
     }
-
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
+    }
     username = String(username).toLowerCase().trim();
     email = String(email).toLowerCase().trim();
 

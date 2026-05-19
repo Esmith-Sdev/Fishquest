@@ -80,20 +80,20 @@ export default function Buddies() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
-      <TopNavbarSecondary
-        title="Buddies"
-        buttonText="Add Buddy"
-        showButton={true}
-        onButtonPress={() => setOpenAddBuddyModal(true)}
-        backRoute="/home"
-      />
-      {loading ? (
-        <View style={styles.centerState}>
-          <LoadingIndicator text="Loading Buddies" color="#fff" />
-        </View>
-      ) : (
-        <>
-          <View style={styles.screen}>
+      <View style={styles.screen}>
+        <TopNavbarSecondary
+          title="Buddies"
+          buttonText="Add Buddy"
+          showButton={true}
+          onButtonPress={() => setOpenAddBuddyModal(true)}
+          backRoute="/home"
+        />
+        {loading ? (
+          <View style={styles.centerState}>
+            <LoadingIndicator text="Loading Buddies" color="#fff" />
+          </View>
+        ) : (
+          <>
             <ScrollView contentContainerStyle={styles.content}>
               <View style={styles.notificationContainer}>
                 <Pressable
@@ -178,10 +178,11 @@ export default function Buddies() {
                 }}
               />
             </ScrollView>
+
             <BottomNavbar />
-          </View>
-        </>
-      )}
+          </>
+        )}
+      </View>
       <AddBuddyModal
         visible={openAddBuddyModal}
         onClose={() => setOpenAddBuddyModal(false)}

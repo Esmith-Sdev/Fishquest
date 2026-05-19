@@ -38,7 +38,21 @@ export async function fetchBuddyProfile(token, buddyId) {
   if (!res.ok) throw new Error(data.message || "Failed to fetch buddy profile");
   return data;
 }
+export async function fetchBuddyStats(token, buddyId) {
+  const res = await fetch(`${API_URL}/api/user-stats/${buddyId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed to fetch buddy stats.");
+  }
+
+  return data;
+}
 export async function toggleTrackedBuddy(token, buddyId, enabled) {
   const res = await fetch(`${API_URL}/api/users/tracked-buddies/${buddyId}`, {
     method: "PATCH",
