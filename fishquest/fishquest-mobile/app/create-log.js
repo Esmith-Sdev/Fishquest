@@ -732,7 +732,7 @@ export default function CreateLog() {
                   <TextInput
                     style={styles.pillInputFull}
                     placeholder="Street Address"
-                    placeholderTextColor="#000"
+                    placeholderTextColor="#666"
                     maxLength={35}
                     value={form.address}
                     onChangeText={(text) =>
@@ -751,7 +751,7 @@ export default function CreateLog() {
                     <TextInput
                       style={styles.pillInputCity}
                       placeholder="City"
-                      placeholderTextColor="#000"
+                      placeholderTextColor="#666"
                       maxLength={35}
                       value={form.city}
                       onChangeText={(text) =>
@@ -785,7 +785,7 @@ export default function CreateLog() {
                   numberOfLines={4}
                   style={styles.notesBox}
                   placeholder="Other Notes..."
-                  placeholderTextColor="#111"
+                  placeholderTextColor="#666"
                   value={notes}
                   onChangeText={setNotes}
                 />

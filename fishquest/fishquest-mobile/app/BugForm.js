@@ -158,6 +158,7 @@ export default function BugForm() {
             <View style={styles.inputRow}>
               <TextInput
                 placeholder="e.g. 'App crashes when I try to view my profile'"
+                placeholderTextColor="#666"
                 value={form.title}
                 style={styles.input}
                 onChangeText={(text) => setForm((p) => ({ ...p, title: text }))}
@@ -169,6 +170,7 @@ export default function BugForm() {
             <View style={styles.inputRow}>
               <TextInput
                 placeholder="Write a detailed description of the bug"
+                placeholderTextColor="#666"
                 multiline
                 numberOfLines={4}
                 value={form.description}
@@ -184,6 +186,7 @@ export default function BugForm() {
             <View style={styles.inputRow}>
               <TextInput
                 placeholder="Home, Profile, etc."
+                placeholderTextColor="#666"
                 value={form.screen}
                 style={styles.input}
                 onChangeText={(text) =>

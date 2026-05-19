@@ -108,6 +108,7 @@ export default function FishSpeciesTypeahead({
                 if (!text.trim()) onPick(null);
               }}
               placeholder={placeholder}
+              placeholderTextColor="#666"
               showSoftInputOnFocus={true}
               autoFocus={false}
               style={styles.searchInput}

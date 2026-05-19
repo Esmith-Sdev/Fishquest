@@ -39,6 +39,7 @@ export default function AuthForm({
       <TextInput
         style={styles.input}
         placeholder="Username"
+        placeholderTextColor="#666"
         autoCapitalize="none"
         keyboardType="email-address"
         value={email}
@@ -48,6 +49,7 @@ export default function AuthForm({
       <TextInput
         style={styles.input}
         placeholder="Password"
+        placeholderTextColor="#666"
         autoCapitalize="none"
         secureTextEntry
         value={password}
@@ -93,13 +95,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     textAlign: "center",
   },
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    marginBottom: 20,
-    textAlign: "center",
-  },
+
   biometricButton: {
     backgroundColor: COLORS.primary,
     opacity: 0.8,

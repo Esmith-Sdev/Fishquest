@@ -9,7 +9,12 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "FishQuest needs access to your photo library to upload images for logs.",
+        "NSCameraUsageDescription": "FishQuest needs camera access to take photos for logs.",
+        "NSLocationWhenInUseUsageDescription": "FishQuest uses your location to autofill the log address and get local weather."
+      }
     },
     "android": {
       "package": "com.sdev.esmith.fishquest",
@@ -24,7 +29,10 @@
       "predictiveBackGestureEnabled": false,
       "permissions": [
         "android.permission.USE_BIOMETRIC",
-        "android.permission.USE_FINGERPRINT"
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_IMAGES"
       ]
     },
     "web": {
@@ -56,6 +64,7 @@
       "expo-secure-store",
       "expo-notifications"
     ],
+    
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

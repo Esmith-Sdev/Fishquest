@@ -112,6 +112,7 @@ export default function AddBuddyModal({ visible, onClose }) {
               <View style={styles.searchBar}>
                 <TextInput
                   placeholder="Enter a username..."
+                  placeholderTextColor="#666"
                   style={styles.searchText}
                   value={query}
                   onChangeText={setQuery}

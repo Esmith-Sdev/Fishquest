@@ -49,7 +49,10 @@ export async function getCurrentLocation() {
 
     city: place?.city || "",
     state: place?.region || "",
+    // Provide both `address` and `streetAddress` for callers
+    // which may expect either property name.
     address: place?.street || "",
+    streetAddress: place?.street || "",
 
     temp: weatherData.current.temperature_2m,
 
