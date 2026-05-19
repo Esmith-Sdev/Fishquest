@@ -53,7 +53,7 @@ router.patch("/tracked-buddies/:buddyId", protect, async (req, res) => {
 router.get("/profile/:userId", protect, async (req, res) => {
   try {
     const buddy = await User.findById(req.params.userId).select(
-      "username xp level levelTitle",
+      "username xp level levelTitle favoriteBait challengesCompleted",
     );
 
     if (!buddy) {

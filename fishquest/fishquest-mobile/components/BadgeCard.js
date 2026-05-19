@@ -1,9 +1,15 @@
-import { Pressable, Image, StyleSheet, View, Text } from "react-native";
-import LoadingIndicator from "./LoadingIndicator";
-import { useState } from "react";
-import { LinearGradient } from "expo-linear-gradient";
+import {
+  Pressable,
+  Image,
+  StyleSheet,
+  View,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 import { COLORS } from "../constants/theme";
+import { LinearGradient } from "expo-linear-gradient";
 import { Dimensions } from "react-native";
+import { useState } from "react";
 const screenWidth = Dimensions.get("window").width;
 const CARD_GAP = 12;
 const CARD_SIZE = (screenWidth - 24 - CARD_GAP * 2) / 3;
@@ -25,7 +31,11 @@ export default function BadgeCard({ badge, unlocked, onClick, preview }) {
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.imageWrapper}>
-          {imageLoading && <LoadingIndicator color={COLORS.primary} />}
+          {imageLoading && (
+            <View style={styles.centerState}>
+              <ActivityIndicator color={COLORS.primary} />
+            </View>
+          )}
 
           {badge.icon ? (
             <Image
@@ -67,6 +77,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
+  },
+  centerState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    zIndex: 5,
   },
   previewCard: {
     width: "75%",

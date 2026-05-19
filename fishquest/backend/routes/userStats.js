@@ -67,14 +67,43 @@ router.get("/", async (req, res) => {
 });
 router.get("/:userId", async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    const fishingStats = await UserFishingStats.findOne({ userId });
+
+    const personalBestLog = await Log.findOne({
+      userId,
+      weight: { $gt: 0 },
+    }).sort({ weight: -1 });
+
+    const challengesCompleted = await UserChallenge.countDocuments({
+      userId,
+      isFinished: true,
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     res.json({
-      xp: user.xp,
-      level: user.level,
-      levelTitle: user.levelTitle,
+      xp: user.xp || 0,
+      level: user.level || 1,
+      levelTitle: user.levelTitle || "Minnow Wrangler",
+
+      totalCatches: fishingStats?.totalCatches || 0,
+      skunkedCount: fishingStats?.skunkedCount || 0,
+      personalBest: personalBestLog?.weight || 0,
+      challengesCompleted,
+
+      baits: fishingStats?.baits || {},
+      poles: fishingStats?.poles || {},
+      hooks: fishingStats?.hooks || {},
+      weights: fishingStats?.weights || {},
+      bobberCount: fishingStats?.bobberCount || 0,
     });
   } catch (err) {
+    console.error("Failed to fetch buddy stats:", err.message);
     res.status(500).json({ message: "Failed to fetch user stats" });
   }
 });
