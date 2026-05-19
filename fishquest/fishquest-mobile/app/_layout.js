@@ -17,7 +17,7 @@ export default function Layout() {
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <LoadingIndicator text="Loading Fonts" color="#fff" />
+          <LoadingIndicator text="Getting Things Ready" color="#fff" />
         </View>
       </GradientBackground>
     );

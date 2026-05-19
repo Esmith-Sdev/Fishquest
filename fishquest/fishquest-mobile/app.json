@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "FishQuest",
-    "slug": "fishquest-mobile",
+    "slug": "fishquest",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/FishQuest-Logo-only.png",
