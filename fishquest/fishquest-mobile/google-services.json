@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "355892617355",
+    "project_id": "fishquest-4c75f",
+    "storage_bucket": "fishquest-4c75f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:355892617355:android:c9b4b6339c4f02541a348e",
+        "android_client_info": {
+          "package_name": "com.sdev.esmith.fishquest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB166UToGxNtRrG0yL2Q3tLcHDfx4wzqrg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

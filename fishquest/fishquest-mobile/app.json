@@ -12,6 +12,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.sdev.esmith.fishquest",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#090040",
         "foregroundImage": "./assets/images/FishQuest-Logo-only.png",
@@ -23,8 +25,7 @@
       "permissions": [
         "android.permission.USE_BIOMETRIC",
         "android.permission.USE_FINGERPRINT"
-      ],
-      "package": "com.sdev.esmith.fishquest"
+      ]
     },
     "web": {
       "output": "static",
@@ -52,7 +53,8 @@
       ],
       "expo-font",
       "@react-native-community/datetimepicker",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true,
