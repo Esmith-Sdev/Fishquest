@@ -40,9 +40,17 @@ export default function LoginScreen() {
       });
 
       const data = await res.json();
-      await SecureStore.setItemAsync("token", data.token);
+
+      if (!res.ok) {
+        setError(true);
+        Alert.alert("Error", data.message || "Login failed");
+        return;
+      }
+
       await SecureStore.setItemAsync("userId", String(data.user.id));
-      await SecureStore.setItemAsync("username", data.user.username);
+      await SecureStore.setItemAsync("username", String(data.user.username));
+
+      login(data);
       if (res.ok) {
         login(data);
 
@@ -51,9 +59,8 @@ export default function LoginScreen() {
         // shown before for this user/install.
         const hasHardware = await LocalAuthentication.hasHardwareAsync();
         const enrolled = await LocalAuthentication.isEnrolledAsync();
-        const biometricEnabled = await SecureStore.getItemAsync(
-          "biometricEnabled",
-        );
+        const biometricEnabled =
+          await SecureStore.getItemAsync("biometricEnabled");
         const biometricPromptShown = await SecureStore.getItemAsync(
           "biometricPromptShown",
         );
@@ -145,10 +152,7 @@ export default function LoginScreen() {
                 router.replace("/home");
               }}
               onCancel={async () => {
-                await SecureStore.setItemAsync(
-                  "biometricPromptShown",
-                  "true",
-                );
+                await SecureStore.setItemAsync("biometricPromptShown", "true");
                 setShowBiometricPrompt(false);
                 router.replace("/home");
               }}

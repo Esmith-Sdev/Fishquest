@@ -4,7 +4,7 @@
     "slug": "fishquest",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/FishQuest-Logo-only.png",
+    "icon": "./assets/images/fishquest-android-icon.png",
     "scheme": "fishquestmobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -21,9 +21,9 @@
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#090040",
-        "foregroundImage": "./assets/images/FishQuest-Logo-only.png",
-        "backgroundImage": "./assets/images/FishQuest-Logo-only.png",
-        "monochromeImage": "./assets/images/FishQuest-Logo-only.png"
+        "foregroundImage": "./assets/images/fishquest-android-icon.png",
+        "backgroundImage": "./assets/images/fishquest-android-icon.png",
+        "monochromeImage": "./assets/images/fishquest-android-icon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -37,14 +37,14 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/FishQuest-Logo-only.png"
+      "favicon": "./assets/images/fishquest-android-icon.png.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/FishQuest-Logo-only.png",
+          "image": "./assets/images/fishquest-android-icon.png.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",

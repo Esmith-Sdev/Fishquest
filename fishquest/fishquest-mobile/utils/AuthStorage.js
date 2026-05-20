@@ -24,7 +24,7 @@ export async function enableBiometrics() {
     throw new Error("Biometric setup was cancelled.");
   }
 
-  await SecureStore.setItemAsync("biometricEnabled", "true");
+  await SecureStore.setItemAsync("biometricEnabled", JSON.stringify(true));
 
   return true;
 }
