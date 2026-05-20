@@ -15,7 +15,12 @@ export default function Layout() {
     return (
       <GradientBackground>
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "transparent",
+          }}
         >
           <LoadingIndicator text="Getting Things Ready" color="#fff" />
         </View>

@@ -6,22 +6,15 @@ import {
   Pressable,
   Image,
   ScrollView,
-  TextInput,
   Alert,
   FlatList,
-  TouchableOpacity,
-  Modal,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import LoadingIndicator from "../components/LoadingIndicator";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomNavbar from "../components/BottomNavbar";
-import FishSpeciesTypeahead from "../components/FishSpeciesTypeahead";
-import { getCurrentLocation } from "../utils/getCurrentLocation";
-import { uploadImages } from "../api/uploads";
-import { fetchLogById, updateCatchLog } from "../api/logs";
+import { fetchLogById } from "../api/logs";
 import { getToken } from "../api/auth";
 import { fetchRigPresets } from "../api/rigPresets";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -35,7 +28,6 @@ import { WEIGHTS } from "../data/weight.config";
 import { STATE_ABBREVIATIONS } from "../data/states";
 import { COLORS, RADIUS } from "../constants/theme";
 import ImagePreviewModal from "../components/ImagePreviewModal";
-import StateDropdown from "../components/StateDropdown";
 
 export default function ViewLog() {
   const params = useLocalSearchParams();
@@ -62,7 +54,7 @@ export default function ViewLog() {
   const [rigsError, setRigsError] = useState("");
   const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
   const [weightUnit, setWeightUnit] = useState("LB");
-  const [lengthUnit, setLengthUnit] = useState("CM");
+  const [lengthUnit, setLengthUnit] = useState("IN");
   const [timeValue, setTimeValue] = useState();
   const [period, setPeriod] = useState("AM");
   const [rigs, setRigs] = useState([]);
@@ -171,7 +163,7 @@ export default function ViewLog() {
         setWeight(log.weight ? String(log.weight) : "");
         setLength(log.length ? String(log.length) : "");
         setWeightUnit(log.weightUnit || "LB");
-        setLengthUnit(log.lengthUnit || "CM");
+        setLengthUnit(log.lengthUnit || "IN");
         setSelectedDate(log.date ? new Date(log.date) : new Date());
         setSelectedWeather((log.weather || "sunny").toLowerCase());
         setForm({
@@ -334,24 +326,6 @@ export default function ViewLog() {
                   ))}
                 </View>
               )}
-
-              {aiResult?.speciesName ? (
-                <View style={{ marginTop: 8 }}>
-                  <Text style={styles.logLabel}>
-                    AI Suggestion: {aiResult.speciesName} (
-                    {Math.round(aiResult.confidence * 100)}%)
-                  </Text>
-
-                  {aiResult.alternatives?.length > 0 ? (
-                    <Text style={styles.challengeText}>
-                      Also possible:{" "}
-                      {aiResult.alternatives
-                        .map((a) => a.speciesName)
-                        .join(", ")}
-                    </Text>
-                  ) : null}
-                </View>
-              ) : null}
               <View style={styles.logForm}>
                 <View style={styles.checkboxRow}>
                   <Text style={styles.checkboxLabel}>

@@ -35,7 +35,10 @@ export async function getCurrentLocation() {
   });
 
   const place = reverseGeocode[0];
-
+  const streetAddress =
+    place?.streetNumber && place?.street
+      ? `${place.streetNumber} ${place.street}`
+      : place?.name || place?.street || "";
   // WEATHER FETCH
   const weatherRes = await fetch(
     `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,wind_speed_10m&temperature_unit=fahrenheit&wind_speed_unit=mph`,
@@ -51,8 +54,8 @@ export async function getCurrentLocation() {
     state: place?.region || "",
     // Provide both `address` and `streetAddress` for callers
     // which may expect either property name.
-    address: place?.street || "",
-    streetAddress: place?.street || "",
+    address: streetAddress,
+    streetAddress,
 
     temp: weatherData.current.temperature_2m,
 

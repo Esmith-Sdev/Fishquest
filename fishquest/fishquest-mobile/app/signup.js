@@ -28,6 +28,7 @@ export default function SignUp() {
     username: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const [preferences, setPreferences] = useState({
     notificationsEnabled: false,
@@ -109,7 +110,10 @@ export default function SignUp() {
 
   async function handleSubmit() {
     if (loading) return;
-
+    if (form.password !== form.confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
     try {
       setLoading(true);
 
@@ -136,6 +140,7 @@ export default function SignUp() {
           contentContainerStyle={styles.content}
           enableOnAndroid
           extraScrollHeight={50}
+          keyboardShouldPersistTaps="handled"
         >
           {index === 0 ? (
             <View style={styles.welcomeContainer}>
@@ -197,7 +202,17 @@ export default function SignUp() {
                 onChangeText={(text) => handleChange("password", text)}
                 placeholder="Password"
                 textContentType="password"
-                autoComplete="password"
+                autoCapitalize="none"
+                placeholderTextColor="#666"
+                secureTextEntry
+              />
+              <Text style={styles.label}>Confirm Password</Text>
+              <TextInput
+                style={styles.input}
+                value={form.confirmPassword}
+                onChangeText={(text) => handleChange("confirmPassword", text)}
+                placeholder="Confirm Password"
+                textContentType="password"
                 autoCapitalize="none"
                 placeholderTextColor="#666"
                 secureTextEntry

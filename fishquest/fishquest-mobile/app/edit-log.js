@@ -1,11 +1,10 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Pressable,
   Image,
-  ScrollView,
   TextInput,
   Alert,
   FlatList,
@@ -68,7 +67,7 @@ export default function UpdateLog() {
   const [rigsError, setRigsError] = useState("");
   const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
   const [weightUnit, setWeightUnit] = useState("LB");
-  const [lengthUnit, setLengthUnit] = useState("CM");
+  const [lengthUnit, setLengthUnit] = useState("IN");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedWeather, setSelectedWeather] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -167,8 +166,15 @@ export default function UpdateLog() {
     });
   }
   async function ensureUploadedImages() {
-    const newUrls = files.length ? await uploadImages(files) : [];
-    return [...uploadedImageUrls, ...newUrls];
+    if (!files.length) return uploadedImageUrls;
+
+    const newUrls = await uploadImages(files);
+    const allUrls = [...uploadedImageUrls, ...newUrls];
+
+    setUploadedImageUrls(allUrls);
+    setFiles([]);
+
+    return allUrls;
   }
 
   function handleRemoveImage(index, isRemote) {
@@ -290,7 +296,7 @@ export default function UpdateLog() {
         setWeight(log.weight ? String(log.weight) : "");
         setLength(log.length ? String(log.length) : "");
         setWeightUnit(log.weightUnit || "LB");
-        setLengthUnit(log.lengthUnit || "CM");
+        setLengthUnit(log.lengthUnit || "IN");
         setSelectedDate(log.date ? new Date(log.date) : new Date());
         setSelectedWeather((log.weather || "sunny").toLowerCase());
         setForm({
@@ -309,6 +315,8 @@ export default function UpdateLog() {
         }
       } catch (err) {
         Alert.alert("Error", err.message || "Failed to load log");
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -394,6 +402,7 @@ export default function UpdateLog() {
         imageUrls: urls,
         skunked,
         address: form.address,
+        weather: selectedWeather,
         city: form.city,
         state: form.state,
         challenge,
@@ -422,6 +431,17 @@ export default function UpdateLog() {
     ...files.map((file) => ({ ...file, isRemote: false })),
   ];
   const isGridFull = allImages.length >= 4;
+  const aiPercentage =
+    typeof aiResult?.confidence === "number"
+      ? Math.round(aiResult.confidence * 100)
+      : null;
+
+  function getAiPercentColor(percentage) {
+    if (percentage === null) return "#666";
+    if (percentage >= 75) return "#4CAF50";
+    if (percentage >= 50) return "#FFC107";
+    return "#F44336";
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.screen}>
@@ -584,8 +604,12 @@ export default function UpdateLog() {
               {aiResult?.speciesName ? (
                 <View style={{ marginTop: 8 }}>
                   <Text style={styles.logLabel}>
-                    AI Suggestion: {aiResult.speciesName} (
-                    {Math.round(aiResult.confidence * 100)}%)
+                    AI Suggestion: {aiResult.speciesName}{" "}
+                    {aiPercentage !== null ? (
+                      <Text style={{ color: getAiPercentColor(aiPercentage) }}>
+                        ({aiPercentage}%)
+                      </Text>
+                    ) : null}
                   </Text>
 
                   {aiResult.alternatives?.length > 0 ? (
@@ -803,7 +827,7 @@ export default function UpdateLog() {
                       renderItem={({ item }) => {
                         const isSelected = selectedWeather === item.id;
                         return (
-                          <View
+                          <Pressable
                             onPress={() => setSelectedWeather(item.id)}
                             style={[
                               styles.weatherOption,
@@ -823,7 +847,7 @@ export default function UpdateLog() {
                             >
                               {item.label}
                             </Text>
-                          </View>
+                          </Pressable>
                         );
                       }}
                     />
@@ -970,25 +994,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0D1B1E",
   },
-  header: {
-    paddingTop: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: COLORS.primary,
-  },
-  headerTitle: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    textAlign: "center",
-    fontSize: 24,
-    fontFamily: "Jua",
-    color: "#fff",
-    paddingHorizontal: 95,
-  },
   content: {
     padding: 16,
     paddingBottom: 110,
@@ -999,12 +1004,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
-  },
-  loadingText: {
-    fontSize: 16,
-    color: "#fff",
-    fontFamily: "Jua",
-    marginTop: 10,
   },
   orangeButton: {
     backgroundColor: COLORS.secondary,
@@ -1031,10 +1030,6 @@ const styles = StyleSheet.create({
   disabledButton: {
     opacity: 0.6,
   },
-  smallActionBtn: {
-    minWidth: 64,
-    alignSelf: "flex-start",
-  },
   buttonText: {
     color: "#000",
     fontFamily: "Jua",
@@ -1047,15 +1042,6 @@ const styles = StyleSheet.create({
   caret: {
     color: "#fff",
     fontSize: 20,
-  },
-  emptyState: {
-    paddingVertical: 40,
-    alignItems: "center",
-    gap: 14,
-  },
-  emptyText: {
-    fontSize: 18,
-    color: "#fff",
   },
   rigSection: {
     flexDirection: "row",
@@ -1128,10 +1114,6 @@ const styles = StyleSheet.create({
     height: "90%",
   },
 
-  editButton: {
-    alignSelf: "flex-start",
-    minWidth: 70,
-  },
   noRigBox: {
     borderWidth: 1,
     borderStyle: "dashed",
@@ -1288,16 +1270,6 @@ const styles = StyleSheet.create({
     fontFamily: "Jua",
     textAlign: "center",
   },
-  pillInputTime: {
-    width: 90,
-    backgroundColor: "#dedede",
-    borderRadius: 50,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    color: "#000",
-    fontFamily: "Jua",
-    textAlign: "center",
-  },
   pillSelectTime: {
     width: 70,
     backgroundColor: "#dedede",
@@ -1355,24 +1327,6 @@ const styles = StyleSheet.create({
     gap: 10,
     flexDirection: "column",
     zIndex: 999,
-  },
-  stateChips: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  stateChip: {
-    backgroundColor: "#dedede",
-    borderRadius: 999,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-  },
-  stateChipActive: {
-    backgroundColor: COLORS.secondary,
-  },
-  stateChipText: {
-    color: "#000",
-    fontFamily: "Jua",
-    fontSize: 14,
   },
   geoError: {
     color: "red",

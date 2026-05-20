@@ -47,7 +47,7 @@ export default function CreateRig() {
   const currentWeight = WEIGHTS[weightIndex];
   const currentHook = HOOKS[hookIndex];
   const {
-    returnTo = "/create-log",
+    returnTo = "/home",
     challengeId = "",
     templateKey = "",
     challengeTitle = "",

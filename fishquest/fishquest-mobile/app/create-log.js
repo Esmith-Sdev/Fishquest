@@ -1,11 +1,10 @@
-import { useState, useRef, useEffect, useMemo, use } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Pressable,
   Image,
-  ScrollView,
   TextInput,
   Alert,
   FlatList,
@@ -207,7 +206,6 @@ export default function CreateLog() {
       const result = await identifyFish(imageUrl, form.state, token);
 
       setAiResult(result);
-
       if (!result?.isFishVisible) {
         Alert.alert(
           "No clear fish found",
@@ -382,7 +380,16 @@ export default function CreateLog() {
       setSaving(false);
     }
   }
-
+  const aiPercentage =
+    typeof aiResult?.confidence === "number"
+      ? Math.round(aiResult.confidence * 100)
+      : null;
+  function getAiPercentColor(percentage) {
+    if (percentage === null) return "#666";
+    if (percentage >= 75) return "#4CAF50";
+    if (percentage >= 50) return "#FFC107";
+    return "#F44336";
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.screen}>
@@ -401,7 +408,6 @@ export default function CreateLog() {
           </View>
         ) : (
           <>
-            <BottomNavbar />
             <KeyboardAwareScrollView
               style={{ flex: 1 }}
               contentContainerStyle={styles.content}
@@ -548,9 +554,13 @@ export default function CreateLog() {
               </Pressable>
               {aiResult?.speciesName ? (
                 <View style={{ marginTop: 8 }}>
-                  <Text style={styles.logLabel}>
-                    AI Suggestion: {aiResult.speciesName} (
-                    {Math.round(aiResult.confidence * 100)}%)
+                  <Text style={styles.aiLabel}>
+                    AI Suggestion: {aiResult.speciesName}{" "}
+                    {aiPercentage !== null ? (
+                      <Text style={{ color: getAiPercentColor(aiPercentage) }}>
+                        ({aiPercentage}%)
+                      </Text>
+                    ) : null}
                   </Text>
                   {aiResult.alternatives?.length > 0 ? (
                     <Text style={styles.challengeText}>
@@ -609,32 +619,51 @@ export default function CreateLog() {
                         setWeight(text.replace(/\D/g, "").slice(0, 2))
                       }
                     />
-                    <View style={styles.unitToggle}>
-                      {["LB", "OZ"].map((unit) => (
-                        <Pressable
-                          key={unit}
-                          onPress={() => {
-                            Keyboard.dismiss();
-                            setWeightUnit(unit);
-                          }}
-                          disabled={skunked}
+                    <SelectDropdown
+                      statusBarTranslucent={true}
+                      data={["LB", "OZ"]}
+                      defaultValue={weightUnit}
+                      disabled={skunked}
+                      dropdownOverlayColor="transparent"
+                      onSelect={(selectedItem) => setWeightUnit(selectedItem)}
+                      renderButton={(selectedItem, isOpened) => (
+                        <View
                           style={[
-                            styles.unitOption,
-                            weightUnit === unit && styles.unitOptionSelected,
+                            styles.pillSelectSmall,
                             skunked && styles.disabledButton,
                           ]}
                         >
-                          <Text
-                            style={[
-                              styles.unitText,
-                              weightUnit === unit && styles.unitTextSelected,
-                            ]}
-                          >
-                            {unit}
-                          </Text>
-                        </Pressable>
-                      ))}
-                    </View>
+                          <View style={styles.logRow}>
+                            <Text style={styles.selectText}>
+                              {selectedItem || "LB"}
+                            </Text>
+                            {!isOpened ? (
+                              <FontAwesome6
+                                name="caret-down"
+                                size={20}
+                                color="black"
+                              />
+                            ) : (
+                              <FontAwesome6
+                                name="caret-up"
+                                size={20}
+                                color="black"
+                              />
+                            )}
+                          </View>
+                        </View>
+                      )}
+                      renderItem={(item, index, isSelected) => (
+                        <View
+                          style={[
+                            styles.dropdownItem,
+                            isSelected && styles.dropdownItemSelected,
+                          ]}
+                        >
+                          <Text style={styles.selectText}>{item}</Text>
+                        </View>
+                      )}
+                    />
                   </View>
                 </View>
                 <View style={styles.logRow}>
@@ -652,42 +681,61 @@ export default function CreateLog() {
                         setLength(text.replace(/\D/g, "").slice(0, 2))
                       }
                     />
-                    <View style={styles.unitToggle}>
-                      {["IN", "CM"].map((unit) => (
-                        <Pressable
-                          key={unit}
-                          onPress={() => {
-                            Keyboard.dismiss();
-                            setLengthUnit(unit);
-                          }}
-                          disabled={skunked}
+                    <SelectDropdown
+                      statusBarTranslucent={true}
+                      data={["IN", "CM"]}
+                      defaultValue={lengthUnit}
+                      disabled={skunked}
+                      dropdownOverlayColor="transparent"
+                      onSelect={(selectedItem) => setLengthUnit(selectedItem)}
+                      renderButton={(selectedItem, isOpened) => (
+                        <View
                           style={[
-                            styles.unitOption,
-                            lengthUnit === unit && styles.unitOptionSelected,
+                            styles.pillSelectSmall,
                             skunked && styles.disabledButton,
                           ]}
                         >
-                          <Text
-                            style={[
-                              styles.unitText,
-                              lengthUnit === unit && styles.unitTextSelected,
-                            ]}
-                          >
-                            {unit}
-                          </Text>
-                        </Pressable>
-                      ))}
-                    </View>
+                          <View style={styles.logRow}>
+                            <Text style={styles.selectText}>
+                              {selectedItem || "IN"}
+                            </Text>
+                            {!isOpened ? (
+                              <FontAwesome6
+                                name="caret-down"
+                                size={20}
+                                color="black"
+                              />
+                            ) : (
+                              <FontAwesome6
+                                name="caret-up"
+                                size={20}
+                                color="black"
+                              />
+                            )}
+                          </View>
+                        </View>
+                      )}
+                      renderItem={(item, index, isSelected) => (
+                        <View
+                          style={[
+                            styles.dropdownItem,
+                            isSelected && styles.dropdownItemSelected,
+                          ]}
+                        >
+                          <Text style={styles.selectText}>{item}</Text>
+                        </View>
+                      )}
+                    />
                   </View>
                 </View>
                 <View style={styles.logRow}>
                   <Text style={styles.logLabel}>Date:</Text>
                   <View style={styles.fieldFlex}>
                     <Pressable
-                      style={styles.dateButton}
+                      style={styles.pillInputMedium}
                       onPress={() => setShowDatePicker(true)}
                     >
-                      <Text style={styles.dateButtonText}>
+                      <Text style={styles.selectText}>
                         {selectedDate.toLocaleDateString()}
                       </Text>
                     </Pressable>
@@ -697,18 +745,25 @@ export default function CreateLog() {
                   <Text style={styles.logLabel}>Time:</Text>
                   <View style={styles.inlineField}>
                     <Pressable
-                      style={styles.pillInputTime}
+                      style={styles.pillInputMedium}
                       onPress={() => setShowTimePicker(true)}
                     >
-                      <Text
-                        style={styles.dateButtonText}
-                      >{`${timeValue} ${period}`}</Text>
+                      <Text style={styles.selectText}>{timeValue}</Text>
+                    </Pressable>
+                    <Pressable
+                      style={styles.pillSelectTime}
+                      onPress={() =>
+                        setPeriod((prev) => (prev === "AM" ? "PM" : "AM"))
+                      }
+                    >
+                      <Text style={styles.selectText}>{period}</Text>
                     </Pressable>
                   </View>
                 </View>
                 <View style={styles.logRow}>
-                  <Text style={styles.logLabel}>Weather:</Text>
-                  <View style={styles.inlineField}>
+                  <View style={styles.logColumn}>
+                    <Text style={styles.logLabel}>Weather:</Text>
+
                     <FlatList
                       data={weatherOptions}
                       horizontal
@@ -797,20 +852,23 @@ export default function CreateLog() {
                     {challengeTitle || "No Challenge"}
                   </Text>
                 </View>
-                <TextInput
-                  multiline
-                  numberOfLines={4}
-                  style={styles.notesBox}
-                  placeholder="Other Notes..."
-                  placeholderTextColor="#666"
-                  value={notes}
-                  onChangeText={setNotes}
-                />
+                <View style={styles.notesBlock}>
+                  <TextInput
+                    multiline
+                    numberOfLines={4}
+                    style={styles.notesBox}
+                    placeholder="Other Notes..."
+                    placeholderTextColor="#666"
+                    value={notes}
+                    onChangeText={setNotes}
+                  />
+                </View>
               </View>
               {rigsError ? (
                 <Text style={styles.rigsError}>{rigsError}</Text>
               ) : null}
             </KeyboardAwareScrollView>
+            <BottomNavbar />
           </>
         )}
         {showDatePicker && (
@@ -870,7 +928,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#0D1B1E",
-    paddingBottom: 50,
   },
   savingOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -881,34 +938,9 @@ const styles = StyleSheet.create({
     elevation: 99999,
   },
 
-  savingText: {
-    marginTop: 12,
-    color: "#fff",
-    fontFamily: "Jua",
-    fontSize: 18,
-  },
-  header: {
-    paddingTop: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: COLORS.primary,
-  },
-  headerTitle: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    textAlign: "center",
-    fontSize: 24,
-    fontFamily: "Jua",
-    color: "#fff",
-    paddingHorizontal: 95,
-  },
   content: {
     padding: 16,
-    paddingBottom: 50,
+    paddingBottom: 110,
     gap: 18,
   },
   centerState: {
@@ -916,40 +948,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
-  },
-  loadingText: {
-    fontSize: 16,
-    color: "#fff",
-    fontFamily: "Jua",
-    marginTop: 10,
-  },
-  unitToggle: {
-    flexDirection: "row",
-    backgroundColor: "#dedede",
-    borderRadius: RADIUS.pill,
-    overflow: "hidden",
-  },
-
-  unitOption: {
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    minWidth: 42,
-    alignItems: "center",
-  },
-
-  unitOptionSelected: {
-    backgroundColor: COLORS.secondary,
-  },
-
-  unitText: {
-    color: "#000",
-    fontFamily: "Jua",
-    fontSize: 14,
-  },
-  unitTextSelected: {
-    color: "#fff",
-    fontFamily: "Jua",
-    fontSize: 14,
   },
   orangeButton: {
     boxShadow: "0px 4px 0px #733800",
@@ -978,10 +976,6 @@ const styles = StyleSheet.create({
   disabledButton: {
     opacity: 0.6,
   },
-  smallActionBtn: {
-    minWidth: 64,
-    alignSelf: "flex-start",
-  },
   buttonText: {
     color: "#000",
     fontFamily: "Jua",
@@ -994,15 +988,6 @@ const styles = StyleSheet.create({
   caret: {
     color: "#fff",
     fontSize: 20,
-  },
-  emptyState: {
-    paddingVertical: 40,
-    alignItems: "center",
-    gap: 14,
-  },
-  emptyText: {
-    fontSize: 18,
-    color: "#fff",
   },
   rigSection: {
     flexDirection: "row",
@@ -1084,10 +1069,6 @@ const styles = StyleSheet.create({
     height: "90%",
   },
 
-  editButton: {
-    alignSelf: "flex-start",
-    minWidth: 70,
-  },
   noRigBox: {
     borderWidth: 1,
     borderStyle: "dashed",
@@ -1109,19 +1090,6 @@ const styles = StyleSheet.create({
     zIndex: 10000,
     elevation: 40,
     minWidth: 200,
-  },
-  dateButton: {
-    backgroundColor: "#dedede",
-    borderRadius: 50,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    minWidth: 140,
-  },
-
-  dateButtonText: {
-    color: "#000",
-    fontFamily: "Jua",
-    textAlign: "center",
   },
   speciesRow: {
     gap: 8,
@@ -1193,7 +1161,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "Jua",
     fontSize: 16,
-
+    flex: 1,
     marginRight: 12,
   },
   checkboxBox: {
@@ -1218,11 +1186,14 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "Jua",
     fontSize: 16,
-    width: 100,
+  },
+  aiLabel: {
+    color: "#fff",
+    fontFamily: "Jua",
+    fontSize: 16,
   },
   fieldFlex: {
     minWidth: 0,
-    flex: 1,
   },
   inlineField: {
     flexDirection: "row",
@@ -1249,16 +1220,6 @@ const styles = StyleSheet.create({
   },
   pillInputMedium: {
     width: 140,
-    backgroundColor: "#dedede",
-    borderRadius: 50,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    color: "#000",
-    fontFamily: "Jua",
-    textAlign: "center",
-  },
-  pillInputTime: {
-    width: 90,
     backgroundColor: "#dedede",
     borderRadius: 50,
     paddingVertical: 8,
@@ -1316,24 +1277,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     zIndex: 999,
   },
-  stateChips: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  stateChip: {
-    backgroundColor: "#dedede",
-    borderRadius: 999,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-  },
-  stateChipActive: {
-    backgroundColor: COLORS.secondary,
-  },
-  stateChipText: {
-    color: "#000",
-    fontFamily: "Jua",
-    fontSize: 14,
-  },
   geoError: {
     color: "red",
     marginTop: 4,
@@ -1344,6 +1287,9 @@ const styles = StyleSheet.create({
     color: "#fff",
     opacity: 0.9,
     fontWeight: "600",
+  },
+  notesBlock: {
+    marginTop: 6,
   },
 
   notesBox: {
@@ -1376,10 +1322,5 @@ const styles = StyleSheet.create({
   },
   weatherTextSelected: {
     color: "#fff",
-  },
-  center: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
   },
 });
