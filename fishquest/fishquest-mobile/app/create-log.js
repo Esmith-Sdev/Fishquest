@@ -254,8 +254,25 @@ export default function CreateLog() {
     }
   }
 
+  function getPickerAssets(result) {
+    const canceled = result?.canceled ?? result?.cancelled;
+    if (canceled) return [];
+    if (Array.isArray(result?.assets)) return result.assets;
+    if (result?.uri) return [result];
+    return [];
+  }
+
   async function pickImages() {
     if (isGridFull) return;
+
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert(
+        "Storage permission required",
+        "Please allow access to your photos to upload images.",
+      );
+      return;
+    }
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -264,9 +281,9 @@ export default function CreateLog() {
       selectionLimit: 4 - files.length,
     });
 
-    if (result.canceled) return;
+    const picked = getPickerAssets(result);
+    if (!picked.length) return;
 
-    const picked = result.assets || [];
     const room = 4 - files.length;
     setFiles((prev) => [...prev, ...picked.slice(0, room)]);
   }

@@ -196,6 +196,8 @@ export default function SignUp() {
                 value={form.password}
                 onChangeText={(text) => handleChange("password", text)}
                 placeholder="Password"
+                textContentType="password"
+                autoComplete="password"
                 autoCapitalize="none"
                 placeholderTextColor="#666"
                 secureTextEntry
@@ -350,6 +352,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     marginBottom: 20,
+    color: "#000",
   },
   orangeButton: {
     boxShadow: "0px 4px 0px #733800",

@@ -49,6 +49,8 @@ export default function AuthForm({
       <TextInput
         style={styles.input}
         placeholder="Password"
+        textContentType="password"
+        autoComplete="password"
         placeholderTextColor="#666"
         autoCapitalize="none"
         secureTextEntry
@@ -110,11 +112,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: RADIUS.pill,
     paddingHorizontal: 14,
+    color: "#000",
     paddingVertical: 14,
     marginBottom: 12,
     fontSize: 16,
     width: "100%",
-    maxWidth: "40rem",
+    maxWidth: 400,
   },
   button: {
     backgroundColor: COLORS.primary,
