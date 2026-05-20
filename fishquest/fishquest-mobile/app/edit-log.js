@@ -34,13 +34,12 @@ import { COLORS, RADIUS } from "../constants/theme";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import StateDropdown from "../components/StateDropdown";
 import SelectDropdown from "react-native-select-dropdown";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons , FontAwesome6 } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { FontAwesome6 } from "@expo/vector-icons";
+
 export default function UpdateLog() {
   const params = useLocalSearchParams();
   const { id } = useLocalSearchParams();
-  const [stateValue, setStateValue] = useState("");
   const [form, setForm] = useState({
     address: "",
     city: "",
@@ -84,19 +83,6 @@ export default function UpdateLog() {
   const [period, setPeriod] = useState(() =>
     new Date().getHours() >= 12 ? "PM" : "AM",
   );
-  function handleConfirmDate(date) {
-    setShowDatePicker(false);
-    setSelectedDate(date);
-
-    const h24 = date.getHours();
-    const mins = date.getMinutes();
-    const h12 = h24 % 12 || 12;
-
-    setTimeValue(
-      `${String(h12).padStart(2, "0")}:${String(mins).padStart(2, "0")}`,
-    );
-    setPeriod(h24 >= 12 ? "PM" : "AM");
-  }
   const [rigs, setRigs] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -359,12 +345,6 @@ export default function UpdateLog() {
     setFiles((prev) => [...prev, ...picked.slice(0, room)]);
   }
 
-  function getImageSource(file) {
-    if (!file) return null;
-    if (file.uri) return { uri: file.uri };
-    return file;
-  }
-
   async function handleSubmitLog() {
     if (!rigPresetId) {
       Alert.alert("Missing rig", "Please select a rig preset first.");
@@ -623,6 +603,14 @@ export default function UpdateLog() {
                 </View>
               ) : null}
               <View style={styles.logForm}>
+                <View style={styles.logRow}>
+                  <Text style={styles.logLabel}>Challenge:</Text>
+                  <Text style={styles.challengeText}>
+                    {challenge?.title ||
+                      challenge?.templateKey ||
+                      "No Challenge"}
+                  </Text>
+                </View>
                 <Pressable
                   style={styles.checkboxRow}
                   onPress={() => setSkunked((prev) => !prev)}
@@ -815,9 +803,9 @@ export default function UpdateLog() {
                   </View>
                 </View>
                 <View style={styles.logRow}>
-                  <View style={styles.logColumn}>
-                    <Text style={styles.logLabel}>Weather:</Text>
+                  <Text style={styles.logLabel}>Weather:</Text>
 
+                  <View>
                     <FlatList
                       data={weatherOptions}
                       horizontal
@@ -904,15 +892,6 @@ export default function UpdateLog() {
                   {geoError ? (
                     <Text style={styles.geoError}>{geoError}</Text>
                   ) : null}
-                </View>
-
-                <View style={styles.logRow}>
-                  <Text style={styles.logLabel}>Challenge:</Text>
-                  <Text style={styles.challengeText}>
-                    {challenge?.title ||
-                      challenge?.templateKey ||
-                      "No Challenge"}
-                  </Text>
                 </View>
 
                 <View style={styles.notesBlock}>
@@ -1131,10 +1110,14 @@ const styles = StyleSheet.create({
   },
 
   speciesFieldWrap: {
-    flex: 1,
-    zIndex: 10000,
-    elevation: 40,
-    minWidth: 200,
+    width: 230,
+
+    borderRadius: 50,
+
+    paddingHorizontal: 4,
+    color: "#000",
+    fontFamily: "Jua",
+    textAlign: "center",
   },
 
   speciesRow: {
@@ -1233,6 +1216,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "Jua",
     fontSize: 16,
+    flex: 1,
   },
   fieldFlex: {
     minWidth: 0,
@@ -1254,14 +1238,15 @@ const styles = StyleSheet.create({
   },
   pillSelectSmall: {
     width: 70,
+    height: 33,
     backgroundColor: "#dedede",
     borderRadius: 50,
-    paddingVertical: 8,
+    justifyContent: "center",
     paddingHorizontal: 12,
     alignItems: "center",
   },
   pillInputMedium: {
-    width: 140,
+    width: 150,
     backgroundColor: "#dedede",
     borderRadius: 50,
     paddingVertical: 8,
@@ -1335,9 +1320,10 @@ const styles = StyleSheet.create({
   },
 
   challengeText: {
-    color: "#fff",
-    opacity: 0.9,
+    color: COLORS.secondary,
+    opacity: 1,
     fontWeight: "600",
+    paddingVertical: 10,
   },
   notesBlock: {
     marginTop: 6,

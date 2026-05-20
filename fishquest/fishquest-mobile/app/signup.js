@@ -30,7 +30,7 @@ export default function SignUp() {
     password: "",
     confirmPassword: "",
   });
-  const [preferences, setPreferences] = useState({
+  const [, setPreferences] = useState({
     notificationsEnabled: false,
     locationEnabled: false,
   });
@@ -139,8 +139,10 @@ export default function SignUp() {
           style={{ flex: 1 }}
           contentContainerStyle={styles.content}
           enableOnAndroid
-          extraScrollHeight={50}
-          keyboardShouldPersistTaps="handled"
+          extraScrollHeight={200}
+          keyboardShouldPersistTaps="always"
+          nestedScrollEnabled={true}
+          keyboardDismissMode="on-drag"
         >
           {index === 0 ? (
             <View style={styles.welcomeContainer}>
@@ -282,13 +284,7 @@ export default function SignUp() {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-
-    justifyContent: "center",
-  },
-  blueButton: {
+const styles = StyleSheet.create({  blueButton: {
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
@@ -308,11 +304,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  loadingText: {
-    color: "#fff",
-    marginTop: 12,
-    fontSize: 16,
   },
   content: {
     flexGrow: 1,
@@ -396,11 +387,5 @@ const styles = StyleSheet.create({
   backButton: {
     marginBottom: 10,
     alignSelf: "flex-start",
-  },
-  backIcon: {
-    width: "30px",
-    height: "30px",
-    BackgroundColor: "#fff",
-    fontWeight: "700",
   },
 });

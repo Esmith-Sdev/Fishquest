@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -8,10 +8,9 @@ import {
   FlatList,
   TextInput,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+
 import { COLORS, RADIUS } from "../constants/theme";
-import { getCurrentLocation } from "../utils/getCurrentLocation";
 import { useAuth } from "../context/AuthContext";
 import LoadingIndicator from "./LoadingIndicator";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -19,8 +18,8 @@ export default function AddBuddyModal({ visible, onClose }) {
   const { token } = useAuth();
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState([]);
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [, setMessage] = useState("");
+  const [loading] = useState(false);
   const [searching, setSearching] = useState(false);
   const [addedUsers, setAddedUsers] = useState({});
   const [addingUserId, setAddingUserId] = useState(null);
@@ -192,10 +191,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 15,
   },
-  locationText: {
-    fontSize: 14,
-    fontFamily: "Rubik",
-  },
   searchBar: {
     width: "100%",
     borderRadius: 999,
@@ -211,13 +206,6 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 14,
     fontFamily: "Rubik",
-  },
-  alertText: {
-    fontSize: 14,
-    fontFamily: "Rubik",
-  },
-  spacer: {
-    width: 50,
   },
   userContainer: {
     width: "50%",
@@ -270,18 +258,6 @@ const styles = StyleSheet.create({
     fontFamily: "Jua",
     paddingBottom: 15,
   },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingTop: 25,
-  },
-  profileImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 15,
-    backgroundColor: "#dedede",
-  },
   orangeButton: {
     boxShadow: "0px 4px 0px #733800",
 
@@ -295,12 +271,6 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
     elevation: 4,
     zIndex: 10,
-  },
-  weatherImage: {
-    width: 90,
-    height: 90,
-    resizeMode: "contain",
-    marginTop: 16,
   },
   blueButton: {
     backgroundColor: COLORS.primary,

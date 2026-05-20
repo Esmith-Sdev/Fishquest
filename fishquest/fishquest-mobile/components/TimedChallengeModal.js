@@ -4,7 +4,6 @@ import { COLORS, RADIUS } from "../constants/theme";
 import { router } from "expo-router";
 import { getToken } from "../api/auth";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import ConfirmModal from "./ConfirmModal";
 export default function TimedChallengeModal({
   show,
   onHide,
@@ -126,7 +125,7 @@ export default function TimedChallengeModal({
               </View>
 
               <Text style={styles.body}>
-                Once you click "Start" the challenge begins. You have one
+                Once you click &quot;Start&quot; the challenge begins. You have one
                 chance, good luck!
               </Text>
 

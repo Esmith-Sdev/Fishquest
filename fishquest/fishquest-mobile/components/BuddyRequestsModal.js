@@ -209,19 +209,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 15,
   },
-  locationText: {
-    fontSize: 14,
-    fontFamily: "Rubik",
-  },
-
-  alertText: {
-    fontSize: 14,
-    fontFamily: "Rubik",
-  },
-  spacer: {
-    width: 50,
-  },
-  userContainer: {
+  userContainer: {
     width: "50%",
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
@@ -238,19 +226,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
 
     fontFamily: "Jua",
-  },
-  column: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  row: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-
-    justifyContent: "center",
   },
   modalCard: {
     width: 300,
@@ -270,18 +245,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "Jua",
     paddingBottom: 15,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingTop: 25,
-  },
-  profileImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 15,
-    backgroundColor: "#dedede",
   },
   orangeButton: {
     boxShadow: "0px 4px 0px #733800",
@@ -321,18 +284,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-
-  messageBox: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 15,
-  },
-
-  actionRow: {
-    flexDirection: "row",
-    gap: 8,
   },
 
   row: {

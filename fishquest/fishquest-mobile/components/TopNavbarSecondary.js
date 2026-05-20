@@ -1,8 +1,8 @@
-import { StyleSheet } from "react-native";
-import { View, Pressable, Text } from "react-native";
+import { StyleSheet , View, Pressable, Text } from "react-native";
+
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { RADIUS } from "../constants/theme";
-import { COLORS } from "../constants/theme";
+import { RADIUS , COLORS } from "../constants/theme";
+
 import { router } from "expo-router";
 export default function TopNavbarSecondary({
   title,
@@ -88,16 +88,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     zIndex: 10,
   },
-  backIcon: {
-    fontSize: 28,
-    fontWeight: "700",
-    zIndex: 10,
-  },
-
-  headerSpacer: {
-    width: 40,
-  },
-  orangeButton: {
+  orangeButton: {
     boxShadow: "0px 4px 0px #733800",
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,

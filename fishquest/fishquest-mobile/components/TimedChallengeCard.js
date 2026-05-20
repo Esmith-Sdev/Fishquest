@@ -3,13 +3,11 @@ import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
 import TimedChallengeModal from "./TimedChallengeModal";
 import GradientProgress from "./GradientProgress";
-import DisabledChallengeCard from "./DisabledChallengeCard";
 import GradientCard from "./GradientCard";
 import HardGradientCard from "./HardGradientCard";
 export default function TimedChallengeCard({ challenge, onRefresh }) {
   const [showModal, setShowModal] = useState(false);
   const progress = challenge?.progress ?? 0;
-  const isFinished = challenge?.isFinished;
   const goal = challenge?.goal ?? 1;
   const percent = goal ? Math.min((progress / goal) * 100, 100) : 0;
   const difficulty = challenge?.difficulty || "easy";
@@ -84,23 +82,6 @@ const styles = StyleSheet.create({
     width: "100%",
     position: "relative",
   },
-
-  difficulty: {
-    position: "absolute",
-    top: 6,
-    left: 10,
-    fontFamily: "Jua",
-    fontSize: 10,
-    color: "#000",
-  },
-  disabledCard: {
-    backgroundColor: "#212529",
-    padding: 16,
-    borderRadius: RADIUS.md,
-    alignItems: "center",
-    width: "100%",
-    position: "relative",
-  },
   xp: {
     position: "absolute",
     top: 6,
@@ -109,12 +90,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#000",
     fontSize: 13,
-  },
-  gradientButtonText: {
-    color: "#fff",
-    fontSize: 13,
-    fontFamily: "Jua",
-    textAlign: "center",
   },
   progressRow: {
     flexDirection: "row",
@@ -142,23 +117,6 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     overflow: "hidden",
     borderWidth: 1,
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: COLORS.primary,
-  },
-
-  glowWrap: {
-    shadowColor: "#ffffff",
-    shadowOpacity: 0.9,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 0 },
-    elevation: 14,
-  },
-  gradientButton: {
-    borderRadius: RADIUS.pill,
-    marginTop: 4,
-    overflow: "hidden",
   },
 
   button: {

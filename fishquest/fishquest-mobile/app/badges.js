@@ -13,13 +13,12 @@ import BottomBar from "../components/BottomNavbar";
 import { BADGES } from "../data/badges.config";
 import BadgeCard from "../components/BadgeCard";
 import { COLORS } from "../constants/theme";
-import { RADIUS } from "../constants/theme";
+
 import Feather from "@expo/vector-icons/Feather";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 import { getToken } from "../api/auth";
 export default function BadgesPage() {
   const [show, setShow] = useState(false);
-  const [imageLoading, setImageLoading] = useState(true);
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [userBadges, setUserBadges] = useState([]);
   const selectedProgress = selectedBadge
@@ -158,36 +157,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0D1B1E",
   },
-  header: {
-    paddingTop: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-
-    backgroundColor: COLORS.primary,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "400",
-    fontFamily: "Jua",
-    color: "#fff",
-    left: 0,
-    right: 0,
-    position: "absolute",
-    textAlign: "center",
-  },
-  backButton: {
-    width: 40,
-    alignItems: "flex-start",
-    justifyContent: "center",
-  },
-
-  headerSpacer: {
-    width: 40,
-  },
-  grid: {
+  grid: {
     paddingHorizontal: 12,
     paddingTop: 12,
     paddingBottom: 100,
@@ -229,36 +199,10 @@ const styles = StyleSheet.create({
     right: 0,
     position: "absolute",
   },
-  closeText: {
-    fontSize: 20,
-    fontWeight: "700",
-  },
   progressText: {
     marginTop: 14,
     textAlign: "center",
     fontSize: 16,
     fontWeight: "600",
-  },
-  orangeButton: {
-    backgroundColor: COLORS.secondary,
-    borderRadius: RADIUS.pill,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    minWidth: 80,
-
-    shadowColor: COLORS.secondaryDropShadow,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 1,
-    elevation: 4,
-  },
-  buttonText: {
-    color: "#000",
-    fontSize: 16,
-    fontFamily: "Jua",
-    textAlign: "center",
   },
 });

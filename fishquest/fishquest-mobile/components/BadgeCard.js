@@ -5,10 +5,10 @@ import {
   View,
   Text,
   ActivityIndicator,
-} from "react-native";
+ Dimensions } from "react-native";
 import { COLORS } from "../constants/theme";
 import { LinearGradient } from "expo-linear-gradient";
-import { Dimensions } from "react-native";
+
 import { useState } from "react";
 const screenWidth = Dimensions.get("window").width;
 const CARD_GAP = 12;
@@ -66,10 +66,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 10,
-  },
-  loader: {
-    position: "absolute",
-    zIndex: 5,
   },
   gradient: {
     width: "100%",

@@ -1,13 +1,8 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useState, useEffect, useMemo } from "react";
-import { router } from "expo-router";
 import { COLORS, RADIUS } from "../constants/theme";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 export default function DisabledChallengeCard({ challenge }) {
-  const progress = challenge?.progress ?? 0;
-  const goal = challenge?.goal ?? 1;
-  const percent = goal ? (progress / goal) * 100 : 0;
-
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -108,27 +103,4 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: COLORS.primary,
   },
-
-  button: {
-    backgroundColor: COLORS.secondary,
-    borderRadius: RADIUS.pill,
-    paddingVertical: 4,
-    paddingHorizontal: 18,
-    minWidth: 80,
-    marginTop: 4,
-    shadowColor: COLORS.secondaryDropShadow,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 1,
-    elevation: 4,
-  },
-  buttonText: {
-    color: "#000",
-    fontSize: 13,
-    fontFamily: "Jua",
-    textAlign: "center",
-  },
-});
+});

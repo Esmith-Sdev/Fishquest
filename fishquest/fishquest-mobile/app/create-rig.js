@@ -10,7 +10,6 @@ import {
   Alert,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";
 import LoadingIndicator from "../components/LoadingIndicator";
 import BottomNavbar from "../components/BottomNavbar";
@@ -309,25 +308,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#0D1B1E",
-  },
-  header: {
-    paddingTop: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-
-    backgroundColor: COLORS.primary,
-  },
-  headerTitle: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    textAlign: "center",
-    fontSize: 24,
-    fontFamily: "Jua",
-    color: "#fff",
   },
   content: {
     padding: 16,

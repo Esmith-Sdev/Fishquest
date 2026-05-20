@@ -1,7 +1,6 @@
 import { Modal, View, Text, Pressable, StyleSheet, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { COLORS } from "../constants/theme";
+import { COLORS , RADIUS } from "../constants/theme";
 import { router } from "expo-router";
 import { useAuth } from "../context/AuthContext";
 import { enableBiometrics } from "../utils/AuthStorage";
@@ -9,7 +8,7 @@ import * as LocalAuthentication from "expo-local-authentication";
 import * as SecureStore from "expo-secure-store";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
-import { RADIUS } from "../constants/theme";
+
 import { fetchPreferences, updatePreferences } from "../api/users";
 import { registerForPushNotificationsAsync } from "../utils/pushNotifications";
 export default function SettingsModal({ visible, onClose, onLogOut }) {
@@ -20,7 +19,7 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
     notificationsEnabled: false,
     locationEnabled: false,
   });
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -42,7 +41,7 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
             locationEnabled: !!prefs.locationEnabled,
           });
         }
-      } catch (err) {
+      } catch {
         // ignore loading errors
       }
     }

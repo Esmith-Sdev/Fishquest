@@ -1,13 +1,12 @@
-import { View, Text, Image, StyleSheet, Pressable, Alert } from "react-native";
+import { View, Text, StyleSheet, Pressable, Alert , Animated } from "react-native";
 import { Link } from "expo-router";
 
-import { Animated } from "react-native";
+
 import { useRef, useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import { COLORS } from "../constants/theme";
 import { LEVELS } from "../data/levels.config";
-import Coin from "../assets/images/icons/Coin.png";
 import { useAuth } from "@/context/AuthContext";
 import ForecastModal from "./ForecastModal";
 export default function Topbar() {
@@ -31,19 +30,6 @@ export default function Topbar() {
     nextLevel && xpNeededForLevel > 0
       ? Math.min((xpIntoLevel / xpNeededForLevel) * 100, 100)
       : 100;
-  const currentDate = new Date();
-
-  const setDate = currentDate.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  const setTime = currentDate.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
   const slideAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(slideAnim, {
@@ -159,12 +145,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  left: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    flexShrink: 1,
-  },
   dropdown: {
     position: "absolute",
     top: 67,
@@ -191,17 +171,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 8,
   },
-  right: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-
-  smallText: {
-    color: "#fff",
-    fontSize: 8,
-  },
-  rankText: {
+  rankText: {
     color: "#fff",
     fontSize: 14,
     marginBottom: 6,
@@ -231,13 +201,5 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#000",
     fontWeight: "700",
-  },
-  iconButton: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  coin: {
-    width: 28,
-    height: 28,
   },
 });

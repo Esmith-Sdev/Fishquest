@@ -1,10 +1,10 @@
-import { View, Text, Pressable, StyleSheet, Image, Alert } from "react-native";
+import { View, Pressable, StyleSheet, Image, Alert , ScrollView } from "react-native";
 
 import TopNavbar from "../components/TopNavbar";
 import BottomNavbar from "../components/BottomNavbar";
 import DailyChallenges from "../components/DailyChallenges";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView } from "react-native";
+
 import { COLORS } from "@/constants/theme";
 export default function HomeScreen() {
   return (
@@ -41,32 +41,7 @@ const styles = StyleSheet.create({
   content: {
     paddingBottom: 100,
   },
-  title: {
-    fontSize: 30,
-    fontWeight: "800",
-    color: "#F6A623",
-    marginBottom: 10,
-  },
-  subtitle: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: "#008575",
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderRadius: 12,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontWeight: "700",
-  },
-
-  cardPressable: {
-    width: "90%",
-  },
-  horizontalCardContainer: {
+  horizontalCardContainer: {
     width: "100%",
     alignItems: "center",
     paddingHorizontal: 20,

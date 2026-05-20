@@ -6,7 +6,7 @@ import {
   Pressable,
   FlatList,
   Image,
-  ScrollView,
+  Alert,
 } from "react-native";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -23,7 +23,6 @@ import ConfirmModal from "../components/ConfirmModal";
 export default function Logs() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [deleteModeLogId, setDeleteModeLogId] = useState(null);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [selectedLogId, setSelectedLogId] = useState(null);
@@ -37,11 +36,11 @@ export default function Logs() {
           return;
         }
 
-        const data = await fetchLogs(token);
-        setLogs(Array.isArray(data) ? data : []);
-      } catch (err) {
-        setError(err.message || "Failed to load logs");
-      } finally {
+      const data = await fetchLogs(token);
+      setLogs(Array.isArray(data) ? data : []);
+    } catch (err) {
+      Alert.alert("Error", err.message || "Failed to load logs");
+    } finally {
         setLoading(false);
       }
     }
@@ -66,7 +65,7 @@ export default function Logs() {
       setLogs((prev) => prev.filter((log) => log._id !== logId));
       setDeleteModeLogId(null);
     } catch (err) {
-      setError(err.message || "Failed to delete log");
+      Alert.alert("Error", err.message || "Failed to delete log");
     }
   }
   return (
@@ -88,15 +87,39 @@ export default function Logs() {
             <View style={styles.sortRow}>
               <Text style={styles.sortLabel}>Sort By:</Text>
 
-              <Pressable style={styles.orangeButtonSmall}>
+              <Pressable
+                style={styles.orangeButtonSmall}
+                onPress={() =>
+                  Alert.alert(
+                    "Feature Unavailable",
+                    "This is not available in beta yet.",
+                  )
+                }
+              >
                 <Text style={styles.orangeButtonText}>Date</Text>
               </Pressable>
 
-              <Pressable style={styles.orangeButtonSmall}>
+              <Pressable
+                style={styles.orangeButtonSmall}
+                onPress={() =>
+                  Alert.alert(
+                    "Feature Unavailable",
+                    "This is not available in beta yet.",
+                  )
+                }
+              >
                 <Text style={styles.orangeButtonText}>Photo</Text>
               </Pressable>
 
-              <Pressable style={styles.orangeButtonSmall}>
+              <Pressable
+                style={styles.orangeButtonSmall}
+                onPress={() =>
+                  Alert.alert(
+                    "Feature Unavailable",
+                    "This is not available in beta yet.",
+                  )
+                }
+              >
                 <Text style={styles.orangeButtonText}>Location</Text>
               </Pressable>
             </View>
@@ -209,33 +232,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0D1B1E",
   },
-  loadingText: {
-    fontSize: 16,
-    color: "#fff",
-    fontFamily: "Jua",
-    marginTop: 10,
-  },
-  header: {
-    paddingTop: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.15)",
-    backgroundColor: COLORS.primary,
-  },
-  headerTitle: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    textAlign: "center",
-    fontSize: 24,
-    fontFamily: "Jua",
-    color: "#fff",
-    paddingHorizontal: 95,
-  },
   sortRow: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -266,10 +262,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Jua",
   },
-  content: {
-    padding: 12,
-    paddingBottom: 100,
-  },
   centerState: {
     flex: 1,
     alignItems: "center",
@@ -285,12 +277,6 @@ const styles = StyleSheet.create({
   subText: {
     color: "#ddd",
     fontSize: 14,
-    textAlign: "center",
-  },
-  errorText: {
-    color: "#ff7b7b",
-    fontSize: 16,
-    fontFamily: "Jua",
     textAlign: "center",
   },
   listContent: {
@@ -342,21 +328,6 @@ const styles = StyleSheet.create({
     marginVertical: 4,
 
     alignItems: "center",
-  },
-  orangeButton: {
-    backgroundColor: COLORS.secondary,
-    borderRadius: RADIUS.pill,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    minWidth: 92,
-    shadowColor: COLORS.secondaryDropShadow,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 1,
-    elevation: 4,
   },
   orangeButtonSmall: {
     backgroundColor: COLORS.secondary,

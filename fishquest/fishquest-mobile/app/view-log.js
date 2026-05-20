@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -25,29 +25,21 @@ import { BAIT } from "../data/bait.config";
 import { HOOKS } from "../data/hooks.config";
 import { POLES } from "../data/poles.config";
 import { WEIGHTS } from "../data/weight.config";
-import { STATE_ABBREVIATIONS } from "../data/states";
 import { COLORS, RADIUS } from "../constants/theme";
 import ImagePreviewModal from "../components/ImagePreviewModal";
 
 export default function ViewLog() {
-  const params = useLocalSearchParams();
   const { id } = useLocalSearchParams();
-  const [stateValue, setStateValue] = useState("");
   const [form, setForm] = useState({
     address: "",
     city: "",
     state: "",
   });
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiResult, setAiResult] = useState(null);
-  const [files, setFiles] = useState([]);
+  const [files] = useState([]);
   const [skunked, setSkunked] = useState(false);
   const [species, setSpecies] = useState(null);
   const [notes, setNotes] = useState("");
-  const [saving, setSaving] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [geoError, setGeoError] = useState("");
-  const [loadingLocation, setLoadingLocation] = useState(false);
   const [weight, setWeight] = useState("");
   const [length, setLength] = useState("");
   const [rigsLoading, setRigsLoading] = useState(true);
@@ -60,7 +52,6 @@ export default function ViewLog() {
   const [rigs, setRigs] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedWeather, setSelectedWeather] = useState(false);
-  const speciesDisabled = skunked || saving;
   const [show, setShow] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [challenge, setChallenge] = useState(null);
@@ -111,16 +102,11 @@ export default function ViewLog() {
   }, [rigs]);
 
   const selectedRig = hydratedRigs[selectedIndex];
-  const rigPresetId = selectedRig?._id;
-
   function handleCreateRig() {
     router.push({
       pathname: "/create-rig",
       params: {
         returnTo: "/create-log",
-        challengeId,
-        templateKey,
-        challengeTitle,
       },
     });
   }
@@ -192,17 +178,10 @@ export default function ViewLog() {
     }
   }, [id, rigsLoading, hydratedRigs]);
 
-  function getImageSource(file) {
-    if (!file) return null;
-    if (file.uri) return { uri: file.uri };
-    return file;
-  }
-
   const allImages = [
     ...uploadedImageUrls.map((url) => ({ uri: url, isRemote: true })),
     ...files.map((file) => ({ ...file, isRemote: false })),
   ];
-  const isGridFull = allImages.length >= 4;
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={styles.screen}>
@@ -327,6 +306,14 @@ export default function ViewLog() {
                 </View>
               )}
               <View style={styles.logForm}>
+                <View style={styles.logRow}>
+                  <Text style={styles.logLabel}>Challenge:</Text>
+                  <Text style={styles.challengeText}>
+                    {challenge?.title ||
+                      challenge?.templateKey ||
+                      "No Challenge"}
+                  </Text>
+                </View>
                 <View style={styles.checkboxRow}>
                   <Text style={styles.checkboxLabel}>
                     Skunked (No fish caught)
@@ -462,15 +449,6 @@ export default function ViewLog() {
                   </View>
                 </View>
 
-                <View style={styles.logRow}>
-                  <Text style={styles.logLabel}>Challenge:</Text>
-                  <Text style={styles.challengeText}>
-                    {challenge?.title ||
-                      challenge?.templateKey ||
-                      "No Challenge"}
-                  </Text>
-                </View>
-
                 <View style={styles.notesBox}>
                   <Text style={styles.notesText}>{notes || "No notes"}</Text>
                 </View>
@@ -499,25 +477,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0D1B1E",
   },
-  header: {
-    paddingTop: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: COLORS.primary,
-  },
-  headerTitle: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    textAlign: "center",
-    fontSize: 24,
-    fontFamily: "Jua",
-    color: "#fff",
-    paddingHorizontal: 95,
-  },
   content: {
     padding: 16,
     paddingBottom: 110,
@@ -528,12 +487,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
-  },
-  loadingText: {
-    fontSize: 16,
-    color: "#fff",
-    fontFamily: "Jua",
-    marginTop: 10,
   },
   orangeButton: {
     boxShadow: "0px 4px 0px #733800",
@@ -548,24 +501,6 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
     elevation: 4,
   },
-  blueButton: {
-    backgroundColor: COLORS.primary,
-    borderRadius: RADIUS.pill,
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    shadowColor: COLORS.primaryDropShadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 1,
-    elevation: 4,
-  },
-  disabledButton: {
-    opacity: 0.6,
-  },
-  smallActionBtn: {
-    minWidth: 64,
-    alignSelf: "flex-start",
-  },
   buttonText: {
     color: "#000",
     fontFamily: "Jua",
@@ -574,19 +509,6 @@ const styles = StyleSheet.create({
   },
   topArea: {
     gap: 16,
-  },
-  caret: {
-    color: "#fff",
-    fontSize: 20,
-  },
-  emptyState: {
-    paddingVertical: 40,
-    alignItems: "center",
-    gap: 14,
-  },
-  emptyText: {
-    fontSize: 18,
-    color: "#fff",
   },
   rigSection: {
     flexDirection: "row",
@@ -612,16 +534,6 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     fontFamily: "Jua",
     color: "#fff",
-  },
-  uploadImageContainer: {
-    width: "100%",
-    height: 140,
-    borderRadius: 12,
-    backgroundColor: "#dedede",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 10,
-    borderColor: COLORS.primary,
   },
   rigImageContainer: {
     width: "100%",
@@ -658,12 +570,7 @@ const styles = StyleSheet.create({
     width: "90%",
     height: "90%",
   },
-
-  editButton: {
-    alignSelf: "flex-start",
-    minWidth: 70,
-  },
-  noRigBox: {
+  noRigBox: {
     borderWidth: 1,
     borderStyle: "dashed",
     borderColor: "#ccc",
@@ -678,28 +585,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
   },
-
-  speciesFieldWrap: {
-    flex: 1,
-    zIndex: 10000,
-    elevation: 40,
-    minWidth: 200,
-  },
-
-  speciesRow: {
-    gap: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    zIndex: 9999,
-    elevation: 30,
-  },
-  uploadText: {
-    color: "#000",
-    fontFamily: "Jua",
-    fontSize: 12,
-    marginBottom: 8,
-  },
-  imageGrid: {
+  imageGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 16,
@@ -727,37 +613,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
   },
-  removeImageBtn: {
-    position: "absolute",
-    top: 6,
-    right: 6,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "rgba(0,0,0,0.75)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 2,
-  },
-  largeSquare: {
-    width: 100,
-    height: 100,
-    backgroundColor: "#dedede",
-    borderRadius: 15,
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-  },
   gridImage: {
     width: "100%",
     height: "100%",
     borderRadius: 15,
-  },
-  addImageText: {
-    color: "#000",
-    fontFamily: "Jua",
-    fontSize: 14,
-    marginBottom: 4,
   },
   logForm: {
     padding: 8,
@@ -802,11 +661,6 @@ const styles = StyleSheet.create({
   fieldFlex: {
     minWidth: 0,
   },
-  inlineField: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
   pillDisplay: {
     width: 150,
     backgroundColor: "#dedede",
@@ -828,14 +682,6 @@ const styles = StyleSheet.create({
     fontFamily: "Jua",
     textAlign: "center",
   },
-  pillSelectSmall: {
-    width: 70,
-    backgroundColor: "#dedede",
-    borderRadius: 50,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    alignItems: "center",
-  },
   pillInputSmall: {
     width: 60,
     backgroundColor: "#dedede",
@@ -846,97 +692,10 @@ const styles = StyleSheet.create({
     fontFamily: "Jua",
     textAlign: "center",
   },
-  pillInputMedium: {
-    width: 140,
-    backgroundColor: "#dedede",
-    borderRadius: 50,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    color: "#000",
-    fontFamily: "Jua",
-    textAlign: "center",
-  },
-  pillInputTime: {
-    width: 90,
-    backgroundColor: "#dedede",
-    borderRadius: 50,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    color: "#000",
-    fontFamily: "Jua",
-    textAlign: "center",
-  },
-  pillSelectTime: {
-    width: 70,
-    backgroundColor: "#dedede",
-    borderRadius: 50,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    alignItems: "center",
-  },
-  pillInputFull: {
-    backgroundColor: "#dedede",
-    borderRadius: 50,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    color: "#000",
-    fontFamily: "Jua",
-  },
-  pillInputCity: {
-    width: 160,
-    backgroundColor: "#dedede",
-    borderRadius: 50,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    color: "#000",
-    fontFamily: "Jua",
-  },
-  disabledField: {
-    opacity: 0.6,
-  },
-  selectText: {
-    color: "#000",
-    fontFamily: "Jua",
-    textAlign: "center",
-  },
-  stateDropdownWrap: {
-    zIndex: 9999,
-    elevation: 20,
-  },
-  locationRow: {
-    marginVertical: 4,
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 15,
-    zIndex: 999,
-  },
   logColumn: {
     gap: 10,
     flexDirection: "column",
     zIndex: 999,
-  },
-  stateChips: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  stateChip: {
-    backgroundColor: "#dedede",
-    borderRadius: 999,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-  },
-  stateChipActive: {
-    backgroundColor: COLORS.secondary,
-  },
-  stateChipText: {
-    color: "#000",
-    fontFamily: "Jua",
-    fontSize: 14,
-  },
-  geoError: {
-    color: "red",
-    marginTop: 4,
-    fontFamily: "Jua",
   },
 
   challengeText: {

@@ -6,19 +6,16 @@ import * as LocalAuthentication from "expo-local-authentication";
 import GradientBackground from "../components/GradientBackground";
 import {
   Alert,
-  Text,
   StyleSheet,
   View,
   Keyboard,
   TouchableWithoutFeedback,
-  Modal,
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import LoadingIndicator from "../components/LoadingIndicator";
-import { COLORS } from "../constants/theme";
 import ConfirmModal from "../components/ConfirmModal";
 const API_URL = "https://fishquest.onrender.com";
 export default function LoginScreen() {
@@ -164,12 +161,6 @@ export default function LoginScreen() {
   );
 }
 const styles = StyleSheet.create({
-  center: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-  },
-
   content: {
     flexGrow: 1,
     justifyContent: "center",
@@ -180,11 +171,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
-  },
-  loadingText: {
-    fontSize: 16,
-    color: "#fff",
-    fontFamily: "Jua",
-    marginTop: 10,
   },
 });
