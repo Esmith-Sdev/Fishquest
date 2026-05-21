@@ -561,7 +561,7 @@ export default function UpdateLog() {
                     style={{ flexDirection: "row", gap: 12, marginTop: 12 }}
                   >
                     <Pressable style={styles.blueButton} onPress={pickImages}>
-                      <Text style={styles.uploadText}>Upload Images</Text>
+                      <Text style={styles.buttonText}>Upload Images</Text>
                     </Pressable>
                     <Pressable style={styles.orangeButton} onPress={takePhoto}>
                       <Text style={styles.buttonText}>Take Photo</Text>
@@ -597,6 +597,7 @@ export default function UpdateLog() {
                       <Pressable
                         style={styles.addCameraBtn}
                         onPress={takePhoto}
+                        hitSlop={10}
                       >
                         <Ionicons name="camera" size={18} color="#000" />
                       </Pressable>
@@ -1020,6 +1021,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   orangeButton: {
+    boxShadow: "0px 4px 0px #733800",
+
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
@@ -1035,7 +1038,7 @@ const styles = StyleSheet.create({
 
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.pill,
-    paddingVertical: 4,
+    paddingVertical: 6,
     paddingHorizontal: 12,
     shadowColor: COLORS.primaryDropShadow,
     shadowOffset: { width: 0, height: 4 },
@@ -1196,13 +1199,14 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   addCameraBtn: {
+    backgroundColor: "#fff",
     position: "absolute",
-    bottom: 8,
-    right: 8,
+    opacity: 0.5,
+    bottom: 4,
+    right: 4,
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: COLORS.secondary,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 3,

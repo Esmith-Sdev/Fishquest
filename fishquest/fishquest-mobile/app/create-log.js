@@ -585,6 +585,7 @@ export default function CreateLog() {
                       <Pressable
                         style={styles.addCameraBtn}
                         onPress={takePhoto}
+                        hitSlop={10}
                       >
                         <Ionicons name="camera" size={18} color="#000" />
                       </Pressable>
@@ -1181,10 +1182,11 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   addCameraBtn: {
-    backgroundColor: COLORS.secondary,
+    backgroundColor: "#fff",
     position: "absolute",
-    bottom: 8,
-    right: 8,
+    opacity: 0.5,
+    bottom: 4,
+    right: 4,
     width: 32,
     height: 32,
     borderRadius: 16,
