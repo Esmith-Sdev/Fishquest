@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { View, Text, Modal, StyleSheet, Pressable, Image } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { COLORS, RADIUS } from "../constants/theme";
+
+import { COLORS } from "../constants/theme";
 import { getCurrentLocation } from "../utils/getCurrentLocation";
 import LoadingIndicator from "./LoadingIndicator";
 
@@ -161,47 +161,10 @@ const styles = StyleSheet.create({
     fontFamily: "Jua",
     paddingBottom: 15,
   },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingTop: 25,
-  },
-
-  orangeButton: {
-    backgroundColor: COLORS.secondary,
-    borderRadius: RADIUS.pill,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    shadowColor: COLORS.secondaryDropShadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 1,
-    elevation: 4,
-    zIndex: 10,
-  },
-  weatherImage: {
+  weatherImage: {
     width: 90,
     height: 90,
     resizeMode: "contain",
     marginTop: 16,
-  },
-  blueButton: {
-    backgroundColor: COLORS.primary,
-    borderRadius: RADIUS.pill,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    shadowColor: COLORS.primaryDropShadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 1,
-    elevation: 4,
-    zIndex: 10,
-  },
-  buttonText: {
-    color: "#000",
-    fontFamily: "Jua",
-    fontSize: 15,
-    textAlign: "center",
   },
 });

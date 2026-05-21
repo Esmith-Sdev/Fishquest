@@ -37,14 +37,14 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/fishquest-android-icon.png.png"
+      "favicon": "./assets/images/fishquest-android-icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/fishquest-android-icon.png.png",
+          "image": "./assets/images/fishquest-android-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",

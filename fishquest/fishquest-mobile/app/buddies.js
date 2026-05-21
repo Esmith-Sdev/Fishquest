@@ -3,9 +3,8 @@ import {
   Text,
   Pressable,
   StyleSheet,
-  Image,
   FlatList,
-} from "react-native";
+ ScrollView } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { router } from "expo-router";
 import { useState, useEffect } from "react";
@@ -13,8 +12,7 @@ import TopNavbarSecondary from "../components/TopNavbarSecondary";
 import BottomNavbar from "../components/BottomNavbar";
 import { Entypo } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
-import { ScrollView } from "react-native";
+
 import AddBuddyModal from "../components/AddBuddyModal";
 import { COLORS, RADIUS } from "../constants/theme";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -43,20 +41,6 @@ export default function Buddies() {
     } catch {
       setRequests([]);
     }
-  }
-  async function acceptFriendRequest(requestId) {
-    const res = await fetch(
-      `${API_URL}/api/buddies/requests/${requestId}/accept`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-
-    const data = await res.json();
-    return data;
   }
   async function fetchFriends() {
     try {
@@ -132,7 +116,7 @@ export default function Buddies() {
                 ListEmptyComponent={
                   <View style={styles.centerState}>
                     <Text style={styles.stateText}>
-                      You don't have any buddies yet
+                      You do not have any buddies yet
                     </Text>
                     <Text style={styles.subText}>
                       Add some buddies to see them here.
@@ -199,20 +183,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0D1B1E",
   },
-  content: {
-    paddingBottom: 100,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: "800",
-    color: "#F6A623",
-    marginBottom: 10,
-  },
-  subtitle: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    marginBottom: 20,
-  },
   notificationRow: {
     flexDirection: "row",
     justifyContent: "flex-start",
@@ -224,89 +194,7 @@ const styles = StyleSheet.create({
     fontFamily: "Rubik",
     fontSize: 12,
   },
-  button: {
-    backgroundColor: "#008575",
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderRadius: 12,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontWeight: "700",
-  },
-
-  cardPressable: {
-    width: "90%",
-  },
-  horizontalCard: {
-    width: "100%",
-    height: 100,
-    borderRadius: 15,
-    overflow: "hidden",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  horizontalCardImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 15,
-  },
-  loadingText: {
-    fontSize: 16,
-    color: "#fff",
-    fontFamily: "Jua",
-    marginTop: 10,
-  },
-  header: {
-    paddingTop: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.15)",
-    backgroundColor: COLORS.primary,
-  },
-  headerTitle: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    textAlign: "center",
-    fontSize: 24,
-    fontFamily: "Jua",
-    color: "#fff",
-    paddingHorizontal: 95,
-  },
-  sortRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 18,
-    paddingHorizontal: 12,
-  },
-  deleteBtn: {
-    position: "absolute",
-    top: 4,
-    right: 4,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "rgba(0,0,0,0.8)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 10,
-    elevation: 10,
-  },
-  sortLabel: {
-    color: "#fff",
-    fontSize: 15,
-    fontFamily: "Jua",
-  },
-  content: {
+  content: {
     padding: 12,
     paddingBottom: 100,
   },
@@ -325,12 +213,6 @@ const styles = StyleSheet.create({
   subText: {
     color: "#ddd",
     fontSize: 14,
-    textAlign: "center",
-  },
-  errorText: {
-    color: "#ff7b7b",
-    fontSize: 16,
-    fontFamily: "Jua",
     textAlign: "center",
   },
   listContent: {
@@ -369,12 +251,6 @@ const styles = StyleSheet.create({
     color: "#000",
     textAlign: "center",
   },
-  cardSubtitle: {
-    fontSize: 10,
-    fontWeight: "600",
-    color: "#000",
-    textAlign: "center",
-  },
   cardImage: {
     width: 72,
     height: 72,
@@ -389,20 +265,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     minWidth: 92,
-    shadowColor: COLORS.secondaryDropShadow,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 1,
-    elevation: 4,
-  },
-  orangeButtonSmall: {
-    backgroundColor: COLORS.secondary,
-    borderRadius: RADIUS.pill,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
     shadowColor: COLORS.secondaryDropShadow,
     shadowOffset: {
       width: 0,

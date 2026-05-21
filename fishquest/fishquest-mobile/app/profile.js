@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Pressable, Image, Alert } from "react-native";
 import { router } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomNavbar from "../components/BottomNavbar";
 import { COLORS, RADIUS } from "../constants/theme";
@@ -11,7 +10,6 @@ import SettingsModal from "../components/SettingsModal";
 import LoadingIndicator from "../components/LoadingIndicator";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export default function Profile() {
-  const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(true);
   const { user, token } = useAuth();
   const [stats, setStats] = useState({
@@ -54,37 +52,6 @@ export default function Profile() {
   }, [token]);
   const [showModal, setShowModal] = useState(false);
 
-  const titles = [
-    "Minnow Wrangler",
-    "Pond Rookie",
-    "Bobber Buddy",
-    "Reel Recruit",
-    "Hook Apprentice",
-    "Line Caster",
-    "Bait Specialist",
-    "Tackle Technician",
-    "Lure Adept",
-    "Dock Adventurer",
-    "Shoreline Scout",
-    "River Ranger",
-    "Lake Legend",
-    "Deepwater Pro",
-    "Tide Tamer",
-    "Master Angler",
-    "Mythic Fisher",
-    "King of the Catch",
-    "Reelmaster Supreme",
-    "Fish God",
-  ];
-
-  const rank = 1;
-  const rankTitle = titles[rank - 1];
-  const xp = 60;
-
-  function handleLogout() {
-    logout();
-    router.replace("/login");
-  }
   function openModal() {
     setShowModal(true);
   }
@@ -266,16 +233,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0D1B1E",
   },
-  header: {
-    paddingTop: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e5e5",
-  },
   title: {
     textAlign: "center",
     fontSize: 24,
@@ -363,11 +320,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 12,
   },
-  loadingText: {
-    color: "#fff",
-    fontFamily: "Jua",
-    fontSize: 18,
-  },
   statLabel: {
     color: "#fff",
     fontSize: 16,
@@ -377,50 +329,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontFamily: "Jua",
-  },
-  rankContainer: {
-    marginTop: 24,
-    padding: 16,
-    width: "100%",
-  },
-  rankText: {
-    color: "#fff",
-    fontSize: 18,
-    fontFamily: "Jua",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  progressTrack: {
-    width: "100%",
-    height: 18,
-    backgroundColor: "#d9d9d9",
-    borderRadius: 999,
-    overflow: "hidden",
-    justifyContent: "center",
-    borderColor: "#000",
-    borderWidth: 1,
-    position: "relative",
-  },
-  progressFill: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: COLORS.secondary,
-    borderRadius: 999,
-  },
-  progressLabel: {
-    textAlign: "center",
-    fontSize: 11,
-    color: "#000",
-    fontFamily: "Jua",
-  },
-  levelText: {
-    color: "#fff",
-    fontSize: 18,
-    fontFamily: "Jua",
-    textAlign: "center",
-    marginTop: 8,
   },
   orangeButton: {
     backgroundColor: COLORS.secondary,
@@ -459,38 +367,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Jua",
     textAlign: "center",
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  modalCard: {
-    width: "100%",
-    maxWidth: 360,
-    backgroundColor: "#fff",
-    borderRadius: 18,
-    padding: 16,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 22,
-    fontFamily: "Jua",
-    color: "#000",
-  },
-  modalBody: {
-    minHeight: 40,
-    marginTop: 10,
-  },
-  modalFooter: {
-    marginTop: 12,
-    alignItems: "flex-end",
   },
   tipsColumn: {
     flexDirection: "column",

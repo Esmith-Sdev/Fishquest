@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import ChallengeCard from "./ChallengeCard";
 import TimedChallengeCard from "./TimedChallengeCard";
 import DisabledChallengeCard from "../components/DisabledChallengeCard";
-import { COLORS, RADIUS } from "../constants/theme";
+import { RADIUS } from "../constants/theme";
 import { getToken } from "../api/auth";
 import LoadingIndicator from "./LoadingIndicator";
 const API_URL = "https://fishquest.onrender.com";
@@ -119,41 +119,10 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     textDecorationLine: "underline",
   },
-  shadowWrapper: {
-    marginTop: 2,
-    alignSelf: "center",
-  },
-  button: {
-    backgroundColor: COLORS.secondary,
-    borderRadius: RADIUS.pill,
-    paddingVertical: 4,
-    paddingHorizontal: 18,
-    minWidth: 80,
-    marginTop: 2,
-    shadowColor: COLORS.secondaryDropShadow,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 1,
-    elevation: 4,
-  },
-  buttonText: {
-    color: "#000",
-    fontSize: 16,
-    fontFamily: "Jua",
-    textAlign: "center",
-  },
   centerState: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
-  },
-  loadingText: {
-    color: "#000",
-    fontFamily: "Jua",
-    fontSize: 18,
   },
 });

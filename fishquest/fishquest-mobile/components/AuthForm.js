@@ -5,11 +5,9 @@ import {
   TextInput,
   Pressable,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+ Image } from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
-import { Image } from "react-native";
+
 import { Link } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 export default function AuthForm({
@@ -68,8 +66,10 @@ export default function AuthForm({
       </View>
       <View style={styles.footerRow}>
         <Text style={styles.footerText}>{footerText} </Text>
-        <Link href={footerHref} style={styles.link}>
-          {footerLinkText}
+        <Link href={footerHref} asChild>
+          <Pressable hitSlop={20}>
+            <Text style={styles.link}>{footerLinkText}</Text>
+          </Pressable>
         </Link>
       </View>
       {errorText && (
@@ -79,23 +79,11 @@ export default function AuthForm({
   );
 }
 
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  card: {
+const styles = StyleSheet.create({  card: {
     borderRadius: 20,
     padding: 24,
     alignItems: "center",
     width: "100%",
-  },
-  logo: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: "#F6A623",
-    marginBottom: 8,
-    textAlign: "center",
   },
 
   biometricButton: {
@@ -135,7 +123,7 @@ const styles = StyleSheet.create({
   footerRow: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 18,
+    marginTop: 25,
     flexWrap: "wrap",
   },
   footerText: {

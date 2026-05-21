@@ -12,11 +12,10 @@ import BottomNavbar from "../components/BottomNavbar";
 import { fetchRigPresets } from "../api/rigPresets";
 import { fetchRigStats } from "../api/rigStats";
 import { getToken } from "../api/auth";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import Bobber from "../assets/images/Bobbers/bobber.png";
 import NoBobber from "../assets/images/Bobbers/no-bobber.png";
-import { COLORS } from "../constants/theme";
-import { RADIUS } from "../constants/theme";
+import { COLORS , RADIUS } from "../constants/theme";
+
 import { BAIT } from "../data/bait.config";
 import { HOOKS } from "../data/hooks.config";
 import { POLES } from "../data/poles.config";
@@ -288,34 +287,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0D1B1E",
   },
-  loadingText: {
-    fontSize: 16,
-    color: "#fff",
-    fontFamily: "Jua",
-    marginTop: 10,
-  },
-  header: {
-    paddingTop: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-
-    backgroundColor: COLORS.primary,
-  },
-
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "400",
-    fontFamily: "Jua",
-    color: "#fff",
-    left: 0,
-    right: 0,
-    position: "absolute",
-    textAlign: "center",
-  },
-  content: {
+  content: {
     padding: 16,
     paddingBottom: 100,
   },
@@ -393,12 +365,7 @@ const styles = StyleSheet.create({
     width: "90%",
     height: "90%",
   },
-
-  editButton: {
-    alignSelf: "flex-start",
-    minWidth: 70,
-  },
-  orangeButton: {
+  orangeButton: {
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 4,

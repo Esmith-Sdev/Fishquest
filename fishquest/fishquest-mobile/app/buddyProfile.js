@@ -236,7 +236,6 @@ const styles = StyleSheet.create({
   },
   profileCard: {
     backgroundColor: COLORS.primary,
-    borderRadius: RADIUS.card,
     padding: 20,
     alignItems: "center",
     marginBottom: 20,
@@ -293,7 +292,6 @@ const styles = StyleSheet.create({
   },
   detailsCard: {
     backgroundColor: "#dedede",
-    borderRadius: 15,
     padding: 18,
     borderRadius: 15,
     marginBottom: 20,

@@ -6,7 +6,7 @@ import {
   Pressable,
   Image,
   Alert,
-} from "react-native";
+ Keyboard } from "react-native";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,7 +17,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import * as ImagePicker from "expo-image-picker";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { uploadImages } from "../api/uploads";
-import { Keyboard } from "react-native";
+
 import { getToken } from "../api/auth";
 import { router } from "expo-router";
 const API_URL =
@@ -352,18 +352,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 6,
   },
-  descriptionInput: {
-    backgroundColor: "#dedede",
-    paddingHorizontal: 5,
-    paddingVertical: 5,
-    textAlignVertical: "top",
-    fontSize: 14,
-    lineHeight: 20,
-    fontFamily: "Jua",
-    borderRadius: 15,
-    width: "100%",
-    height: 150,
-  },
   input: {
     fontSize: 14,
     fontFamily: "Jua",
@@ -379,31 +367,6 @@ const styles = StyleSheet.create({
   label: {
     color: "#fff",
     fontFamily: "Jua",
-  },
-  savingText: {
-    marginTop: 12,
-    color: "#fff",
-    fontFamily: "Jua",
-    fontSize: 18,
-  },
-  header: {
-    paddingTop: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: COLORS.primary,
-  },
-  headerTitle: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    textAlign: "center",
-    fontSize: 24,
-    fontFamily: "Jua",
-    color: "#fff",
-    paddingHorizontal: 95,
   },
   content: {
     padding: 16,
@@ -438,18 +401,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "Jua",
     fontSize: 14,
-  },
-  centerState: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 12,
-  },
-  loadingText: {
-    fontSize: 16,
-    color: "#fff",
-    fontFamily: "Jua",
-    marginTop: 10,
   },
 
   orangeButton: {
@@ -494,40 +445,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
     borderColor: COLORS.primary,
-  },
-  rigImageContainer: {
-    width: "100%",
-    height: 140,
-    borderRadius: 12,
-    backgroundColor: "#f3f3f3",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-    marginBottom: 10,
-  },
-  rigImage: {
-    width: "100%",
-    height: "100%",
-  },
-  optionsGrid: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 28,
-  },
-  optionColumn: {
-    gap: 12,
-  },
-  smallSquare: {
-    width: 70,
-    height: 70,
-    borderRadius: 12,
-    backgroundColor: "#dedede",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  optionImage: {
-    width: "90%",
-    height: "90%",
   },
 });

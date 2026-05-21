@@ -8,7 +8,6 @@ import {
   TextInput,
   Alert,
   FlatList,
-  Keyboard,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -43,8 +42,7 @@ import ConfettiCannon from "react-native-confetti-cannon";
 import LoadingIndicator from "../components/LoadingIndicator";
 export default function CreateLog() {
   const params = useLocalSearchParams();
-  const [stateValue, setStateValue] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [form, setForm] = useState({
     address: "",
     city: "",
@@ -69,8 +67,6 @@ export default function CreateLog() {
   const [lengthUnit, setLengthUnit] = useState("IN");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [speciesDropdownOpen, setSpeciesDropdownOpen] = useState(false);
-  const rigCreated = params.rigCreated === "true";
   const [timeValue, setTimeValue] = useState(() => {
     const d = new Date();
     const h24 = d.getHours();
@@ -162,9 +158,6 @@ export default function CreateLog() {
         challengeTitle,
       },
     });
-  }
-  function dismissKeyboardBeforeDropdown() {
-    Keyboard.dismiss();
   }
   async function ensureUploadedImages() {
     if (uploadedImageUrls.length) return uploadedImageUrls;
@@ -611,6 +604,7 @@ export default function CreateLog() {
                   {aiLoading ? "Identifying..." : "Identify Fish with AI"}
                 </Text>
               </Pressable>
+
               {aiResult?.speciesName ? (
                 <View style={{ marginTop: 8 }}>
                   <Text style={styles.aiLabel}>
@@ -632,6 +626,12 @@ export default function CreateLog() {
                 </View>
               ) : null}
               <View style={styles.logForm}>
+                <View style={styles.logRow}>
+                  <Text style={styles.logLabel}>Challenge:</Text>
+                  <Text style={styles.challengeText}>
+                    {challengeTitle || "No Challenge"}
+                  </Text>
+                </View>
                 <Pressable
                   style={styles.checkboxRow}
                   onPress={() => setSkunked((prev) => !prev)}
@@ -658,7 +658,6 @@ export default function CreateLog() {
                         disabled={speciesDisabled}
                         value={species}
                         onPick={setSpecies}
-                        onOpenChange={setSpeciesDropdownOpen}
                       />
                     </View>
                   </View>
@@ -804,7 +803,7 @@ export default function CreateLog() {
                   <Text style={styles.logLabel}>Time:</Text>
                   <View style={styles.inlineField}>
                     <Pressable
-                      style={styles.pillInputMedium}
+                      style={styles.pillInputSmall}
                       onPress={() => setShowTimePicker(true)}
                     >
                       <Text style={styles.selectText}>{timeValue}</Text>
@@ -820,9 +819,9 @@ export default function CreateLog() {
                   </View>
                 </View>
                 <View style={styles.logRow}>
-                  <View style={styles.logColumn}>
-                    <Text style={styles.logLabel}>Weather:</Text>
+                  <Text style={styles.logLabel}>Weather:</Text>
 
+                  <View>
                     <FlatList
                       data={weatherOptions}
                       horizontal
@@ -905,12 +904,7 @@ export default function CreateLog() {
                     <Text style={styles.geoError}>{geoError}</Text>
                   ) : null}
                 </View>
-                <View style={styles.logRow}>
-                  <Text style={styles.logLabel}>Challenge:</Text>
-                  <Text style={styles.challengeText}>
-                    {challengeTitle || "No Challenge"}
-                  </Text>
-                </View>
+
                 <View style={styles.notesBlock}>
                   <TextInput
                     multiline
@@ -1146,22 +1140,20 @@ const styles = StyleSheet.create({
   },
 
   speciesFieldWrap: {
-    flex: 1,
-    zIndex: 10000,
-    elevation: 40,
-    minWidth: 200,
+    width: 230,
+
+    borderRadius: 50,
+
+    paddingHorizontal: 4,
+    color: "#000",
+    fontFamily: "Jua",
+    textAlign: "center",
   },
   speciesRow: {
     gap: 8,
     flexDirection: "row",
     alignItems: "center",
     zIndex: 9999,
-  },
-  uploadText: {
-    color: "#000",
-    fontFamily: "Jua",
-    fontSize: 12,
-    marginBottom: 8,
   },
   imageGrid: {
     flexDirection: "row",
@@ -1258,6 +1250,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "Jua",
     fontSize: 16,
+    flex: 1,
   },
   aiLabel: {
     color: "#fff",
@@ -1284,14 +1277,15 @@ const styles = StyleSheet.create({
   },
   pillSelectSmall: {
     width: 70,
+    height: 33,
     backgroundColor: "#dedede",
     borderRadius: 50,
-    paddingVertical: 8,
+    justifyContent: "center",
     paddingHorizontal: 12,
     alignItems: "center",
   },
   pillInputMedium: {
-    width: 140,
+    width: 150,
     backgroundColor: "#dedede",
     borderRadius: 50,
     paddingVertical: 8,
@@ -1356,9 +1350,10 @@ const styles = StyleSheet.create({
   },
 
   challengeText: {
-    color: "#fff",
-    opacity: 0.9,
+    color: COLORS.secondary,
+    opacity: 1,
     fontWeight: "600",
+    paddingVertical: 10,
   },
   notesBlock: {
     marginTop: 6,
