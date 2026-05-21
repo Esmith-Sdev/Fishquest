@@ -218,6 +218,8 @@ export default function ViewLog() {
           showButton={true}
           backRoute="/logs"
         />
+        <BottomNavbar />
+
         {loadingLog ? (
           <View style={styles.centerState}>
             <LoadingIndicator text="Loading Log" color="#fff" />
@@ -488,7 +490,6 @@ export default function ViewLog() {
           images={allImages.map((img) => ({ uri: img.uri }))}
           imageIndex={selectedImageIndex}
         />
-        <BottomNavbar />
       </View>
     </SafeAreaView>
   );

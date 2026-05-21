@@ -23,6 +23,7 @@ import { createCatchLog } from "../api/logs";
 import { getToken } from "../api/auth";
 import { fetchRigPresets } from "../api/rigPresets";
 import { identifyFish } from "../api/identifyFish";
+import { savePendingCatchLog, syncPendingCatchLogs } from "../api/offlineLogs";
 import Bobber from "../assets/images/Bobbers/bobber.png";
 import NoBobber from "../assets/images/Bobbers/no-bobber.png";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
@@ -286,6 +287,29 @@ export default function CreateLog() {
     setFiles((prev) => [...prev, ...picked.slice(0, room)]);
   }
 
+  async function takePhoto() {
+    if (isGridFull) return;
+
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert(
+        "Camera permission required",
+        "Please allow access to your camera to take photos.",
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      quality: 0.8,
+    });
+
+    const picked = getPickerAssets(result);
+    if (!picked.length) return;
+
+    const room = 4 - files.length;
+    setFiles((prev) => [...prev, ...picked.slice(0, room)]);
+  }
+
   function getImageSource(file) {
     if (!file) return null;
     if (file.uri) return { uri: file.uri };
@@ -316,8 +340,6 @@ export default function CreateLog() {
         return;
       }
 
-      const urls = await ensureUploadedImages();
-
       const selectedSpecies = skunked
         ? null
         : {
@@ -329,7 +351,6 @@ export default function CreateLog() {
         rigPresetId,
         date: selectedDate.toISOString(),
         notes,
-        imageUrls: urls,
         skunked,
         weather: selectedWeather,
         address: form.address,
@@ -355,24 +376,52 @@ export default function CreateLog() {
             }),
       };
 
-      const result = await createCatchLog(payload, token);
-
-      await refreshUserStats();
-
-      if (result.completedChallenges?.length > 0) {
-        setShowConfetti(true);
-        Alert.alert(
-          "Challenge Complete!",
-          `You completed ${result.completedChallenges.length} challenge(s) and earned ${result.challengeXp || 0} XP!`,
-          [
-            {
-              text: "OK",
-              onPress: () => router.replace("/logs"),
-            },
-          ],
+      try {
+        const urls = await ensureUploadedImages();
+        const result = await createCatchLog(
+          { ...payload, imageUrls: urls },
+          token,
         );
-      } else {
-        router.replace("/logs");
+
+        await refreshUserStats();
+        await syncPendingCatchLogs(token);
+
+        if (result.completedChallenges?.length > 0) {
+          setShowConfetti(true);
+          Alert.alert(
+            "Challenge Complete!",
+            `You completed ${result.completedChallenges.length} challenge(s) and earned ${result.challengeXp || 0} XP!`,
+            [
+              {
+                text: "OK",
+                onPress: () => router.replace("/logs"),
+              },
+            ],
+          );
+        } else {
+          router.replace("/logs");
+        }
+      } catch (err) {
+        const message = err?.message || "";
+        const shouldQueueOffline =
+          err?.status >= 500 ||
+          /network request failed|failed to fetch|network error/i.test(message);
+
+        if (shouldQueueOffline) {
+          await savePendingCatchLog(payload, files);
+          Alert.alert(
+            "Offline saved",
+            "Your log was saved locally and will sync automatically when a connection is available.",
+            [
+              {
+                text: "OK",
+                onPress: () => router.replace("/logs"),
+              },
+            ],
+          );
+        } else {
+          throw err;
+        }
       }
     } catch (err) {
       Alert.alert("Error", err.message || "Create log failed");
@@ -402,6 +451,7 @@ export default function CreateLog() {
           disabled={saving}
           loading={saving}
         />
+        <BottomNavbar />
         {loading || rigsLoading ? (
           <View style={styles.centerState}>
             <LoadingIndicator text="Loading Log" color="#fff" />
@@ -502,16 +552,19 @@ export default function CreateLog() {
                 )}
               </View>
               {files.length === 0 ? (
-                <Pressable
-                  style={styles.uploadImageContainer}
-                  onPress={pickImages}
-                >
+                <View style={styles.uploadImageContainer}>
                   <Ionicons name="camera" size={50} color="#000" />
-
-                  <Pressable style={styles.blueButton} onPress={pickImages}>
-                    <Text style={styles.buttonText}>Upload Images</Text>
-                  </Pressable>
-                </Pressable>
+                  <View
+                    style={{ flexDirection: "row", gap: 12, marginTop: 12 }}
+                  >
+                    <Pressable style={styles.blueButton} onPress={pickImages}>
+                      <Text style={styles.buttonText}>Upload Images</Text>
+                    </Pressable>
+                    <Pressable style={styles.orangeButton} onPress={takePhoto}>
+                      <Text style={styles.buttonText}>Take Photo</Text>
+                    </Pressable>
+                  </View>
+                </View>
               ) : (
                 <View style={styles.imageGrid}>
                   {files.map((file, i) => (
@@ -536,6 +589,12 @@ export default function CreateLog() {
                         size={46}
                         color={COLORS.primary}
                       />
+                      <Pressable
+                        style={styles.addCameraBtn}
+                        onPress={takePhoto}
+                      >
+                        <Ionicons name="camera" size={18} color="#000" />
+                      </Pressable>
                     </Pressable>
                   )}
                 </View>
@@ -868,7 +927,6 @@ export default function CreateLog() {
                 <Text style={styles.rigsError}>{rigsError}</Text>
               ) : null}
             </KeyboardAwareScrollView>
-            <BottomNavbar />
           </>
         )}
         {showDatePicker && (
@@ -963,6 +1021,8 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   blueButton: {
+    boxShadow: "0px 4px 0px #003f73",
+
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
@@ -1127,6 +1187,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 2,
+  },
+  addCameraBtn: {
+    backgroundColor: COLORS.secondary,
+    position: "absolute",
+    bottom: 8,
+    right: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 3,
   },
   largeSquare: {
     width: 100,

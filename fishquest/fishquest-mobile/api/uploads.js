@@ -19,9 +19,11 @@ export async function uploadImages(files, token) {
     body: formData,
   });
 
-  const data = await res.json();
+  const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(data.error || "Upload failed");
+    const error = new Error(data.error || "Upload failed");
+    error.status = res.status;
+    throw error;
   }
 
   return data.urls;

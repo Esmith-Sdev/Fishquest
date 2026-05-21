@@ -359,6 +359,26 @@ export default function UpdateLog() {
     setFiles((prev) => [...prev, ...picked.slice(0, room)]);
   }
 
+  async function takePhoto() {
+    if (isGridFull) return;
+
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert(
+        "Camera permission required",
+        "Please allow access to your camera to take photos.",
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({ quality: 0.8 });
+    const picked = getPickerAssets(result);
+    if (!picked.length) return;
+
+    const room = 4 - allImages.length;
+    setFiles((prev) => [...prev, ...picked.slice(0, room)]);
+  }
+
   function getImageSource(file) {
     if (!file) return null;
     if (file.uri) return { uri: file.uri };
@@ -549,16 +569,19 @@ export default function UpdateLog() {
               </View>
 
               {allImages.length === 0 ? (
-                <Pressable
-                  style={styles.uploadImageContainer}
-                  onPress={pickImages}
-                >
-                  <Ionicons name="camera" size={25} color="#000" />
-                  <Text style={styles.uploadText}>Select Image to Upload</Text>
-                  <Pressable style={styles.blueButton} onPress={pickImages}>
-                    <Text style={styles.uploadText}>Select Image</Text>
-                  </Pressable>
-                </Pressable>
+                <View style={styles.uploadImageContainer}>
+                  <Ionicons name="camera" size={50} color="#000" />
+                  <View
+                    style={{ flexDirection: "row", gap: 12, marginTop: 12 }}
+                  >
+                    <Pressable style={styles.blueButton} onPress={pickImages}>
+                      <Text style={styles.uploadText}>Upload Images</Text>
+                    </Pressable>
+                    <Pressable style={styles.orangeButton} onPress={takePhoto}>
+                      <Text style={styles.buttonText}>Take Photo</Text>
+                    </Pressable>
+                  </View>
+                </View>
               ) : (
                 <View style={styles.imageGrid}>
                   {allImages.map((img, i) => (
@@ -585,6 +608,12 @@ export default function UpdateLog() {
                         size={46}
                         color={COLORS.primary}
                       />
+                      <Pressable
+                        style={styles.addCameraBtn}
+                        onPress={takePhoto}
+                      >
+                        <Ionicons name="camera" size={18} color="#000" />
+                      </Pressable>
                     </Pressable>
                   )}
                 </View>
@@ -1017,6 +1046,8 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   blueButton: {
+    boxShadow: "0px 4px 0px #003f73",
+
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.pill,
     paddingVertical: 4,
@@ -1174,6 +1205,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 2,
+  },
+  addCameraBtn: {
+    position: "absolute",
+    bottom: 8,
+    right: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: COLORS.secondary,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 3,
   },
   largeSquare: {
     width: 100,

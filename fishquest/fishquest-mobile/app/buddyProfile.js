@@ -127,6 +127,7 @@ export default function BuddyProfile() {
         <View style={styles.centerState}>
           <Text style={styles.errorText}>Buddy not selected.</Text>
         </View>
+        <BottomNavbar />
       </SafeAreaView>
     );
   }
@@ -139,6 +140,8 @@ export default function BuddyProfile() {
           backRoute="/buddies"
           showButton={false}
         />
+        <BottomNavbar />
+
         {loading ? (
           <View style={styles.centerState}>
             <LoadingIndicator text="Loading Buddy" color="#fff" />
@@ -209,7 +212,6 @@ export default function BuddyProfile() {
           </ScrollView>
         )}
       </View>
-      <BottomNavbar />
     </SafeAreaView>
   );
 }

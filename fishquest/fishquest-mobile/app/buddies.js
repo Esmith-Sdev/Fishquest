@@ -178,10 +178,9 @@ export default function Buddies() {
                 }}
               />
             </ScrollView>
-
-            <BottomNavbar />
           </>
         )}
+        <BottomNavbar />
       </View>
       <AddBuddyModal
         visible={openAddBuddyModal}

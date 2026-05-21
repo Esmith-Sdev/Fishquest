@@ -12,7 +12,7 @@ import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomNavbar from "../components/BottomNavbar";
-import { fetchLogs, deleteLog } from "../api/logs";
+import { fetchOfflineLogs, deleteCatchLog } from "../api/offlineLogs";
 import { getToken } from "../api/auth";
 import skunkImage from "../assets/images/Fish/skunked.png";
 import { COLORS, RADIUS } from "../constants/theme";
@@ -37,7 +37,7 @@ export default function Logs() {
           return;
         }
 
-        const data = await fetchLogs(token);
+        const data = await fetchOfflineLogs(token);
         setLogs(Array.isArray(data) ? data : []);
       } catch (err) {
         setError(err.message || "Failed to load logs");
@@ -61,7 +61,7 @@ export default function Logs() {
         return;
       }
 
-      await deleteLog(logId, token);
+      await deleteCatchLog(logId, token);
 
       setLogs((prev) => prev.filter((log) => log._id !== logId));
       setDeleteModeLogId(null);
@@ -136,6 +136,10 @@ export default function Logs() {
                         return;
                       }
 
+                      if (log.pending) {
+                        return;
+                      }
+
                       router.push({
                         pathname: "/view-log",
                         params: { id: log._id },
@@ -143,6 +147,11 @@ export default function Logs() {
                     }}
                     onLongPress={() => setDeleteModeLogId(log._id)}
                   >
+                    {log.pending ? (
+                      <View style={styles.pendingBadge}>
+                        <Text style={styles.pendingBadgeText}>Pending</Text>
+                      </View>
+                    ) : null}
                     <ConfirmModal
                       title="Are you sure?"
                       visible={confirmVisible}
@@ -377,5 +386,21 @@ const styles = StyleSheet.create({
     fontFamily: "Jua",
     fontSize: 14,
     textAlign: "center",
+  },
+  pendingBadge: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    backgroundColor: "rgba(255,165,0,0.95)",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+    zIndex: 1,
+  },
+  pendingBadgeText: {
+    color: "#000",
+    fontSize: 8,
+    fontWeight: "700",
+    textTransform: "uppercase",
   },
 });
