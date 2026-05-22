@@ -9,7 +9,11 @@ import * as SecureStore from "expo-secure-store";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import ConfirmModal from "./ConfirmModal";
-import { deleteAccount, fetchPreferences, updatePreferences } from "../api/users";
+import {
+  deleteAccount,
+  fetchPreferences,
+  updatePreferences,
+} from "../api/users";
 import { registerForPushNotificationsAsync } from "../utils/pushNotifications";
 export default function SettingsModal({ visible, onClose, onLogOut }) {
   const { token, logout } = useAuth();
@@ -296,7 +300,7 @@ const styles = StyleSheet.create({
     paddingTop: 15,
   },
   deleteButton: {
-    backgroundColor: "#d30505",
+    backgroundColor: "#ff0000",
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
     boxShadow: "0px 4px 0px #730000",

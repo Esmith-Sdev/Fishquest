@@ -329,14 +329,24 @@ router.get("/:id", async (req, res) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const requesterId = decoded.id || decoded.sub;
 
-    const log = await Logs.findOne({
-      _id: req.params.id,
-      userId: decoded.sub,
-    });
+    const log = await Logs.findById(req.params.id);
 
     if (!log) {
       return res.status(404).json({ message: "Log not found" });
+    }
+
+    const isOwner = log.userId.toString() === requesterId;
+    if (!isOwner) {
+      const requester = await User.findById(requesterId).select("friends");
+      const isBuddy = requester?.friends?.some(
+        (friendId) => friendId.toString() === log.userId.toString(),
+      );
+
+      if (!isBuddy) {
+        return res.status(403).json({ message: "Not authorized to view log" });
+      }
     }
 
     res.json(log);

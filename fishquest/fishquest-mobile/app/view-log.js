@@ -29,7 +29,9 @@ import { COLORS, RADIUS } from "../constants/theme";
 import ImagePreviewModal from "../components/ImagePreviewModal";
 
 export default function ViewLog() {
-  const { id } = useLocalSearchParams();
+  const params = useLocalSearchParams();
+  const { id } = params;
+  const isBuddyLog = params.source === "buddy";
   const [form, setForm] = useState({
     address: "",
     city: "",
@@ -45,6 +47,7 @@ export default function ViewLog() {
   const [rigsLoading, setRigsLoading] = useState(true);
   const [rigsError, setRigsError] = useState("");
   const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
+  const [logRigPresetId, setLogRigPresetId] = useState(null);
   const [weightUnit, setWeightUnit] = useState("LB");
   const [lengthUnit, setLengthUnit] = useState("IN");
   const [timeValue, setTimeValue] = useState();
@@ -52,6 +55,7 @@ export default function ViewLog() {
   const [rigs, setRigs] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedWeather, setSelectedWeather] = useState(false);
+  const [logRig, setLogRig] = useState(null);
   const [show, setShow] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [challenge, setChallenge] = useState(null);
@@ -101,7 +105,26 @@ export default function ViewLog() {
     }));
   }, [rigs]);
 
-  const selectedRig = hydratedRigs[selectedIndex];
+  const matchingRig = logRigPresetId
+    ? hydratedRigs.find((rig) => String(rig._id) === String(logRigPresetId))
+    : null;
+  const selectedRig = isBuddyLog
+    ? logRig
+    : matchingRig || hydratedRigs[selectedIndex] || logRig;
+
+  function getLogRig(log) {
+    if (!log) return null;
+    return {
+      _id: log.rigPresetId || "log-rig",
+      rigName: log.rigName || "Logged Rig",
+      hook: HOOKS.find((x) => x.id === log.hookId),
+      bait: BAIT.find((x) => x.id === log.baitId),
+      pole: POLES.find((x) => x.id === log.poleId),
+      weight: WEIGHTS.find((x) => x.id === log.weightId),
+      bobber: !!log.bobber,
+    };
+  }
+
   function handleCreateRig() {
     router.push({
       pathname: "/create-rig",
@@ -121,6 +144,9 @@ export default function ViewLog() {
         }
 
         const log = await fetchLogById(id, token);
+        const fallbackRig = getLogRig(log);
+        setLogRig(fallbackRig);
+        setLogRigPresetId(log.rigPresetId || null);
         setChallenge(log.challenge || null);
         if (log.date) {
           const d = new Date(log.date);
@@ -194,8 +220,20 @@ export default function ViewLog() {
               params: { id },
             })
           }
-          showButton={true}
+          showButton={!isBuddyLog}
           backRoute="/logs"
+          onBackPress={
+            isBuddyLog
+              ? () =>
+                  router.replace({
+                    pathname: "/buddyProfile",
+                    params: {
+                      buddyId: params.buddyId,
+                      username: params.username,
+                    },
+                  })
+              : undefined
+          }
         />
         <BottomNavbar />
 
@@ -271,15 +309,19 @@ export default function ViewLog() {
                 ) : (
                   <View style={styles.noRigBox}>
                     <Text style={styles.noRigText}>No rig preset selected</Text>
-                    <Text style={styles.noRigText}>
-                      No rigs found. Create one before logging.
-                    </Text>
-                    <Pressable
-                      style={styles.orangeButton}
-                      onPress={handleCreateRig}
-                    >
-                      <Text style={styles.buttonText}>Create Rig</Text>
-                    </Pressable>
+                    {!isBuddyLog ? (
+                      <>
+                        <Text style={styles.noRigText}>
+                          No rigs found. Create one before logging.
+                        </Text>
+                        <Pressable
+                          style={styles.orangeButton}
+                          onPress={handleCreateRig}
+                        >
+                          <Text style={styles.buttonText}>Create Rig</Text>
+                        </Pressable>
+                      </>
+                    ) : null}
                   </View>
                 )}
               </View>

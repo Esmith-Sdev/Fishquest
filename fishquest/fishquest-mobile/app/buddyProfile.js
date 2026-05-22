@@ -6,8 +6,10 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  Image,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
+import Entypo from "@expo/vector-icons/Entypo";
 import { useAuth } from "../context/AuthContext";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 import BottomNavbar from "../components/BottomNavbar";
@@ -23,6 +25,7 @@ import {
   toggleTrackedBuddy,
 } from "../api/users";
 import { fetchBuddyLogs } from "../api/logs";
+import skunkImage from "../assets/images/Fish/skunked.png";
 
 export default function BuddyProfile() {
   const { token } = useAuth();
@@ -36,6 +39,7 @@ export default function BuddyProfile() {
   const [tracking, setTracking] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [buddyLogs, setBuddyLogs] = useState([]);
   const [stats, setStats] = useState({
     totalCatches: 0,
     skunkedCount: 0,
@@ -68,6 +72,7 @@ export default function BuddyProfile() {
         );
 
         const allLogs = Array.isArray(logs) ? logs : [];
+        setBuddyLogs(allLogs);
         const favoriteBait =
           Object.entries(statsData.baits || {}).sort(
             (a, b) => b[1] - a[1],
@@ -117,6 +122,10 @@ export default function BuddyProfile() {
     } finally {
       setSaving(false);
     }
+  }
+
+  function getImageSource(photo) {
+    return typeof photo === "string" ? { uri: photo } : photo;
   }
 
   async function handleRemoveBuddy() {
@@ -181,6 +190,24 @@ export default function BuddyProfile() {
                 {buddy.levelTitle || "Fishing Friend"}
               </Text>
             </View>
+            <View style={styles.buttonsContainer}>
+              <Pressable
+                onPress={handleTrackToggle}
+                style={[styles.trackButton, saving && { opacity: 0.6 }]}
+                disabled={saving}
+              >
+                <Text style={styles.trackButtonText}>
+                  {tracking ? "Stop Tracking" : "Track Buddy"}
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setOpenConfirmModal(true)}
+                style={[styles.removeButton, saving && { opacity: 0.6 }]}
+                disabled={saving}
+              >
+                <Text style={styles.trackButtonText}>Remove Buddy</Text>
+              </Pressable>
+            </View>
             <View style={styles.statsContainer}>
               <View style={styles.statBlock}>
                 <Text style={styles.statNumber}>{stats.totalCatches}</Text>
@@ -222,22 +249,76 @@ export default function BuddyProfile() {
                 <Text style={styles.detailValue}>{buddy.xp || 0}</Text>
               </View>
             </View>
-            <Pressable
-              onPress={handleTrackToggle}
-              style={[styles.trackButton, saving && { opacity: 0.6 }]}
-              disabled={saving}
-            >
-              <Text style={styles.trackButtonText}>
-                {tracking ? "Stop Tracking" : "Track Buddy"}
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setOpenConfirmModal(true)}
-              style={[styles.trackButton, saving && { opacity: 0.6 }]}
-              disabled={saving}
-            >
-              <Text style={styles.trackButtonText}>Remove Buddy</Text>
-            </Pressable>
+            <View style={styles.logsSection}>
+              <Text style={styles.logsTitle}>Logs</Text>
+              {buddyLogs.length ? (
+                <View style={styles.logsGrid}>
+                  {buddyLogs.map((log) => {
+                    const title = log.skunked
+                      ? "Skunked Trip"
+                      : log.speciesName || "Unknown Fish";
+                    const photo = log.skunked ? skunkImage : log.imageUrls?.[0];
+                    const formattedDate = log.date
+                      ? new Date(log.date).toLocaleDateString()
+                      : "";
+
+                    return (
+                      <Pressable
+                        style={styles.card}
+                        key={log._id}
+                        onPress={() =>
+                          router.push({
+                            pathname: "/view-log",
+                            params: {
+                              id: log._id,
+                              source: "buddy",
+                              buddyId,
+                              username: buddy.username,
+                            },
+                          })
+                        }
+                      >
+                        <View style={styles.cardBodyTop}>
+                          <Text style={styles.cardTitle} numberOfLines={2}>
+                            {title}
+                          </Text>
+                        </View>
+
+                        {photo ? (
+                          <Image
+                            source={getImageSource(photo)}
+                            style={styles.cardImage}
+                            resizeMode="cover"
+                          />
+                        ) : (
+                          <View style={styles.cardImage}>
+                            <Entypo name="camera" size={24} color="black" />
+                            <Text
+                              style={{
+                                textAlign: "center",
+                                fontSize: 10,
+                              }}
+                            >
+                              No Photo Available
+                            </Text>
+                          </View>
+                        )}
+
+                        <View style={styles.cardBodyBottom}>
+                          <Text style={styles.cardSubtitle}>
+                            {formattedDate}
+                          </Text>
+                        </View>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              ) : (
+                <View style={styles.emptyLogs}>
+                  <Text style={styles.emptyLogsText}>No logs yet</Text>
+                </View>
+              )}
+            </View>
           </ScrollView>
         )}
         <ConfirmModal
@@ -353,10 +434,100 @@ const styles = StyleSheet.create({
     color: "#000",
     fontWeight: "700",
   },
+  logsSection: {
+    marginBottom: 20,
+  },
+  logsTitle: {
+    color: "#fff",
+    fontSize: 24,
+    fontFamily: "Jua",
+    textAlign: "center",
+    textDecorationLine: "underline",
+    marginBottom: 12,
+  },
+  logsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    rowGap: 10,
+  },
+  card: {
+    width: "31%",
+    backgroundColor: COLORS.primary,
+    borderRadius: 15,
+    alignItems: "center",
+    overflow: "hidden",
+    paddingVertical: 8,
+    position: "relative",
+  },
+  cardBodyTop: {
+    width: "100%",
+    paddingHorizontal: 6,
+    minHeight: 34,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cardBodyBottom: {
+    width: "100%",
+    paddingHorizontal: 6,
+    paddingTop: 4,
+    alignItems: "center",
+  },
+  cardTitle: {
+    fontFamily: "Jua",
+    fontSize: 10,
+    color: "#000",
+    textAlign: "center",
+  },
+  cardSubtitle: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: "#000",
+    textAlign: "center",
+  },
+  cardImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 15,
+    marginVertical: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  emptyLogs: {
+    backgroundColor: "#dedede",
+    borderRadius: 15,
+    padding: 18,
+    alignItems: "center",
+  },
+  emptyLogsText: {
+    color: "#000",
+    fontFamily: "Jua",
+    fontSize: 16,
+  },
+  buttonsContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 15,
+    marginBottom: 20,
+  },
   trackButton: {
+    backgroundColor: COLORS.primary,
+    boxShadow: "0px 4px 0px #003f73",
+    borderRadius: RADIUS.pill,
+    paddingVertical: 14,
+
+    width: 150,
+    alignItems: "center",
+  },
+  removeButton: {
+    boxShadow: "0px 4px 0px #733800",
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 14,
+    width: 150,
+
     alignItems: "center",
   },
   trackButtonText: {
