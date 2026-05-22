@@ -1,6 +1,6 @@
 import { Modal, View, Text, Pressable, StyleSheet, Alert } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { COLORS , RADIUS } from "../constants/theme";
+import { COLORS, RADIUS } from "../constants/theme";
 import { router } from "expo-router";
 import { useAuth } from "../context/AuthContext";
 import { enableBiometrics } from "../utils/AuthStorage";
@@ -8,13 +8,14 @@ import * as LocalAuthentication from "expo-local-authentication";
 import * as SecureStore from "expo-secure-store";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
-
-import { fetchPreferences, updatePreferences } from "../api/users";
+import ConfirmModal from "./ConfirmModal";
+import { deleteAccount, fetchPreferences, updatePreferences } from "../api/users";
 import { registerForPushNotificationsAsync } from "../utils/pushNotifications";
 export default function SettingsModal({ visible, onClose, onLogOut }) {
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const [supported, setSupported] = useState(false);
   const [enabled, setEnabled] = useState(false);
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const [preferences, setPreferences] = useState({
     notificationsEnabled: false,
     locationEnabled: false,
@@ -149,6 +150,26 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
     }
   }
 
+  async function handleDeleteAccount() {
+    if (!token) {
+      Alert.alert("Error", "No authenticated user.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await deleteAccount(token);
+      setOpenConfirmModal(false);
+      onClose();
+      await logout();
+      router.replace("/login");
+    } catch (err) {
+      Alert.alert("Error", err.message || "Could not delete account.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <Modal
       visible={visible}
@@ -213,8 +234,24 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
               <Text style={styles.buttonText}>Logout</Text>
             </Pressable>
           </View>
+          <View style={styles.footer}>
+            <Pressable
+              onPress={() => setOpenConfirmModal(true)}
+              style={styles.deleteButton}
+            >
+              <Text style={styles.buttonText}>Delete Account</Text>
+            </Pressable>
+          </View>
         </Pressable>
       </Pressable>
+      <ConfirmModal
+        title="Are you sure? You Will lose all progress..."
+        visible={openConfirmModal}
+        onConfirm={handleDeleteAccount}
+        onCancel={() => {
+          setOpenConfirmModal(false);
+        }}
+      />
     </Modal>
   );
 }
@@ -258,7 +295,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 15,
   },
+  deleteButton: {
+    backgroundColor: "#d30505",
+    borderRadius: RADIUS.pill,
+    paddingVertical: 6,
+    boxShadow: "0px 4px 0px #730000",
 
+    paddingHorizontal: 12,
+    shadowColor: COLORS.secondaryDropShadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 1,
+    elevation: 4,
+    zIndex: 10,
+  },
   orangeButton: {
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,

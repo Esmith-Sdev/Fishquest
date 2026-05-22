@@ -36,10 +36,10 @@ export default function Logs() {
           return;
         }
 
-        const data = await fetchOfflineLogs(token);
-        setLogs(Array.isArray(data) ? data : []);
-      } catch (err) {
-        setError(err.message || "Failed to load logs");
+      const data = await fetchOfflineLogs(token);
+      setLogs(Array.isArray(data) ? data : []);
+    } catch (err) {
+        Alert.alert("Error", err.message || "Failed to load logs");
       } finally {
         setLoading(false);
       }

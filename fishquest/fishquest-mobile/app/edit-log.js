@@ -365,12 +365,6 @@ export default function UpdateLog() {
     setFiles((prev) => [...prev, ...picked.slice(0, room)]);
   }
 
-  function getImageSource(file) {
-    if (!file) return null;
-    if (file.uri) return { uri: file.uri };
-    return file;
-  }
-
   async function handleSubmitLog() {
     if (!rigPresetId) {
       Alert.alert("Missing rig", "Please select a rig preset first.");

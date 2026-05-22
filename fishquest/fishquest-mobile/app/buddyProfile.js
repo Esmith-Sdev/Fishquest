@@ -7,10 +7,11 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../context/AuthContext";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 import BottomNavbar from "../components/BottomNavbar";
+import ConfirmModal from "../components/ConfirmModal";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, RADIUS } from "../constants/theme";
@@ -18,6 +19,7 @@ import {
   fetchBuddyProfile,
   fetchBuddyStats,
   fetchPreferences,
+  removeBuddy,
   toggleTrackedBuddy,
 } from "../api/users";
 import { fetchBuddyLogs } from "../api/logs";
@@ -27,6 +29,7 @@ export default function BuddyProfile() {
   const params = useLocalSearchParams();
   const buddyId = params?.buddyId;
   const usernameFromParams = params?.username;
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const [buddy, setBuddy] = useState({
     username: usernameFromParams || "Buddy",
   });
@@ -111,6 +114,25 @@ export default function BuddyProfile() {
       );
     } catch (error) {
       Alert.alert("Error", error.message || "Could not update tracking.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleRemoveBuddy() {
+    if (!token || !buddyId) {
+      return Alert.alert("Error", "Unable to remove buddy.");
+    }
+
+    setSaving(true);
+    try {
+      await removeBuddy(token, buddyId);
+      setOpenConfirmModal(false);
+      Alert.alert("Buddy Removed", "This buddy has been removed.", [
+        { text: "OK", onPress: () => router.replace("/buddies") },
+      ]);
+    } catch (error) {
+      Alert.alert("Error", error.message || "Could not remove buddy.");
     } finally {
       setSaving(false);
     }
@@ -209,8 +231,23 @@ export default function BuddyProfile() {
                 {tracking ? "Stop Tracking" : "Track Buddy"}
               </Text>
             </Pressable>
+            <Pressable
+              onPress={() => setOpenConfirmModal(true)}
+              style={[styles.trackButton, saving && { opacity: 0.6 }]}
+              disabled={saving}
+            >
+              <Text style={styles.trackButtonText}>Remove Buddy</Text>
+            </Pressable>
           </ScrollView>
         )}
+        <ConfirmModal
+          title="Are you sure?"
+          visible={openConfirmModal}
+          onConfirm={handleRemoveBuddy}
+          onCancel={() => {
+            setOpenConfirmModal(false);
+          }}
+        />
       </View>
     </SafeAreaView>
   );

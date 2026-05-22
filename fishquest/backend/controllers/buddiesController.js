@@ -129,12 +129,36 @@ export async function removeFriend(req, res) {
     const userId = req.user.id;
     const { friendId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(friendId)) {
+      return res.status(400).json({ message: "Invalid friend id." });
+    }
+
+    const user = await User.findById(userId).select("friends");
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const isFriend = user.friends.some(
+      (id) => id.toString() === friendId.toString(),
+    );
+
+    if (!isFriend) {
+      return res.status(404).json({ message: "Buddy not found." });
+    }
+
     await User.findByIdAndUpdate(userId, {
-      $pull: { friends: friendId },
+      $pull: { friends: friendId, trackedBuddies: friendId },
     });
 
     await User.findByIdAndUpdate(friendId, {
-      $pull: { friends: userId },
+      $pull: { friends: userId, trackedBuddies: userId },
+    });
+
+    await FriendRequest.deleteMany({
+      $or: [
+        { senderId: userId, receiverId: friendId },
+        { senderId: friendId, receiverId: userId },
+      ],
     });
 
     res.json({ message: "Friend removed." });

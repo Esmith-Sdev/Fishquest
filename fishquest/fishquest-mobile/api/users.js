@@ -68,3 +68,29 @@ export async function toggleTrackedBuddy(token, buddyId, enabled) {
     throw new Error(data.message || "Failed to update buddy tracking");
   return data;
 }
+
+export async function deleteAccount(token) {
+  const res = await fetch(`${API_URL}/api/users/me`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || "Failed to delete account");
+  return data;
+}
+
+export async function removeBuddy(token, buddyId) {
+  const res = await fetch(`${API_URL}/api/buddies/${buddyId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || "Failed to remove buddy");
+  return data;
+}

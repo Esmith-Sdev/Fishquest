@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import * as LocalAuthentication from "expo-local-authentication";
 import * as SecureStore from "expo-secure-store";
 const AuthContext = createContext(null);
 
@@ -64,6 +63,17 @@ export function AuthProvider({ children }) {
   async function logout() {
     setUser(null);
     setToken(null);
+    setUserStats({
+      xp: 0,
+      level: 1,
+      levelTitle: "Minnow Wrangler",
+    });
+    await SecureStore.deleteItemAsync("user");
+    await SecureStore.deleteItemAsync("token");
+    await SecureStore.deleteItemAsync("userId");
+    await SecureStore.deleteItemAsync("username");
+    await SecureStore.deleteItemAsync("biometricEnabled");
+    await SecureStore.deleteItemAsync("biometricPromptShown");
   }
 
   return (

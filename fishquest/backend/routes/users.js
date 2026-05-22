@@ -1,5 +1,13 @@
 import express from "express";
 import User from "../models/User.js";
+import FriendRequest from "../models/Buddies.js";
+import BugReport from "../models/BugReport.js";
+import Logs from "../models/Logs.js";
+import RigPreset from "../models/Rigs.js";
+import RigStat from "../models/RigStats.js";
+import UserChallenge from "../models/UserChallenge.js";
+import UserFishingStats from "../models/UserFishingStats.js";
+import UserSpeciesStats from "../models/UserSpeciesStats.js";
 import { protect } from "../middleware/requireAuth.js";
 
 const router = express.Router();
@@ -104,6 +112,46 @@ router.patch("/preferences", protect, async (req, res) => {
   } catch (error) {
     console.error("Failed to update user preferences:", error.message);
     res.status(500).json({ message: "Failed to update user preferences." });
+  }
+});
+
+router.delete("/me", protect, async (req, res) => {
+  try {
+    const userId = req.user._id || req.user.id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    await Promise.all([
+      Logs.deleteMany({ userId }),
+      RigPreset.deleteMany({ userId }),
+      RigStat.deleteMany({ userId }),
+      UserChallenge.deleteMany({ userId }),
+      UserFishingStats.deleteMany({ userId }),
+      UserSpeciesStats.deleteMany({ userId }),
+      BugReport.deleteMany({ userId }),
+      FriendRequest.deleteMany({
+        $or: [{ senderId: userId }, { receiverId: userId }],
+      }),
+      User.updateMany(
+        {},
+        {
+          $pull: {
+            friends: userId,
+            trackedBuddies: userId,
+          },
+        },
+      ),
+    ]);
+
+    await User.findByIdAndDelete(userId);
+
+    res.json({ message: "Account deleted." });
+  } catch (error) {
+    console.error("Failed to delete account:", error.message);
+    res.status(500).json({ message: "Failed to delete account." });
   }
 });
 
