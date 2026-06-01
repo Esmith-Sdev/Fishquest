@@ -14,7 +14,8 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "FishQuest needs access to your photo library to upload images for logs.",
         "NSCameraUsageDescription": "FishQuest needs camera access to take photos for logs.",
-        "NSLocationWhenInUseUsageDescription": "FishQuest uses your location to autofill the log address and get local weather."
+        "NSLocationWhenInUseUsageDescription": "FishQuest uses your location to autofill the log address and get local weather.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -65,7 +66,6 @@
       "expo-secure-store",
       "expo-notifications"
     ],
-
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

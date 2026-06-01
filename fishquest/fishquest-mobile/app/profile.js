@@ -100,7 +100,7 @@ export default function Profile() {
         />
         <View style={styles.content}>
           <View style={styles.profileRow}>
-            <View style={styles.leftColumn}>
+            <View style={styles.profileColumn}>
               <Text style={styles.username}>{user?.username || "User"}</Text>
               <View style={styles.profileImageContainer}>
                 <Image
@@ -119,37 +119,38 @@ export default function Profile() {
               >
                 <Text style={styles.buttonText}>Customize</Text>
               </Pressable>
-            </View>
-            <View style={styles.statsColumn}>
-              <Text style={styles.statsTitle}>Stats</Text>
-              <View style={styles.statsTextColumn}>
-                <View style={styles.statRow}>
-                  <Text style={styles.statLabel}>Personal Best:</Text>
-                  <Text style={styles.statValue}>{stats.personalBest}lb</Text>
-                </View>
-                <View style={styles.statRow}>
-                  <Text style={styles.statLabel}>Fish Caught:</Text>
-                  <Text style={styles.statValue}>{stats.totalCatches}</Text>
-                </View>
-                <View style={styles.statRow}>
-                  <Text style={styles.statLabel}>Challenges Completed:</Text>
-                  <Text style={styles.statValue}>
-                    {stats.challengesCompleted}
-                  </Text>
-                </View>
-                <View style={styles.statRow}>
-                  <Text style={styles.statLabel}>Favorite Bait:</Text>
-                  <Text style={styles.statValue}>
-                    {stats.favoriteBait
-                      .replaceAll("_", " ")
-                      .toString()
-                      .charAt(0)
-                      .toUpperCase() +
-                      stats.favoriteBait
+
+              <View style={styles.statsColumn}>
+                <Text style={styles.statsTitle}>Stats</Text>
+                <View style={styles.statsTextColumn}>
+                  <View style={styles.statRow}>
+                    <Text style={styles.statLabel}>Personal Best:</Text>
+                    <Text style={styles.statValue}>{stats.personalBest}lb</Text>
+                  </View>
+                  <View style={styles.statRow}>
+                    <Text style={styles.statLabel}>Fish Caught:</Text>
+                    <Text style={styles.statValue}>{stats.totalCatches}</Text>
+                  </View>
+                  <View style={styles.statRow}>
+                    <Text style={styles.statLabel}>Challenges Completed:</Text>
+                    <Text style={styles.statValue}>
+                      {stats.challengesCompleted}
+                    </Text>
+                  </View>
+                  <View style={styles.statRow}>
+                    <Text style={styles.statLabel}>Favorite Bait:</Text>
+                    <Text style={styles.statValue}>
+                      {stats.favoriteBait
                         .replaceAll("_", " ")
                         .toString()
-                        .slice(1)}
-                  </Text>
+                        .charAt(0)
+                        .toUpperCase() +
+                        stats.favoriteBait
+                          .replaceAll("_", " ")
+                          .toString()
+                          .slice(1)}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
@@ -258,15 +259,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
 
     marginBottom: 20,
-    alignItems: "flex-start",
-  },
-  leftColumn: {
-    flex: 1,
     alignItems: "center",
+  },
+  profileColumn: {
+    flexDirection: "column",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: COLORS.primary,
+    padding: 20,
+    borderRadius: 15,
   },
   statsTextColumn: {
     flexDirection: "column",
     alignItems: "flex-start",
+    justifyContent: "center",
   },
   username: {
     color: "#fff",
@@ -280,7 +287,7 @@ const styles = StyleSheet.create({
     width: 130,
     height: 130,
     borderRadius: 16,
-    backgroundColor: COLORS.primary,
+    backgroundColor: "#ffffff",
     marginBottom: 12,
     overflow: "hidden",
     justifyContent: "center",
@@ -291,8 +298,10 @@ const styles = StyleSheet.create({
     height: "125%",
   },
   statsColumn: {
-    flex: 1,
-    gap: 12,
+    marginTop: 20,
+    display: "flex",
+    flexDirection: "column",
+
     justifyContent: "center",
     alignItems: "center",
   },
