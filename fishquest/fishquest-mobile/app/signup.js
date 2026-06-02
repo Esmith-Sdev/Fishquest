@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import { VideoView, useVideoPlayer } from "expo-video";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
@@ -19,11 +20,29 @@ import LoadingIndicator from "../components/LoadingIndicator";
 import { signup } from "../api/auth";
 import * as SecureStore from "expo-secure-store";
 import * as Location from "expo-location";
-
+import OtherFeaturesVideo from "../assets/videos/OTHER-FEATURES.mp4";
+import CreateRigVideo from "../assets/videos/CREATE-RIG.mp4";
+import CreateLogVideo from "../assets/videos/CREATE-LOG.mp4";
 export default function SignUp() {
   const { login } = useAuth();
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [videoIndex, setVideoIndex] = useState(0);
+  const videos = [
+    {
+      title: "Create Rigs",
+      source: CreateRigVideo,
+    },
+    {
+      title: "Log Catches",
+      source: CreateLogVideo,
+    },
+    {
+      title: "Other Features",
+      source: OtherFeaturesVideo,
+    },
+  ];
+  const currentVideo = videos[videoIndex];
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -33,6 +52,11 @@ export default function SignUp() {
   const [, setPreferences] = useState({
     notificationsEnabled: false,
     locationEnabled: false,
+  });
+  const player = useVideoPlayer(currentVideo.source, (player) => {
+    player.loop = true;
+    player.muted = true;
+    player.play();
   });
   if (loading) {
     return (
@@ -54,7 +78,7 @@ export default function SignUp() {
         enabled ? "true" : "false",
       );
 
-      router.replace("/home");
+      setIndex(4);
     } catch (err) {
       Alert.alert("Error", err.message);
     }
@@ -64,7 +88,7 @@ export default function SignUp() {
     try {
       await SecureStore.setItemAsync("locationEnabled", "false");
 
-      router.replace("/home");
+      setIndex(4);
     } catch (err) {
       Alert.alert("Error", err.message);
     }
@@ -104,7 +128,7 @@ export default function SignUp() {
   }
 
   function handleButtonClick() {
-    const isLastSlide = index === 3;
+    const isLastSlide = index === 4;
     if (!isLastSlide) setIndex(index + 1);
   }
 
@@ -152,7 +176,41 @@ export default function SignUp() {
                 resizeMode="contain"
               />
               <Text style={styles.header}>Welcome To Fish Quest!</Text>
-              <Text style={styles.subHeader}>Lets get to know you better.</Text>
+              <View style={styles.videoColumn}>
+                <Text style={styles.videoSubHeader}>{currentVideo.title}</Text>
+                <View style={styles.videoContainer}>
+                  <View style={styles.videoClip}>
+                    <VideoView
+                      nativeControls={false}
+                      player={player}
+                      style={styles.video}
+                      allowsFullscreen={false}
+                      allowsPictureInPicture={false}
+                    />
+                  </View>
+                </View>
+              </View>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: 12,
+                  justifyContent: "center",
+                  paddingBottom: 20,
+                }}
+              >
+                {videos.map((_, i) => (
+                  <Pressable
+                    key={i}
+                    hitSlop={10}
+                    onPress={() => setVideoIndex(i)}
+                    style={[
+                      styles.sliderButton,
+                      videoIndex === i && styles.sliderButtonActive,
+                    ]}
+                  />
+                ))}
+              </View>
               <Pressable
                 style={styles.orangeButton}
                 onPress={handleButtonClick}
@@ -234,7 +292,8 @@ export default function SignUp() {
               />
               <Text style={styles.header}>Enable Notifications?</Text>
               <Text style={styles.subHeader}>
-                Stay updated on your buddies latest catches!
+                This is used to receive updates from your buddies and for timed
+                challenges/events.(We won't spam you, we promise!)
               </Text>
               <View style={{ flexDirection: "column", gap: 12, marginTop: 12 }}>
                 <Pressable
@@ -251,7 +310,7 @@ export default function SignUp() {
                 </Pressable>
               </View>
             </View>
-          ) : (
+          ) : index === 3 ? (
             <View style={styles.welcomeContainer}>
               <Image
                 source={require("../assets/images/FishQuest-Logo-only.png")}
@@ -277,6 +336,33 @@ export default function SignUp() {
                 </Pressable>
               </View>
             </View>
+          ) : (
+            <View style={styles.welcomeContainer}>
+              <Image
+                source={require("../assets/images/rig-preset-example.png")}
+                style={styles.exampleImage}
+                resizeMode="contain"
+              />
+              <Text style={styles.header}>Create your first rig?</Text>
+              <Text style={styles.subHeader}>
+                Used to quickly log catches with a pre-saved rig. You can create
+                more rigs later in your profile.
+              </Text>
+              <View style={{ flexDirection: "column", gap: 12, marginTop: 12 }}>
+                <Pressable
+                  style={styles.blueButton}
+                  onPress={() => router.replace("/create-rig")}
+                >
+                  <Text style={styles.buttonText}>Yes</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.orangeButton}
+                  onPress={() => router.replace("/home")}
+                >
+                  <Text style={styles.buttonText}>No</Text>
+                </Pressable>
+              </View>
+            </View>
           )}
         </KeyboardAwareScrollView>
       </SafeAreaView>
@@ -284,7 +370,8 @@ export default function SignUp() {
   );
 }
 
-const styles = StyleSheet.create({  blueButton: {
+const styles = StyleSheet.create({
+  blueButton: {
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.pill,
     paddingVertical: 6,
@@ -324,6 +411,18 @@ const styles = StyleSheet.create({  blueButton: {
     width: "100%",
     padding: 24,
   },
+  sliderButton: {
+    width: 15,
+    height: 15,
+    borderRadius: 9999,
+    padding: 5,
+    backgroundColor: "#fff",
+    opacity: 0.5,
+  },
+  sliderButtonActive: {
+    opacity: 1,
+    backgroundColor: COLORS.primary,
+  },
   logoWrap: {
     alignItems: "center",
     marginBottom: 20,
@@ -331,6 +430,10 @@ const styles = StyleSheet.create({  blueButton: {
   logo: {
     width: 120,
     height: 120,
+  },
+  exampleImage: {
+    width: 300,
+    height: 200,
   },
   header: {
     color: "#fff",
@@ -344,6 +447,11 @@ const styles = StyleSheet.create({  blueButton: {
     fontSize: 18,
     textAlign: "center",
     marginBottom: 20,
+  },
+  videoSubHeader: {
+    color: "#fff",
+    fontSize: 18,
+    textAlign: "center",
   },
   label: {
     color: "#fff",
@@ -387,5 +495,27 @@ const styles = StyleSheet.create({  blueButton: {
   backButton: {
     marginBottom: 10,
     alignSelf: "flex-start",
+  },
+  videoColumn: {
+    flexDirection: "column",
+    display: "flex",
+    paddingBottom: 20,
+  },
+  videoClip: {
+    flex: 1,
+    borderRadius: 15,
+    overflow: "hidden",
+  },
+  videoContainer: {
+    width: 400,
+    height: 400,
+    overflow: "hidden",
+    marginTop: 12,
+    borderRadius: 20,
+    padding: 4,
+  },
+  video: {
+    width: "100%",
+    height: "100%",
   },
 });

@@ -8,10 +8,10 @@ export async function recalculateUserFishingStats(userId) {
     userId,
     totalLogs: logs.length,
     totalCatches: 0,
-    totalSkunks: 0,
+    skunkedCount: 0,
 
     species: {},
-    bait: {},
+    baits: {},
     hooks: {},
     weights: {},
     poles: {},
@@ -24,6 +24,11 @@ export async function recalculateUserFishingStats(userId) {
 
   for (const log of logs) {
     const caughtFish = !log.skunked && log.speciesId;
+    const baitId = log.baitId || log.rigSnapshot?.baitId;
+
+    if (baitId) {
+      increment(stats.baits, baitId);
+    }
 
     if (caughtFish) {
       stats.totalCatches++;
@@ -34,10 +39,6 @@ export async function recalculateUserFishingStats(userId) {
       if (log.weather) increment(stats.weather, log.weather);
 
       if (log.rigSnapshot) {
-        if (log.rigSnapshot.baitId) {
-          increment(stats.bait, log.rigSnapshot.baitId);
-        }
-
         if (log.rigSnapshot.hookId) {
           increment(stats.hooks, log.rigSnapshot.hookId);
         }
@@ -73,7 +74,7 @@ export async function recalculateUserFishingStats(userId) {
         }
       }
     } else {
-      stats.totalSkunks++;
+      stats.skunkedCount++;
     }
   }
 

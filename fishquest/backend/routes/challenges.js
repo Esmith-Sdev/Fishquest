@@ -95,6 +95,7 @@ router.get("/", async (req, res) => {
           challenge.cooldownEndsAt &&
           new Date(challenge.cooldownEndsAt) > new Date(),
 
+        startedAt: challenge.startedAt,
         cooldownEndsAt: challenge.cooldownEndsAt,
 
         assignedAt: challenge.assignedAt,

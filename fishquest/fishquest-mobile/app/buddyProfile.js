@@ -27,6 +27,14 @@ import {
 import { fetchBuddyLogs } from "../api/logs";
 import skunkImage from "../assets/images/Fish/skunked.png";
 
+function getFavoriteBait(baits) {
+  return (
+    Object.entries(baits || {})
+      .filter(([, count]) => Number(count) > 0)
+      .sort((a, b) => Number(b[1]) - Number(a[1]))[0]?.[0] || "None"
+  );
+}
+
 export default function BuddyProfile() {
   const { token } = useAuth();
   const params = useLocalSearchParams();
@@ -73,10 +81,7 @@ export default function BuddyProfile() {
 
         const allLogs = Array.isArray(logs) ? logs : [];
         setBuddyLogs(allLogs);
-        const favoriteBait =
-          Object.entries(statsData.baits || {}).sort(
-            (a, b) => b[1] - a[1],
-          )[0]?.[0] || "None";
+        const favoriteBait = getFavoriteBait(statsData.baits);
         const skunkedCount = allLogs.filter((log) => log.skunked).length;
         const fishLogs = allLogs.filter((log) => !log.skunked);
         const personalBest = fishLogs.reduce(

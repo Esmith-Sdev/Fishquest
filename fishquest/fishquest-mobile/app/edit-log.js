@@ -51,6 +51,7 @@ export default function UpdateLog() {
     { id: "windy", label: "Windy", icon: "weather-windy" },
     { id: "stormy", label: "Stormy", icon: "weather-lightning-rainy" },
   ];
+  const [imageUploading, setImageUploading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiResult, setAiResult] = useState(null);
   const [files, setFiles] = useState([]);
@@ -154,13 +155,18 @@ export default function UpdateLog() {
   async function ensureUploadedImages() {
     if (!files.length) return uploadedImageUrls;
 
-    const newUrls = await uploadImages(files);
-    const allUrls = [...uploadedImageUrls, ...newUrls];
+    setImageUploading(true);
+    try {
+      const newUrls = await uploadImages(files);
+      const allUrls = [...uploadedImageUrls, ...newUrls];
 
-    setUploadedImageUrls(allUrls);
-    setFiles([]);
+      setUploadedImageUrls(allUrls);
+      setFiles([]);
 
-    return allUrls;
+      return allUrls;
+    } finally {
+      setImageUploading(false);
+    }
   }
 
   function handleRemoveImage(index, isRemote) {

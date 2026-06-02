@@ -48,6 +48,7 @@ export default function CreateLog() {
     city: "",
     state: "",
   });
+  const [imageUploading, setImageUploading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiResult, setAiResult] = useState(null);
   const [files, setFiles] = useState([]);
@@ -161,10 +162,14 @@ export default function CreateLog() {
   }
   async function ensureUploadedImages() {
     if (uploadedImageUrls.length) return uploadedImageUrls;
-
-    const urls = files.length ? await uploadImages(files) : [];
-    setUploadedImageUrls(urls);
-    return urls;
+    setImageUploading(true);
+    try {
+      const urls = files.length ? await uploadImages(files) : [];
+      setUploadedImageUrls(urls);
+      return urls;
+    } finally {
+      setImageUploading(false);
+    }
   }
 
   function handleRemoveImage(indexToRemove) {
@@ -546,17 +551,31 @@ export default function CreateLog() {
               </View>
               {files.length === 0 ? (
                 <View style={styles.uploadImageContainer}>
-                  <Ionicons name="camera" size={50} color="#000" />
-                  <View
-                    style={{ flexDirection: "row", gap: 12, marginTop: 12 }}
-                  >
-                    <Pressable style={styles.blueButton} onPress={pickImages}>
-                      <Text style={styles.buttonText}>Upload Images</Text>
-                    </Pressable>
-                    <Pressable style={styles.orangeButton} onPress={takePhoto}>
-                      <Text style={styles.buttonText}>Take Photo</Text>
-                    </Pressable>
-                  </View>
+                  {!imageUploading ? (
+                    <>
+                      <Ionicons name="camera" size={50} color="#000" />
+
+                      <View
+                        style={{ flexDirection: "row", gap: 12, marginTop: 12 }}
+                      >
+                        <Pressable
+                          style={styles.blueButton}
+                          onPress={pickImages}
+                        >
+                          <Text style={styles.buttonText}>Upload Images</Text>
+                        </Pressable>
+
+                        <Pressable
+                          style={styles.orangeButton}
+                          onPress={takePhoto}
+                        >
+                          <Text style={styles.buttonText}>Take Photo</Text>
+                        </Pressable>
+                      </View>
+                    </>
+                  ) : (
+                    <LoadingIndicator text="Uploading Images" />
+                  )}
                 </View>
               ) : (
                 <View style={styles.imageGrid}>

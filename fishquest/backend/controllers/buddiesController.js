@@ -1,6 +1,38 @@
 import mongoose from "mongoose";
+import { Expo } from "expo-server-sdk";
 import User from "../models/User.js";
 import FriendRequest from "../models/Buddies.js";
+
+const expo = new Expo();
+
+async function sendFriendRequestNotification(sender, receiver, friendRequest) {
+  if (!receiver?.notificationsEnabled || !receiver?.expoPushTokens?.length) {
+    return;
+  }
+
+  const messages = receiver.expoPushTokens
+    .filter((token) => Expo.isExpoPushToken(token))
+    .map((token) => ({
+      to: token,
+      sound: "default",
+      title: "New buddy request",
+      body: `${sender.username} wants to add you on FishQuest.`,
+      data: {
+        type: "friend-request",
+        requestId: friendRequest._id.toString(),
+        senderId: sender._id.toString(),
+      },
+    }));
+
+  const chunks = expo.chunkPushNotifications(messages);
+  for (const chunk of chunks) {
+    try {
+      await expo.sendPushNotificationsAsync(chunk);
+    } catch (error) {
+      console.error("Failed to send friend request notification:", error);
+    }
+  }
+}
 
 export async function sendFriendRequest(req, res) {
   try {
@@ -11,12 +43,14 @@ export async function sendFriendRequest(req, res) {
       return res.status(400).json({ message: "You cannot add yourself." });
     }
 
-    const receiver = await User.findById(receiverId);
+    const receiver = await User.findById(receiverId).select(
+      "username notificationsEnabled expoPushTokens",
+    );
     if (!receiver) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const sender = await User.findById(senderId);
+    const sender = await User.findById(senderId).select("username friends");
 
     if (sender.friends.includes(receiverId)) {
       return res.status(400).json({ message: "Already friends." });
@@ -37,8 +71,11 @@ export async function sendFriendRequest(req, res) {
       receiverId,
     });
 
+    await sendFriendRequestNotification(sender, receiver, friendRequest);
+
     res.status(201).json(friendRequest);
   } catch (error) {
+    console.error("Failed to send friend request:", error.message);
     res.status(500).json({ message: "Failed to send friend request." });
   }
 }

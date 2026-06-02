@@ -35,8 +35,8 @@ export default function CreateRig() {
 
   const [polesIndex, setPolesIndex] = useState(0);
   const [baitIndex, setBaitIndex] = useState(0);
-  const [weightIndex, setWeightIndex] = useState(0);
-  const [hookIndex, setHookIndex] = useState(0);
+  const [weightIndex, setWeightIndex] = useState(1);
+  const [hookIndex, setHookIndex] = useState(1);
   const [poleImageLoading, setPoleImageLoading] = useState(false);
   const [baitImageLoading, setBaitImageLoading] = useState(false);
   const [hookImageLoading, setHookImageLoading] = useState(false);
@@ -126,7 +126,7 @@ export default function CreateRig() {
   }
 
   const renderArrow = (onPress, direction = "left") => (
-    <Pressable onPress={onPress} style={styles.arrowButton}>
+    <Pressable onPress={onPress} style={styles.arrowButton} hitSlop={20}>
       <Entypo
         name={direction === "left" ? "arrow-left" : "arrow-right"}
         size={20}

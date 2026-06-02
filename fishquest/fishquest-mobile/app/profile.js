@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, Image, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Image,
+  Alert,
+  ScrollView,
+} from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import BottomNavbar from "../components/BottomNavbar";
 import { COLORS, RADIUS } from "../constants/theme";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
@@ -9,6 +18,15 @@ import { useAuth } from "../context/AuthContext";
 import SettingsModal from "../components/SettingsModal";
 import LoadingIndicator from "../components/LoadingIndicator";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+function getFavoriteBait(baits) {
+  return (
+    Object.entries(baits || {})
+      .filter(([, count]) => Number(count) > 0)
+      .sort((a, b) => Number(b[1]) - Number(a[1]))[0]?.[0] || "None"
+  );
+}
+
 export default function Profile() {
   const [loading, setLoading] = useState(true);
   const { user, token } = useAuth();
@@ -34,10 +52,7 @@ export default function Profile() {
           totalCatches: data.totalCatches || 0,
           personalBest: data.personalBest || 0,
           challengesCompleted: data.challengesCompleted || 0,
-          favoriteBait:
-            Object.entries(data.baits || {}).sort(
-              (a, b) => b[1] - a[1],
-            )[0]?.[0] || "None",
+          favoriteBait: getFavoriteBait(data.baits),
 
           skunkedCount: data.skunkedCount || 0,
         });
@@ -98,9 +113,24 @@ export default function Profile() {
           showButton={true}
           backRoute="/home"
         />
-        <View style={styles.content}>
+        <View
+          style={{
+            width: "100%",
+            alignItems: "flex-end",
+            padding: 15,
+            paddingBottom: 0,
+          }}
+        >
+          <Pressable
+            style={styles.iconButton}
+            onPress={() => router.push("/buddies")}
+          >
+            <FontAwesome5 name="user-friends" size={20} color="#fff" />
+          </Pressable>
+        </View>
+        <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.profileRow}>
-            <View style={styles.profileColumn}>
+            <View style={styles.leftColumn}>
               <Text style={styles.username}>{user?.username || "User"}</Text>
               <View style={styles.profileImageContainer}>
                 <Image
@@ -119,42 +149,42 @@ export default function Profile() {
               >
                 <Text style={styles.buttonText}>Customize</Text>
               </Pressable>
-
-              <View style={styles.statsColumn}>
-                <Text style={styles.statsTitle}>Stats</Text>
-                <View style={styles.statsTextColumn}>
-                  <View style={styles.statRow}>
-                    <Text style={styles.statLabel}>Personal Best:</Text>
-                    <Text style={styles.statValue}>{stats.personalBest}lb</Text>
-                  </View>
-                  <View style={styles.statRow}>
-                    <Text style={styles.statLabel}>Fish Caught:</Text>
-                    <Text style={styles.statValue}>{stats.totalCatches}</Text>
-                  </View>
-                  <View style={styles.statRow}>
-                    <Text style={styles.statLabel}>Challenges Completed:</Text>
-                    <Text style={styles.statValue}>
-                      {stats.challengesCompleted}
-                    </Text>
-                  </View>
-                  <View style={styles.statRow}>
-                    <Text style={styles.statLabel}>Favorite Bait:</Text>
-                    <Text style={styles.statValue}>
-                      {stats.favoriteBait
+            </View>
+            <View style={styles.statsColumn}>
+              <Text style={styles.statsTitle}>Stats</Text>
+              <View style={styles.statsTextColumn}>
+                <View style={styles.statRow}>
+                  <Text style={styles.statLabel}>Personal Best:</Text>
+                  <Text style={styles.statValue}>{stats.personalBest}lb</Text>
+                </View>
+                <View style={styles.statRow}>
+                  <Text style={styles.statLabel}>Fish Caught:</Text>
+                  <Text style={styles.statValue}>{stats.totalCatches}</Text>
+                </View>
+                <View style={styles.statRow}>
+                  <Text style={styles.statLabel}>Challenges Completed:</Text>
+                  <Text style={styles.statValue}>
+                    {stats.challengesCompleted}
+                  </Text>
+                </View>
+                <View style={styles.statRow}>
+                  <Text style={styles.statLabel}>Favorite Bait:</Text>
+                  <Text style={styles.statValue}>
+                    {stats.favoriteBait
+                      .replaceAll("_", " ")
+                      .toString()
+                      .charAt(0)
+                      .toUpperCase() +
+                      stats.favoriteBait
                         .replaceAll("_", " ")
                         .toString()
-                        .charAt(0)
-                        .toUpperCase() +
-                        stats.favoriteBait
-                          .replaceAll("_", " ")
-                          .toString()
-                          .slice(1)}
-                    </Text>
-                  </View>
+                        .slice(1)}
+                  </Text>
                 </View>
               </View>
             </View>
           </View>
+
           <View style={styles.otherColumn}>
             <View style={styles.tipsContainer}>
               <Text style={styles.title}>Tips/Tricks</Text>
@@ -221,7 +251,7 @@ export default function Profile() {
               </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
 
         <BottomNavbar />
       </View>
@@ -244,6 +274,7 @@ const styles = StyleSheet.create({
   },
   tipsContainer: {
     width: "90%",
+    height: 320,
     marginTop: 20,
     padding: 20,
     backgroundColor: "#dedede",
@@ -251,29 +282,24 @@ const styles = StyleSheet.create({
     boxShadow: "0 4px 0 #747474",
   },
   content: {
-    flex: 1,
     padding: 16,
-    paddingBottom: 100,
+    paddingBottom: 110,
+    alignItems: "center",
   },
   profileRow: {
     flexDirection: "row",
 
     marginBottom: 20,
-    alignItems: "center",
+    alignItems: "flex-start",
   },
-  profileColumn: {
-    flexDirection: "column",
-    display: "flex",
+  leftColumn: {
+    flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: COLORS.primary,
-    padding: 20,
-    borderRadius: 15,
   },
   statsTextColumn: {
     flexDirection: "column",
     alignItems: "flex-start",
-    justifyContent: "center",
+    minHeight: 120,
   },
   username: {
     color: "#fff",
@@ -287,7 +313,7 @@ const styles = StyleSheet.create({
     width: 130,
     height: 130,
     borderRadius: 16,
-    backgroundColor: "#ffffff",
+    backgroundColor: COLORS.primary,
     marginBottom: 12,
     overflow: "hidden",
     justifyContent: "center",
@@ -298,10 +324,8 @@ const styles = StyleSheet.create({
     height: "125%",
   },
   statsColumn: {
-    marginTop: 20,
-    display: "flex",
-    flexDirection: "column",
-
+    flex: 1,
+    gap: 12,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -338,6 +362,11 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontFamily: "Jua",
+  },
+  iconButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 9999,
+    padding: 10,
   },
   orangeButton: {
     backgroundColor: COLORS.secondary,
