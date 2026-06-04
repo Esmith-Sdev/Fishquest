@@ -14,8 +14,8 @@ import { fetchRigStats } from "../api/rigStats";
 import { getToken } from "../api/auth";
 import Bobber from "../assets/images/Bobbers/bobber.png";
 import NoBobber from "../assets/images/Bobbers/no-bobber.png";
-import { COLORS , RADIUS } from "../constants/theme";
-
+import { COLORS, RADIUS } from "../constants/theme";
+import ConfirmModal from "../components/ConfirmModal";
 import { BAIT } from "../data/bait.config";
 import { HOOKS } from "../data/hooks.config";
 import { POLES } from "../data/poles.config";
@@ -24,10 +24,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 import LoadingIndicator from "../components/LoadingIndicator";
 export default function Tacklebox() {
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
   const [rigs, setRigs] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [rigStats, setRigStats] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
   const successRate =
     rigStats?.timesUsed > 0
       ? Math.min((rigStats.fishCaught / rigStats.timesUsed) * 100, 100)
@@ -116,6 +119,16 @@ export default function Tacklebox() {
       <Text style={styles.statValue}>{value}</Text>
     </View>
   );
+  async function deleteRig() {
+    await fetch(`${API_URL}/api/rig-presets/${selectedRig._id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${await getToken()}`,
+      },
+    });
+    setRigs((prev) => prev.filter((r) => r._id !== selectedRig._id));
+    setSelectedIndex(0);
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
@@ -271,11 +284,26 @@ export default function Tacklebox() {
                     <Text style={styles.progressLabel}>Trophy Potential</Text>
                     <ProgressBar value={trophyRate} />
                   </View>
+                  <Pressable
+                    style={[
+                      styles.orangeButton,
+                      { marginTop: 10, paddingVertical: 10 },
+                    ]}
+                    onPress={() => setOpenConfirm(true)}
+                  >
+                    <Text style={styles.buttonText}>Delete Preset</Text>
+                  </Pressable>
                 </View>
               </>
             )}
           </ScrollView>
         )}
+        <ConfirmModal
+          visible={openConfirm}
+          onCancel={() => setOpenConfirm(false)}
+          onConfirm={deleteRig}
+          title="Are you sure you want to delete this rig?"
+        />
         <BottomNavbar />
       </View>
     </SafeAreaView>
@@ -287,7 +315,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0D1B1E",
   },
-  content: {
+
+  content: {
     padding: 16,
     paddingBottom: 100,
   },
@@ -365,7 +394,8 @@ const styles = StyleSheet.create({
     width: "90%",
     height: "90%",
   },
-  orangeButton: {
+
+  orangeButton: {
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,
     paddingVertical: 4,

@@ -4,7 +4,9 @@ import {
   Pressable,
   StyleSheet,
   FlatList,
- ScrollView } from "react-native";
+  ScrollView,
+  Image,
+} from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { router } from "expo-router";
 import { useState, useEffect } from "react";
@@ -150,10 +152,10 @@ export default function Buddies() {
                       </View>
 
                       <View style={styles.cardImage}>
-                        <Entypo name="camera" size={24} color="black" />
-                        <Text style={{ textAlign: "center", fontSize: 10 }}>
-                          No Photo Available
-                        </Text>
+                        <Image
+                          style={styles.cardImage}
+                          source={require("../assets/characters/MaleBasic/Male-Character-template-1.png")}
+                        />
                       </View>
 
                       <View style={styles.cardBodyBottom}></View>
@@ -194,7 +196,8 @@ const styles = StyleSheet.create({
     fontFamily: "Rubik",
     fontSize: 12,
   },
-  content: {
+
+  content: {
     padding: 12,
     paddingBottom: 100,
   },
@@ -217,46 +220,42 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 12,
-    paddingBottom: 100,
   },
   gridRow: {
-    justifyContent: "space-between",
+    justifyContent: "center",
+    gap: 20,
     marginBottom: 10,
   },
   card: {
-    width: "31%",
+    width: "30%",
+    height: 100,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
     backgroundColor: COLORS.primary,
     borderRadius: 15,
     alignItems: "center",
     overflow: "hidden",
-    paddingVertical: 8,
-    position: "relative",
+    paddingVertical: 15,
+    gap: 5,
   },
   cardBodyTop: {
     width: "100%",
-    paddingHorizontal: 6,
-    minHeight: 34,
     justifyContent: "center",
     alignItems: "center",
   },
-  cardBodyBottom: {
-    width: "100%",
-    paddingHorizontal: 6,
-    paddingTop: 4,
-    alignItems: "center",
-  },
+
   cardTitle: {
+    paddingTop: 5,
     fontFamily: "Jua",
     fontSize: 10,
     color: "#000",
     textAlign: "center",
   },
   cardImage: {
-    width: 72,
-    height: 72,
+    width: "100%",
+    height: "100%",
     borderRadius: 15,
-    marginVertical: 4,
-
     alignItems: "center",
   },
   orangeButton: {

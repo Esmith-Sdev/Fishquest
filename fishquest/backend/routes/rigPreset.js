@@ -60,3 +60,16 @@ router.put("/:id", async (req, res) => {
       .json({ message: "Failed to update rig", error: error.message });
   }
 });
+router.delete("/:id", async (req, res) => {
+  try {
+    const deletedRig = await RigPreset.findByIdAndDelete(req.params.id);
+    if (!deletedRig) {
+      return res.status(404).json({ message: "Rig not found" });
+    }
+    res.json({ message: "Rig deleted successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to delete rig", error: error.message });
+  }
+});

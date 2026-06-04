@@ -77,7 +77,7 @@ export async function recalculateUserFishingStats(userId) {
       stats.skunkedCount++;
     }
   }
-
+  console.log("Baits:", stats.baits);
   const updatedStats = await UserFishingStats.findOneAndUpdate(
     { userId },
     stats,

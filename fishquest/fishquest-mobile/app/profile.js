@@ -7,28 +7,27 @@ import {
   Image,
   Alert,
   ScrollView,
+  FlatList,
 } from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import BottomNavbar from "../components/BottomNavbar";
+import { Entypo } from "@expo/vector-icons";
+
 import { COLORS, RADIUS } from "../constants/theme";
 import TopNavbarSecondary from "../components/TopNavbarSecondary";
 import { useAuth } from "../context/AuthContext";
 import SettingsModal from "../components/SettingsModal";
 import LoadingIndicator from "../components/LoadingIndicator";
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+import AddBuddyModal from "../components/AddBuddyModal";
 
-function getFavoriteBait(baits) {
-  return (
-    Object.entries(baits || {})
-      .filter(([, count]) => Number(count) > 0)
-      .sort((a, b) => Number(b[1]) - Number(a[1]))[0]?.[0] || "None"
-  );
-}
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export default function Profile() {
   const [loading, setLoading] = useState(true);
+  const [openAddBuddyModal, setOpenAddBuddyModal] = useState(false);
+  const [users, setUsers] = useState([]);
   const { user, token } = useAuth();
   const [stats, setStats] = useState({
     totalCatches: 0,
@@ -36,7 +35,31 @@ export default function Profile() {
     skunkedCount: 0,
   });
   const { logout: authLogout } = useAuth();
-
+  function getFavoriteBait(baits) {
+    return (
+      Object.entries(baits || {})
+        .filter(([, count]) => Number(count) > 0)
+        .sort((a, b) => Number(b[1]) - Number(a[1]))[0]?.[0] || "None"
+    );
+  }
+  async function fetchFriends() {
+    try {
+      const res = await fetch(`${API_URL}/api/buddies`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      setUsers(Array.isArray(data) ? data : []);
+    } catch {
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => {
+    fetchFriends();
+  }, []);
   useEffect(() => {
     async function fetchStats() {
       try {
@@ -113,21 +136,7 @@ export default function Profile() {
           showButton={true}
           backRoute="/home"
         />
-        <View
-          style={{
-            width: "100%",
-            alignItems: "flex-end",
-            padding: 15,
-            paddingBottom: 0,
-          }}
-        >
-          <Pressable
-            style={styles.iconButton}
-            onPress={() => router.push("/buddies")}
-          >
-            <FontAwesome5 name="user-friends" size={20} color="#fff" />
-          </Pressable>
-        </View>
+
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.profileRow}>
             <View style={styles.leftColumn}>
@@ -151,7 +160,7 @@ export default function Profile() {
               </Pressable>
             </View>
             <View style={styles.statsColumn}>
-              <Text style={styles.statsTitle}>Stats</Text>
+              <Text style={styles.title}>Stats</Text>
               <View style={styles.statsTextColumn}>
                 <View style={styles.statRow}>
                   <Text style={styles.statLabel}>Personal Best:</Text>
@@ -184,10 +193,69 @@ export default function Profile() {
               </View>
             </View>
           </View>
+          <Text style={styles.title}>Buddies</Text>
+          <View style={styles.buddyContainer}>
+            <FlatList
+              data={users.slice(0, 3)}
+              keyExtractor={(item, index) => index.toString()}
+              numColumns={3}
+              columnWrapperStyle={styles.gridRow}
+              contentContainerStyle={styles.listContent}
+              ListEmptyComponent={
+                <View style={styles.centerState}>
+                  <Text style={styles.stateText}>No Buddies Found</Text>
+
+                  <Pressable
+                    style={styles.orangeButton}
+                    onPress={() => setOpenAddBuddyModal(true)}
+                  >
+                    <Text style={styles.buttonText}>Add Buddy</Text>
+                  </Pressable>
+                </View>
+              }
+              renderItem={({ item }) => {
+                return (
+                  <Pressable
+                    style={styles.card}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/buddyProfile",
+                        params: {
+                          buddyId: item._id,
+                          username: item.username,
+                        },
+                      })
+                    }
+                  >
+                    <View style={styles.cardBodyTop}>
+                      <Text style={styles.cardTitle} numberOfLines={2}>
+                        {item.username}
+                      </Text>
+                    </View>
+
+                    <View style={styles.cardImage}>
+                      <Image
+                        style={styles.cardImage}
+                        source={require("../assets/characters/MaleBasic/Male-Character-template-1.png")}
+                      />
+                    </View>
+                  </Pressable>
+                );
+              }}
+            />
+            {users.length > 0 && (
+              <Pressable
+                style={styles.orangeButton}
+                onPress={() => router.push("/buddies")}
+              >
+                <Text style={styles.buttonText}>View All Buddies</Text>
+              </Pressable>
+            )}
+          </View>
 
           <View style={styles.otherColumn}>
+            <Text style={styles.title}>Tips/Tricks</Text>
             <View style={styles.tipsContainer}>
-              <Text style={styles.title}>Tips/Tricks</Text>
               <View style={styles.tipsColumn}>
                 <Pressable
                   style={styles.blueButton}
@@ -252,7 +320,10 @@ export default function Profile() {
             </View>
           </View>
         </ScrollView>
-
+        <AddBuddyModal
+          visible={openAddBuddyModal}
+          onClose={() => setOpenAddBuddyModal(false)}
+        />
         <BottomNavbar />
       </View>
     </SafeAreaView>
@@ -264,18 +335,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0D1B1E",
   },
-  title: {
-    textAlign: "center",
-    fontSize: 24,
-    fontFamily: "Jua",
-    color: "#000",
-    textDecorationLine: "underline",
-    marginBottom: 15,
-  },
+
   tipsContainer: {
-    width: "90%",
-    height: 320,
-    marginTop: 20,
+    width: "80%",
+
     padding: 20,
     backgroundColor: "#dedede",
     borderRadius: 15,
@@ -330,11 +393,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   otherColumn: {
+    marginVertical: 20,
     flex: 1,
-    gap: 12,
+
     alignItems: "center",
   },
-  statsTitle: {
+  title: {
     color: "#fff",
     fontSize: 24,
     fontFamily: "Jua",
@@ -409,6 +473,64 @@ const styles = StyleSheet.create({
   tipsColumn: {
     flexDirection: "column",
     gap: 20,
+    alignItems: "center",
+  },
+  buddyContainer: {
+    backgroundColor: "#dedede",
+    width: "90%",
+    padding: 15,
+    borderRadius: 15,
+    display: "flex",
+  },
+  stateText: {
+    color: "#000",
+    fontSize: 18,
+    fontFamily: "Jua",
+    textAlign: "center",
+  },
+  subText: {
+    color: "#000",
+    fontSize: 14,
+    textAlign: "center",
+  },
+  listContent: {
+    padding: 12,
+  },
+  gridRow: {
+    justifyContent: "center",
+    gap: 20,
+    marginBottom: 10,
+  },
+  card: {
+    width: "30%",
+    height: 100,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    backgroundColor: COLORS.primary,
+    borderRadius: 15,
+    alignItems: "center",
+    overflow: "hidden",
+    paddingVertical: 15,
+    gap: 5,
+  },
+  cardBodyTop: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  cardTitle: {
+    paddingTop: 5,
+    fontFamily: "Jua",
+    fontSize: 10,
+    color: "#000",
+    textAlign: "center",
+  },
+  cardImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 15,
     alignItems: "center",
   },
 });

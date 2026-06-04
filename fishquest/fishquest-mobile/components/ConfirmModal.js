@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontFamily: "Jua",
+    textAlign: "center",
   },
   footer: {
     flexDirection: "row",
