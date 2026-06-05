@@ -3,9 +3,10 @@ import {
   View,
   Text,
   TextInput,
-  Pressable,
+  TouchableOpacity,
   StyleSheet,
- Image } from "react-native";
+  Image,
+} from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
 
 import { Link } from "expo-router";
@@ -57,19 +58,22 @@ export default function AuthForm({
       />
 
       <View style={{ flexDirection: "column", gap: 12, alignItems: "center" }}>
-        <Pressable style={styles.button} onPress={handleSubmit}>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>{buttonText}</Text>
-        </Pressable>
-        <Pressable style={styles.biometricButton} onPress={onBiometricLogin}>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.biometricButton}
+          onPress={onBiometricLogin}
+        >
           <Ionicons name="finger-print" size={50} color="black" />{" "}
-        </Pressable>
+        </TouchableOpacity>
       </View>
       <View style={styles.footerRow}>
         <Text style={styles.footerText}>{footerText} </Text>
         <Link href={footerHref} asChild>
-          <Pressable hitSlop={20}>
+          <TouchableOpacity hitSlop={20}>
             <Text style={styles.link}>{footerLinkText}</Text>
-          </Pressable>
+          </TouchableOpacity>
         </Link>
       </View>
       {errorText && (
@@ -79,7 +83,8 @@ export default function AuthForm({
   );
 }
 
-const styles = StyleSheet.create({  card: {
+const styles = StyleSheet.create({
+  card: {
     borderRadius: 20,
     padding: 24,
     alignItems: "center",

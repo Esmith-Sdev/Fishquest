@@ -6,6 +6,7 @@ import {
   Pressable,
   Image,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { router } from "expo-router";
 import BottomNavbar from "../components/BottomNavbar";
@@ -126,6 +127,7 @@ export default function Tacklebox() {
         Authorization: `Bearer ${await getToken()}`,
       },
     });
+    setOpenConfirm(false);
     setRigs((prev) => prev.filter((r) => r._id !== selectedRig._id));
     setSelectedIndex(0);
   }
@@ -159,25 +161,25 @@ export default function Tacklebox() {
             {!selectedRig ? (
               <View style={styles.emptyState}>
                 <Text style={styles.emptyText}>No rigs yet.</Text>
-                <Pressable
+                <TouchableOpacity
                   style={styles.orangeButton}
                   onPress={() => router.push("/create-rig")}
                 >
                   <Text style={styles.buttonText}>Create your first rig</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             ) : (
               <>
                 <View style={styles.rigSection}>
                   <View style={styles.previewColumn}>
                     <View style={styles.rigTitleRow}>
-                      <Pressable onPress={prevRig}>
+                      <TouchableOpacity onPress={prevRig}>
                         <Text style={styles.caret}>◀</Text>
-                      </Pressable>
+                      </TouchableOpacity>
                       <Text style={styles.rigName}>{selectedRig.rigName}</Text>
-                      <Pressable onPress={nextRig}>
+                      <TouchableOpacity onPress={nextRig}>
                         <Text style={styles.caret}>▶</Text>
-                      </Pressable>
+                      </TouchableOpacity>
                     </View>
                     <View style={styles.rigImageContainer}>
                       {selectedRig.pole?.image ? (
@@ -284,7 +286,7 @@ export default function Tacklebox() {
                     <Text style={styles.progressLabel}>Trophy Potential</Text>
                     <ProgressBar value={trophyRate} />
                   </View>
-                  <Pressable
+                  <TouchableOpacity
                     style={[
                       styles.orangeButton,
                       { marginTop: 10, paddingVertical: 10 },
@@ -292,7 +294,7 @@ export default function Tacklebox() {
                     onPress={() => setOpenConfirm(true)}
                   >
                     <Text style={styles.buttonText}>Delete Preset</Text>
-                  </Pressable>
+                  </TouchableOpacity>
                 </View>
               </>
             )}

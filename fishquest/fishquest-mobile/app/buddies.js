@@ -2,6 +2,7 @@ import {
   View,
   Text,
   Pressable,
+  TouchableOpacity,
   StyleSheet,
   FlatList,
   ScrollView,
@@ -82,7 +83,7 @@ export default function Buddies() {
           <>
             <ScrollView contentContainerStyle={styles.content}>
               <View style={styles.notificationContainer}>
-                <Pressable
+                <TouchableOpacity
                   style={styles.notificationButton}
                   onPress={() => setOpenBuddyRequestsModal(true)}
                 >
@@ -107,7 +108,7 @@ export default function Buddies() {
                       </Text>
                     </View>
                   </View>
-                </Pressable>
+                </TouchableOpacity>
               </View>
               <FlatList
                 data={users}
@@ -123,17 +124,17 @@ export default function Buddies() {
                     <Text style={styles.subText}>
                       Add some buddies to see them here.
                     </Text>
-                    <Pressable
+                    <TouchableOpacity
                       style={styles.orangeButton}
                       onPress={() => setOpenAddBuddyModal(true)}
                     >
                       <Text style={styles.orangeButtonText}>Add Buddy</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                   </View>
                 }
                 renderItem={({ item }) => {
                   return (
-                    <Pressable
+                    <TouchableOpacity
                       style={styles.card}
                       onPress={() =>
                         router.push({
@@ -159,7 +160,7 @@ export default function Buddies() {
                       </View>
 
                       <View style={styles.cardBodyBottom}></View>
-                    </Pressable>
+                    </TouchableOpacity>
                   );
                 }}
               />

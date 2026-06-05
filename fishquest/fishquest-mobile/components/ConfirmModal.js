@@ -1,4 +1,4 @@
-import { Modal, View, Text, Pressable, StyleSheet } from "react-native";
+import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 import { COLORS, RADIUS } from "../constants/theme";
 export default function ConfirmModal({ visible, onCancel, onConfirm, title }) {
@@ -16,12 +16,12 @@ export default function ConfirmModal({ visible, onCancel, onConfirm, title }) {
           </View>
 
           <View style={styles.footer}>
-            <Pressable style={styles.blueButton} onPress={onConfirm}>
+            <TouchableOpacity style={styles.blueButton} onPress={onConfirm}>
               <Text style={styles.buttonText}>Yes</Text>
-            </Pressable>
-            <Pressable style={styles.orangeButton} onPress={onCancel}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.orangeButton} onPress={onCancel}>
               <Text style={styles.buttonText}>No</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

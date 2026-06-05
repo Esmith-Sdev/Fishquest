@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import {
   View,
   Text,
-  Pressable,
+  TouchableOpacity,
   FlatList,
   StyleSheet,
   Modal,
@@ -94,7 +94,7 @@ export default function StateDropdown({ value, onChange }) {
 
   return (
     <View style={styles.container}>
-      <Pressable
+      <TouchableOpacity
         ref={buttonRef}
         style={styles.pillSelectSmall}
         onPress={openDropdown}
@@ -108,7 +108,7 @@ export default function StateDropdown({ value, onChange }) {
             color="black"
           />
         </View>
-      </Pressable>
+      </TouchableOpacity>
 
       <Modal
         visible={open}
@@ -117,7 +117,7 @@ export default function StateDropdown({ value, onChange }) {
         onRequestClose={() => setOpen(false)}
       >
         <View style={styles.modalOverlay}>
-          <Pressable
+          <TouchableOpacity
             style={StyleSheet.absoluteFill}
             onPress={() => setOpen(false)}
           />
@@ -140,7 +140,7 @@ export default function StateDropdown({ value, onChange }) {
                 const isSelected = item.value === value;
 
                 return (
-                  <Pressable
+                  <TouchableOpacity
                     style={[
                       styles.dropdownItem,
                       isSelected && styles.dropdownItemSelected,
@@ -155,7 +155,7 @@ export default function StateDropdown({ value, onChange }) {
                     >
                       {item.label}
                     </Text>
-                  </Pressable>
+                  </TouchableOpacity>
                 );
               }}
             />

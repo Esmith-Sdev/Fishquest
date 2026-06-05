@@ -1,6 +1,12 @@
-import { View, Text, StyleSheet, Pressable, Alert , Animated } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Animated,
+} from "react-native";
 import { Link } from "expo-router";
-
 
 import { useRef, useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -52,14 +58,14 @@ export default function Topbar() {
           <Text style={styles.progressLabel}>{xp} XP</Text>
         </View>
       </View>
-      <Pressable
+      <TouchableOpacity
         style={styles.hamButton}
         onPress={() => setMenuOpen((prev) => !prev)}
       >
         <Ionicons name={menuOpen ? "close" : "menu"} size={30} color="#fff" />
-      </Pressable>
+      </TouchableOpacity>
       {menuOpen && (
-        <Pressable
+        <TouchableOpacity
           style={styles.backgroundOverlay}
           onPress={() => setMenuOpen(false)}
         />
@@ -81,29 +87,29 @@ export default function Topbar() {
           },
         ]}
       >
-        <Pressable
+        <TouchableOpacity
           onPress={() => {
             setMenuOpen(false);
             setShowForecast(true);
           }}
         >
           <Text style={styles.dropdownItem}>Fishing Forecast</Text>
-        </Pressable>
+        </TouchableOpacity>
         <View style={styles.dropdownDivider} />
 
-        <Pressable
+        <TouchableOpacity
           onPress={() =>
             Alert.alert("Shop coming soon!", "Feature not available in Beta")
           }
         >
           <Text style={styles.dropdownItem}>Shop</Text>
-        </Pressable>
+        </TouchableOpacity>
 
         <View style={styles.dropdownDivider} />
         <Link href="/buddies" asChild>
-          <Pressable onPress={() => setMenuOpen(false)}>
+          <TouchableOpacity onPress={() => setMenuOpen(false)}>
             <Text style={styles.dropdownItem}>Buddies</Text>
-          </Pressable>
+          </TouchableOpacity>
         </Link>
       </Animated.View>
       <ForecastModal
@@ -171,7 +177,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 8,
   },
-  rankText: {
+
+  rankText: {
     color: "#fff",
     fontSize: 14,
     marginBottom: 6,

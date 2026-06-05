@@ -7,6 +7,7 @@ import {
   Pressable,
   StyleSheet,
   FlatList,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomBar from "../components/BottomNavbar";
@@ -109,17 +110,20 @@ export default function BadgesPage() {
           animationType="fade"
           onRequestClose={handleClose}
         >
-          <Pressable style={styles.modalOverlay} onPress={handleClose}>
-            <Pressable
+          <TouchableOpacity style={styles.modalOverlay} onPress={handleClose}>
+            <TouchableOpacity
               style={styles.modalCard}
               onPress={(e) => e.stopPropagation()}
             >
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>{selectedBadge?.name}</Text>
 
-                <Pressable onPress={handleClose} style={styles.closeButton}>
+                <TouchableOpacity
+                  onPress={handleClose}
+                  style={styles.closeButton}
+                >
                   <Feather name="x" size={35} color="black" />
-                </Pressable>
+                </TouchableOpacity>
               </View>
 
               {selectedBadge && (
@@ -143,8 +147,8 @@ export default function BadgesPage() {
                   </Text>
                 </View>
               )}
-            </Pressable>
-          </Pressable>
+            </TouchableOpacity>
+          </TouchableOpacity>
         </Modal>
         <BottomBar />
       </View>
@@ -157,7 +161,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0D1B1E",
   },
-  grid: {
+
+  grid: {
     paddingHorizontal: 12,
     paddingTop: 12,
     paddingBottom: 100,

@@ -7,6 +7,7 @@ import {
   Alert,
   ScrollView,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -196,7 +197,7 @@ export default function BuddyProfile() {
               </Text>
             </View>
             <View style={styles.buttonsContainer}>
-              <Pressable
+              <TouchableOpacity
                 onPress={handleTrackToggle}
                 style={[styles.trackButton, saving && { opacity: 0.6 }]}
                 disabled={saving}
@@ -204,14 +205,14 @@ export default function BuddyProfile() {
                 <Text style={styles.trackButtonText}>
                   {tracking ? "Stop Tracking" : "Track Buddy"}
                 </Text>
-              </Pressable>
-              <Pressable
+              </TouchableOpacity>
+              <TouchableOpacity
                 onPress={() => setOpenConfirmModal(true)}
                 style={[styles.removeButton, saving && { opacity: 0.6 }]}
                 disabled={saving}
               >
                 <Text style={styles.trackButtonText}>Remove Buddy</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
             <View style={styles.statsContainer}>
               <View style={styles.statBlock}>
@@ -268,7 +269,7 @@ export default function BuddyProfile() {
                       : "";
 
                     return (
-                      <Pressable
+                      <TouchableOpacity
                         style={styles.card}
                         key={log._id}
                         onPress={() =>
@@ -314,7 +315,7 @@ export default function BuddyProfile() {
                             {formattedDate}
                           </Text>
                         </View>
-                      </Pressable>
+                      </TouchableOpacity>
                     );
                   })}
                 </View>

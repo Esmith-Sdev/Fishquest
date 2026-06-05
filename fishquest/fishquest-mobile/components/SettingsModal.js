@@ -1,4 +1,11 @@
-import { Modal, View, Text, Pressable, StyleSheet, Alert } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { COLORS, RADIUS } from "../constants/theme";
 import { router } from "expo-router";
@@ -181,29 +188,32 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
       animationType="fade"
       onRequestClose={onClose}
     >
-      <Pressable onPress={onClose} style={styles.overlay}>
-        <Pressable onPress={(e) => e.stopPropagation()} style={styles.box}>
+      <TouchableOpacity onPress={onClose} style={styles.overlay}>
+        <TouchableOpacity
+          onPress={(e) => e.stopPropagation()}
+          style={styles.box}
+        >
           <View style={styles.header}>
             <Text style={styles.title}>Settings</Text>
 
             <View style={{ position: "absolute", right: -10, top: -10 }}>
-              <Pressable onPress={onClose} style={styles.button}>
+              <TouchableOpacity onPress={onClose} style={styles.button}>
                 <MaterialIcons
                   name="cancel"
                   size={30}
                   color={COLORS.secondary}
                 />{" "}
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </View>
           <View style={styles.body}>
-            <Pressable
+            <TouchableOpacity
               onPress={handleReportBugPressed}
               style={styles.blueButton}
             >
               <Text style={styles.buttonText}>Report a Bug</Text>
-            </Pressable>
-            <Pressable
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={handleEnablePressed}
               style={[
                 styles.blueButton,
@@ -214,8 +224,8 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
               <Text style={styles.buttonText}>
                 {enabled ? "Biometrics Enabled" : "Enable Biometrics"}
               </Text>
-            </Pressable>
-            <Pressable
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={handleToggleNotifications}
               style={styles.blueButton}
             >
@@ -224,30 +234,33 @@ export default function SettingsModal({ visible, onClose, onLogOut }) {
                   ? "Disable Notifications"
                   : "Enable Notifications"}
               </Text>
-            </Pressable>
-            <Pressable onPress={handleToggleLocation} style={styles.blueButton}>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleToggleLocation}
+              style={styles.blueButton}
+            >
               <Text style={styles.buttonText}>
                 {preferences.locationEnabled
                   ? "Disable Location Services"
                   : "Enable Location Services"}
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
           <View style={styles.footer}>
-            <Pressable onPress={onLogOut} style={styles.orangeButton}>
+            <TouchableOpacity onPress={onLogOut} style={styles.orangeButton}>
               <Text style={styles.buttonText}>Logout</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
           <View style={styles.footer}>
-            <Pressable
+            <TouchableOpacity
               onPress={() => setOpenConfirmModal(true)}
               style={styles.deleteButton}
             >
               <Text style={styles.buttonText}>Delete Account</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
-        </Pressable>
-      </Pressable>
+        </TouchableOpacity>
+      </TouchableOpacity>
       <ConfirmModal
         title="Are you sure? You Will lose all progress..."
         visible={openConfirmModal}

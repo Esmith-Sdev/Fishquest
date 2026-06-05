@@ -7,6 +7,7 @@ import {
   FlatList,
   Image,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -36,9 +37,9 @@ export default function Logs() {
           return;
         }
 
-      const data = await fetchOfflineLogs(token);
-      setLogs(Array.isArray(data) ? data : []);
-    } catch (err) {
+        const data = await fetchOfflineLogs(token);
+        setLogs(Array.isArray(data) ? data : []);
+      } catch (err) {
         Alert.alert("Error", err.message || "Failed to load logs");
       } finally {
         setLoading(false);
@@ -87,7 +88,7 @@ export default function Logs() {
             <View style={styles.sortRow}>
               <Text style={styles.sortLabel}>Sort By:</Text>
 
-              <Pressable
+              <TouchableOpacity
                 style={styles.orangeButtonSmall}
                 onPress={() =>
                   Alert.alert(
@@ -97,9 +98,9 @@ export default function Logs() {
                 }
               >
                 <Text style={styles.orangeButtonText}>Date</Text>
-              </Pressable>
+              </TouchableOpacity>
 
-              <Pressable
+              <TouchableOpacity
                 style={styles.orangeButtonSmall}
                 onPress={() =>
                   Alert.alert(
@@ -109,9 +110,9 @@ export default function Logs() {
                 }
               >
                 <Text style={styles.orangeButtonText}>Photo</Text>
-              </Pressable>
+              </TouchableOpacity>
 
-              <Pressable
+              <TouchableOpacity
                 style={styles.orangeButtonSmall}
                 onPress={() =>
                   Alert.alert(
@@ -121,7 +122,7 @@ export default function Logs() {
                 }
               >
                 <Text style={styles.orangeButtonText}>Location</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
 
             <FlatList
@@ -151,7 +152,7 @@ export default function Logs() {
                   : "";
 
                 return (
-                  <Pressable
+                  <TouchableOpacity
                     style={styles.card}
                     onPress={() => {
                       if (deleteModeLogId === log._id) {
@@ -190,7 +191,7 @@ export default function Logs() {
                       }}
                     />
                     {deleteModeLogId === log._id && (
-                      <Pressable
+                      <TouchableOpacity
                         style={styles.deleteBtn}
                         onPress={() => {
                           setSelectedLogId(log._id);
@@ -198,7 +199,7 @@ export default function Logs() {
                         }}
                       >
                         <Ionicons name="close" size={16} color="#fff" />
-                      </Pressable>
+                      </TouchableOpacity>
                     )}
                     <View style={styles.cardBodyTop}>
                       <Text style={styles.cardTitle} numberOfLines={2}>
@@ -224,7 +225,7 @@ export default function Logs() {
                     <View style={styles.cardBodyBottom}>
                       <Text style={styles.cardSubtitle}>{formattedDate}</Text>
                     </View>
-                  </Pressable>
+                  </TouchableOpacity>
                 );
               }}
             />
@@ -293,7 +294,8 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   gridRow: {
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
+    gap: 20,
     marginBottom: 10,
   },
   card: {

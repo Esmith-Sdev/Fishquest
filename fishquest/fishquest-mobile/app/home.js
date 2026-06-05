@@ -1,4 +1,11 @@
-import { View, Pressable, StyleSheet, Image, Alert , ScrollView } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Alert,
+  ScrollView,
+} from "react-native";
 
 import TopNavbar from "../components/TopNavbar";
 import BottomNavbar from "../components/BottomNavbar";
@@ -14,7 +21,7 @@ export default function HomeScreen() {
         <ScrollView contentContainerStyle={styles.content}>
           <DailyChallenges />
           <View style={styles.horizontalCardContainer}>
-            <Pressable
+            <TouchableOpacity
               onPress={() =>
                 Alert.alert("PvP coming soon!", "Feature not available in Beta")
               }
@@ -24,7 +31,7 @@ export default function HomeScreen() {
                 style={styles.horizontalCardImage}
                 source={require("../assets/images/vs.png")}
               ></Image>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </ScrollView>
         <BottomNavbar />
@@ -41,7 +48,8 @@ const styles = StyleSheet.create({
   content: {
     paddingBottom: 100,
   },
-  horizontalCardContainer: {
+
+  horizontalCardContainer: {
     width: "100%",
     alignItems: "center",
     paddingHorizontal: 20,

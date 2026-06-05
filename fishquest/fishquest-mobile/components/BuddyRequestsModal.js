@@ -4,7 +4,7 @@ import {
   Text,
   Modal,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   FlatList,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -109,8 +109,8 @@ export default function BuddyRequestsModal({ visible, onClose }) {
       animationType="fade"
       onRequestClose={onClose}
     >
-      <Pressable onPress={onClose} style={styles.overlay}>
-        <Pressable
+      <TouchableOpacity onPress={onClose} style={styles.overlay}>
+        <TouchableOpacity
           onPress={(e) => e.stopPropagation()}
           style={styles.modalCard}
         >
@@ -118,13 +118,13 @@ export default function BuddyRequestsModal({ visible, onClose }) {
             <Text style={styles.title}>Buddy Requests</Text>
 
             <View style={{ position: "absolute", right: -10, top: -10 }}>
-              <Pressable onPress={onClose} style={styles.button}>
+              <TouchableOpacity onPress={onClose} style={styles.button}>
                 <MaterialIcons
                   name="cancel"
                   size={30}
                   color={COLORS.secondary}
                 />
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -136,12 +136,12 @@ export default function BuddyRequestsModal({ visible, onClose }) {
             <View style={styles.messageBox}>
               <Text style={styles.buttonText}>{resultMessage}</Text>
 
-              <Pressable
+              <TouchableOpacity
                 style={styles.orangeButton}
                 onPress={() => setResultMessage("")}
               >
                 <Text style={styles.buttonText}>OK</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
           ) : (
             <FlatList
@@ -165,27 +165,27 @@ export default function BuddyRequestsModal({ visible, onClose }) {
                     <LoadingIndicator text="" color="#fff" />
                   ) : (
                     <>
-                      <Pressable
+                      <TouchableOpacity
                         style={styles.blueButton}
                         onPress={() => handleAccept(item._id)}
                       >
                         <FontAwesome name="check" size={20} color="black" />
-                      </Pressable>
+                      </TouchableOpacity>
 
-                      <Pressable
+                      <TouchableOpacity
                         style={styles.orangeButton}
                         onPress={() => handleDecline(item._id)}
                       >
                         <FontAwesome6 name="xmark" size={20} color="black" />
-                      </Pressable>
+                      </TouchableOpacity>
                     </>
                   )}
                 </View>
               )}
             />
           )}
-        </Pressable>
-      </Pressable>
+        </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
   );
 }
@@ -209,7 +209,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 15,
   },
-  userContainer: {
+
+  userContainer: {
     width: "50%",
     borderRadius: RADIUS.pill,
     paddingVertical: 6,

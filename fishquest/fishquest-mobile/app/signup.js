@@ -4,7 +4,7 @@ import {
   Text,
   TextInput,
   Image,
-  Pressable,
+  TouchableOpacity,
   StyleSheet,
   Alert,
 } from "react-native";
@@ -200,7 +200,7 @@ export default function SignUp() {
                 }}
               >
                 {videos.map((_, i) => (
-                  <Pressable
+                  <TouchableOpacity
                     key={i}
                     hitSlop={10}
                     onPress={() => setVideoIndex(i)}
@@ -211,23 +211,23 @@ export default function SignUp() {
                   />
                 ))}
               </View>
-              <Pressable
+              <TouchableOpacity
                 style={styles.orangeButton}
                 onPress={handleButtonClick}
               >
                 <Text style={styles.buttonText}>Get Started</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
           ) : index === 1 ? (
             <View style={styles.formContainer}>
               <Link href="/" asChild>
-                <Pressable style={styles.backButton}>
+                <TouchableOpacity style={styles.backButton}>
                   <LeftArrowCircle
                     name="arrow-circle-left"
                     size={30}
                     color="white"
                   />
-                </Pressable>
+                </TouchableOpacity>
               </Link>
               <View style={styles.logoWrap}>
                 <Image
@@ -278,9 +278,12 @@ export default function SignUp() {
                 secureTextEntry
               />
               <View style={styles.submitWrap}>
-                <Pressable style={styles.orangeButton} onPress={handleSubmit}>
+                <TouchableOpacity
+                  style={styles.orangeButton}
+                  onPress={handleSubmit}
+                >
                   <Text style={styles.buttonText}>Submit</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </View>
           ) : index === 2 ? (
@@ -296,18 +299,18 @@ export default function SignUp() {
                 challenges/events.(We won't spam you, we promise!)
               </Text>
               <View style={{ flexDirection: "column", gap: 12, marginTop: 12 }}>
-                <Pressable
+                <TouchableOpacity
                   style={styles.blueButton}
                   onPress={handleEnableNotifications}
                 >
                   <Text style={styles.buttonText}>Yes</Text>
-                </Pressable>
-                <Pressable
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={styles.orangeButton}
                   onPress={handleDisableNotifications}
                 >
                   <Text style={styles.buttonText}>No</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </View>
           ) : index === 3 ? (
@@ -322,18 +325,18 @@ export default function SignUp() {
                 Used to autofill your location
               </Text>
               <View style={{ flexDirection: "column", gap: 12, marginTop: 12 }}>
-                <Pressable
+                <TouchableOpacity
                   style={styles.blueButton}
                   onPress={handleEnableLocationServices}
                 >
                   <Text style={styles.buttonText}>Yes</Text>
-                </Pressable>
-                <Pressable
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={styles.orangeButton}
                   onPress={handleDisableLocationServices}
                 >
                   <Text style={styles.buttonText}>No</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </View>
           ) : (
@@ -349,18 +352,18 @@ export default function SignUp() {
                 more rigs later in your profile.
               </Text>
               <View style={{ flexDirection: "column", gap: 12, marginTop: 12 }}>
-                <Pressable
+                <TouchableOpacity
                   style={styles.blueButton}
                   onPress={() => router.replace("/create-rig")}
                 >
                   <Text style={styles.buttonText}>Yes</Text>
-                </Pressable>
-                <Pressable
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={styles.orangeButton}
                   onPress={() => router.replace("/home")}
                 >
                   <Text style={styles.buttonText}>No</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </View>
           )}

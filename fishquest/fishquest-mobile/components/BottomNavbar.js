@@ -1,41 +1,41 @@
-import { View, StyleSheet, Pressable, Image } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { COLORS } from "../constants/theme";
 import { router } from "expo-router";
 export default function BottomNavbar() {
   return (
     <View style={styles.container}>
       <View style={styles.iconsContainer}>
-        <Pressable onPress={() => router.push("/home")}>
+        <TouchableOpacity onPress={() => router.push("/home")}>
           <Image
             source={require("../assets/images/icons/Home.png")}
             style={styles.icon}
           ></Image>
-        </Pressable>
+        </TouchableOpacity>
 
-        <Pressable onPress={() => router.push("/tacklebox")}>
+        <TouchableOpacity onPress={() => router.push("/tacklebox")}>
           <Image
             source={require("../assets/images/icons/TackleBox.png")}
             style={styles.icon}
           ></Image>
-        </Pressable>
-        <Pressable onPress={() => router.push("/logs")}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/logs")}>
           <Image
             source={require("../assets/images/icons/Book.png")}
             style={styles.icon}
           ></Image>
-        </Pressable>
-        <Pressable onPress={() => router.push("/badges")}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/badges")}>
           <Image
             source={require("../assets/images/icons/Trophy.png")}
             style={styles.biggerIcon}
           ></Image>
-        </Pressable>
-        <Pressable onPress={() => router.push("/profile")}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/profile")}>
           <Image
             source={require("../assets/images/icons/Fisherman.png")}
             style={styles.biggerIcon}
           ></Image>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </View>
   );

@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   Image,
   ScrollView,
   Alert,
@@ -314,12 +314,12 @@ export default function ViewLog() {
                         <Text style={styles.noRigText}>
                           No rigs found. Create one before logging.
                         </Text>
-                        <Pressable
+                        <TouchableOpacity
                           style={styles.orangeButton}
                           onPress={handleCreateRig}
                         >
                           <Text style={styles.buttonText}>Create Rig</Text>
-                        </Pressable>
+                        </TouchableOpacity>
                       </>
                     ) : null}
                   </View>
@@ -333,7 +333,7 @@ export default function ViewLog() {
               ) : (
                 <View style={styles.imageGrid}>
                   {allImages.map((img, i) => (
-                    <Pressable
+                    <TouchableOpacity
                       key={i}
                       style={styles.imageTile}
                       onPress={() => {
@@ -345,7 +345,7 @@ export default function ViewLog() {
                         source={{ uri: img.uri }}
                         style={styles.gridImage}
                       />
-                    </Pressable>
+                    </TouchableOpacity>
                   ))}
                 </View>
               )}
@@ -613,7 +613,8 @@ const styles = StyleSheet.create({
     width: "90%",
     height: "90%",
   },
-  noRigBox: {
+
+  noRigBox: {
     borderWidth: 1,
     borderStyle: "dashed",
     borderColor: "#ccc",
@@ -628,7 +629,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
   },
-  imageGrid: {
+
+  imageGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 16,

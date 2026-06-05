@@ -4,7 +4,7 @@ import {
   Text,
   Modal,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   FlatList,
   TextInput,
 } from "react-native";
@@ -87,21 +87,21 @@ export default function AddBuddyModal({ visible, onClose }) {
       animationType="fade"
       onRequestClose={onClose}
     >
-      <Pressable onPress={onClose} style={styles.overlay}>
-        <Pressable
+      <TouchableOpacity onPress={onClose} style={styles.overlay}>
+        <TouchableOpacity
           onPress={(e) => e.stopPropagation()}
           style={styles.modalCard}
         >
           <View style={styles.header}>
             <Text style={styles.title}>Add a Buddy</Text>
             <View style={{ position: "absolute", right: -10, top: -10 }}>
-              <Pressable onPress={onClose} style={styles.button}>
+              <TouchableOpacity onPress={onClose} style={styles.button}>
                 <MaterialIcons
                   name="cancel"
                   size={30}
                   color={COLORS.secondary}
                 />{" "}
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </View>
           {loading ? (
@@ -117,24 +117,24 @@ export default function AddBuddyModal({ visible, onClose }) {
                   onChangeText={setQuery}
                 />
               </View>
-              <Pressable
+              <TouchableOpacity
                 style={[styles.orangeButton, { marginBottom: 15 }]}
                 onPress={() => handleSearch(query)}
               >
                 <Text style={styles.buttonText}>
                   {searching ? "Searching..." : "Search"}
                 </Text>
-              </Pressable>
+              </TouchableOpacity>
               {resultMessage ? (
                 <View style={styles.messageBox}>
                   <Text style={styles.buttonText}>{resultMessage}</Text>
 
-                  <Pressable
+                  <TouchableOpacity
                     style={styles.orangeButton}
                     onPress={() => setResultMessage("")}
                   >
                     <Text style={styles.buttonText}>OK</Text>
-                  </Pressable>
+                  </TouchableOpacity>
                 </View>
               ) : (
                 <FlatList
@@ -150,16 +150,16 @@ export default function AddBuddyModal({ visible, onClose }) {
                       {addingUserId === item._id ? (
                         <LoadingIndicator text="Adding" color="#fff" />
                       ) : addedUsers[item._id] ? (
-                        <Pressable style={styles.blueButton} disabled>
+                        <TouchableOpacity style={styles.blueButton} disabled>
                           <Text style={styles.buttonText}>Sent!</Text>
-                        </Pressable>
+                        </TouchableOpacity>
                       ) : (
-                        <Pressable
+                        <TouchableOpacity
                           style={styles.blueButton}
                           onPress={() => handleAddFriend(item._id)}
                         >
                           <Text style={styles.buttonText}>Add</Text>
-                        </Pressable>
+                        </TouchableOpacity>
                       )}
                     </View>
                   )}
@@ -167,8 +167,8 @@ export default function AddBuddyModal({ visible, onClose }) {
               )}
             </View>
           )}
-        </Pressable>
-      </Pressable>
+        </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
   );
 }

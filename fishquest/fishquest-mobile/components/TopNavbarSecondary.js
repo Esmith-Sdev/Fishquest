@@ -1,7 +1,7 @@
-import { StyleSheet , View, Pressable, Text } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { RADIUS , COLORS } from "../constants/theme";
+import { RADIUS, COLORS } from "../constants/theme";
 
 import { router } from "expo-router";
 export default function TopNavbarSecondary({
@@ -38,14 +38,14 @@ export default function TopNavbarSecondary({
 
   return (
     <View style={styles.header}>
-      <Pressable style={styles.backButton} onPress={handleBack}>
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
         <Ionicons name="arrow-back-circle" size={30} color="#fff" />
-      </Pressable>
+      </TouchableOpacity>
 
       <Text style={styles.headerTitle}>{title}</Text>
 
       {showButton ? (
-        <Pressable
+        <TouchableOpacity
           style={[
             styles.orangeButton,
             (disabled || loading) && styles.disabledButton,
@@ -53,7 +53,7 @@ export default function TopNavbarSecondary({
           onPress={handleRightButton}
         >
           <Text style={styles.buttonText}>{buttonText}</Text>
-        </Pressable>
+        </TouchableOpacity>
       ) : (
         <View style={styles.sideButton} />
       )}
@@ -88,7 +88,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     zIndex: 10,
   },
-  orangeButton: {
+
+  orangeButton: {
     boxShadow: "0px 4px 0px #733800",
     backgroundColor: COLORS.secondary,
     borderRadius: RADIUS.pill,

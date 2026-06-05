@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   Image,
   TextInput,
   Alert,
@@ -476,15 +476,15 @@ export default function UpdateLog() {
                     <View style={styles.rigSection}>
                       <View style={styles.previewColumn}>
                         <View style={styles.rigTitleRow}>
-                          <Pressable onPress={prevRig}>
+                          <TouchableOpacity onPress={prevRig}>
                             <Text style={styles.caret}>◀</Text>
-                          </Pressable>
+                          </TouchableOpacity>
                           <Text style={styles.rigName}>
                             {selectedRig.rigName}
                           </Text>
-                          <Pressable onPress={nextRig}>
+                          <TouchableOpacity onPress={nextRig}>
                             <Text style={styles.caret}>▶</Text>
-                          </Pressable>
+                          </TouchableOpacity>
                         </View>
                         <View style={styles.rigImageContainer}>
                           {selectedRig.pole?.image ? (
@@ -544,12 +544,12 @@ export default function UpdateLog() {
                     <Text style={styles.noRigText}>
                       No rigs found. Create one before logging.
                     </Text>
-                    <Pressable
+                    <TouchableOpacity
                       style={styles.orangeButton}
                       onPress={handleCreateRig}
                     >
                       <Text style={styles.buttonText}>Create Rig</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                   </View>
                 )}
               </View>
@@ -560,12 +560,18 @@ export default function UpdateLog() {
                   <View
                     style={{ flexDirection: "row", gap: 12, marginTop: 12 }}
                   >
-                    <Pressable style={styles.blueButton} onPress={pickImages}>
+                    <TouchableOpacity
+                      style={styles.blueButton}
+                      onPress={pickImages}
+                    >
                       <Text style={styles.buttonText}>Upload Images</Text>
-                    </Pressable>
-                    <Pressable style={styles.orangeButton} onPress={takePhoto}>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.orangeButton}
+                      onPress={takePhoto}
+                    >
                       <Text style={styles.buttonText}>Take Photo</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                   </View>
                 </View>
               ) : (
@@ -577,35 +583,38 @@ export default function UpdateLog() {
                         style={styles.gridImage}
                       />
 
-                      <Pressable
+                      <TouchableOpacity
                         style={styles.removeImageBtn}
                         onPress={() => handleRemoveImage(i, img.isRemote)}
                       >
                         <Ionicons name="close" size={16} color="#fff" />
-                      </Pressable>
+                      </TouchableOpacity>
                     </View>
                   ))}
 
                   {!isGridFull && (
-                    <Pressable style={styles.largeSquare} onPress={pickImages}>
+                    <TouchableOpacity
+                      style={styles.largeSquare}
+                      onPress={pickImages}
+                    >
                       <Text style={styles.addImageText}>Add Image</Text>
                       <Ionicons
                         name="add-circle"
                         size={46}
                         color={COLORS.primary}
                       />
-                      <Pressable
+                      <TouchableOpacity
                         style={styles.addCameraBtn}
                         onPress={takePhoto}
                         hitSlop={10}
                       >
                         <Ionicons name="camera" size={18} color="#000" />
-                      </Pressable>
-                    </Pressable>
+                      </TouchableOpacity>
+                    </TouchableOpacity>
                   )}
                 </View>
               )}
-              <Pressable
+              <TouchableOpacity
                 style={[
                   styles.orangeButton,
                   aiLoading && styles.disabledButton,
@@ -616,7 +625,7 @@ export default function UpdateLog() {
                 <Text style={styles.buttonText}>
                   {aiLoading ? "Identifying..." : "Identify Fish with AI"}
                 </Text>
-              </Pressable>
+              </TouchableOpacity>
               {aiResult?.speciesName ? (
                 <View style={{ marginTop: 8 }}>
                   <Text style={styles.logLabel}>
@@ -647,7 +656,7 @@ export default function UpdateLog() {
                       "No Challenge"}
                   </Text>
                 </View>
-                <Pressable
+                <TouchableOpacity
                   style={styles.checkboxRow}
                   onPress={() => setSkunked((prev) => !prev)}
                 >
@@ -664,7 +673,7 @@ export default function UpdateLog() {
                       <Ionicons name="checkmark" size={20} color="#000" />
                     ) : null}
                   </View>
-                </Pressable>
+                </TouchableOpacity>
 
                 <View style={styles.speciesRow}>
                   <Text style={styles.logLabel}>Fish Species:</Text>
@@ -808,34 +817,34 @@ export default function UpdateLog() {
                 <View style={styles.logRow}>
                   <Text style={styles.logLabel}>Date:</Text>
                   <View style={styles.fieldFlex}>
-                    <Pressable
+                    <TouchableOpacity
                       style={styles.pillInputMedium}
                       onPress={() => setShowDatePicker(true)}
                     >
                       <Text style={styles.selectText}>
                         {selectedDate.toLocaleDateString()}
                       </Text>
-                    </Pressable>
+                    </TouchableOpacity>
                   </View>
                 </View>
 
                 <View style={styles.logRow}>
                   <Text style={styles.logLabel}>Time:</Text>
                   <View style={styles.inlineField}>
-                    <Pressable
+                    <TouchableOpacity
                       style={styles.pillInputMedium}
                       onPress={() => setShowTimePicker(true)}
                     >
                       <Text style={styles.selectText}>{timeValue}</Text>
-                    </Pressable>
-                    <Pressable
+                    </TouchableOpacity>
+                    <TouchableOpacity
                       style={styles.pillSelectTime}
                       onPress={() =>
                         setPeriod((prev) => (prev === "AM" ? "PM" : "AM"))
                       }
                     >
                       <Text style={styles.selectText}>{period}</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                   </View>
                 </View>
                 <View style={styles.logRow}>
@@ -851,7 +860,7 @@ export default function UpdateLog() {
                       renderItem={({ item }) => {
                         const isSelected = selectedWeather === item.id;
                         return (
-                          <Pressable
+                          <TouchableOpacity
                             onPress={() => setSelectedWeather(item.id)}
                             style={[
                               styles.weatherOption,
@@ -871,7 +880,7 @@ export default function UpdateLog() {
                             >
                               {item.label}
                             </Text>
-                          </Pressable>
+                          </TouchableOpacity>
                         );
                       }}
                     />
@@ -913,7 +922,7 @@ export default function UpdateLog() {
                     />
                   </View>
 
-                  <Pressable
+                  <TouchableOpacity
                     style={styles.orangeButton}
                     disabled={loadingLocation}
                     onPress={handleGetLocation}
@@ -923,7 +932,7 @@ export default function UpdateLog() {
                         ? "Getting Location..."
                         : "Use Current Location"}
                     </Text>
-                  </Pressable>
+                  </TouchableOpacity>
 
                   {geoError ? (
                     <Text style={styles.geoError}>{geoError}</Text>

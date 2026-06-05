@@ -6,7 +6,7 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
 } from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
 import { router } from "expo-router";
@@ -241,13 +241,13 @@ export default function TimedChallengeModal({
         <View style={styles.modal}>
           {!start && (
             <View style={{ position: "absolute", right: 15, top: 10 }}>
-              <Pressable onPress={onHide} style={styles.button}>
+              <TouchableOpacity onPress={onHide} style={styles.button}>
                 <MaterialIcons
                   name="cancel"
                   size={30}
                   color={COLORS.secondary}
                 />{" "}
-              </Pressable>
+              </TouchableOpacity>
             </View>
           )}
           {!openConfirm ? (
@@ -266,15 +266,15 @@ export default function TimedChallengeModal({
               </Text>
 
               {!start ? (
-                <Pressable
+                <TouchableOpacity
                   style={styles.startButton}
                   onPress={() => startChallenge()}
                 >
                   <Text style={styles.buttonText}>Start</Text>
-                </Pressable>
+                </TouchableOpacity>
               ) : (
                 <View style={styles.row}>
-                  <Pressable
+                  <TouchableOpacity
                     style={styles.startButton}
                     onPress={() =>
                       router.push({
@@ -288,14 +288,14 @@ export default function TimedChallengeModal({
                     }
                   >
                     <Text style={styles.buttonText}>Log Challenge</Text>
-                  </Pressable>
+                  </TouchableOpacity>
 
-                  <Pressable
+                  <TouchableOpacity
                     style={styles.closeButton}
                     onPress={() => setOpenConfirm(true)}
                   >
                     <Text style={styles.buttonText}>Forfeit Challenge</Text>
-                  </Pressable>
+                  </TouchableOpacity>
                 </View>
               )}
             </>
@@ -311,21 +311,21 @@ export default function TimedChallengeModal({
             >
               <Text style={styles.title}>Are You Sure?</Text>
               <View style={{ flexDirection: "row", gap: 10 }}>
-                <Pressable
+                <TouchableOpacity
                   style={styles.startButton}
                   onPress={() => forfeitChallenge(challenge.userChallengeId)}
                 >
                   <Text style={styles.buttonText}>Yes</Text>
-                </Pressable>
+                </TouchableOpacity>
 
-                <Pressable
+                <TouchableOpacity
                   style={styles.closeButton}
                   onPress={() => {
                     setOpenConfirm(false);
                   }}
                 >
                   <Text style={styles.buttonText}>No</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </View>
           )}

@@ -1,11 +1,12 @@
 import {
-  Pressable,
+  TouchableOpacity,
   Image,
   StyleSheet,
   View,
   Text,
   ActivityIndicator,
- Dimensions } from "react-native";
+  Dimensions,
+} from "react-native";
 import { COLORS } from "../constants/theme";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -17,7 +18,7 @@ export default function BadgeCard({ badge, unlocked, onClick, preview }) {
   const [imageLoading, setImageLoading] = useState(true);
 
   return (
-    <Pressable
+    <TouchableOpacity
       onPress={onClick}
       style={[preview ? styles.previewCard : styles.card]}
     >
@@ -53,7 +54,7 @@ export default function BadgeCard({ badge, unlocked, onClick, preview }) {
           )}
         </View>
       </LinearGradient>
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 

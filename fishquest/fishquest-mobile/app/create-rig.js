@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   Image,
   TextInput,
   ScrollView,
@@ -126,13 +126,13 @@ export default function CreateRig() {
   }
 
   const renderArrow = (onPress, direction = "left") => (
-    <Pressable onPress={onPress} style={styles.arrowButton} hitSlop={20}>
+    <TouchableOpacity onPress={onPress} style={styles.arrowButton} hitSlop={20}>
       <Entypo
         name={direction === "left" ? "arrow-left" : "arrow-right"}
         size={20}
         color="#fff"
       />
-    </Pressable>
+    </TouchableOpacity>
   );
 
   return (
@@ -180,7 +180,7 @@ export default function CreateRig() {
               {renderArrow(nextPole, "right")}
             </View>
 
-            <Pressable
+            <TouchableOpacity
               style={styles.orangeButton}
               onPress={() =>
                 Alert.alert(
@@ -190,7 +190,7 @@ export default function CreateRig() {
               }
             >
               <Text style={styles.buttonText}>Customize</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.optionsSection}>
@@ -285,7 +285,7 @@ export default function CreateRig() {
             </View>
           </View>
 
-          <Pressable
+          <TouchableOpacity
             style={[styles.orangeButton, styles.bottomCustomize]}
             onPress={() =>
               Alert.alert(
@@ -295,7 +295,7 @@ export default function CreateRig() {
             }
           >
             <Text style={styles.buttonText}>Customize</Text>
-          </Pressable>
+          </TouchableOpacity>
         </ScrollView>
 
         <BottomNavbar />

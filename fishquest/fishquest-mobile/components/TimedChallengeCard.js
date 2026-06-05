@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { COLORS, RADIUS } from "../constants/theme";
 import TimedChallengeModal from "./TimedChallengeModal";
 import GradientProgress from "./GradientProgress";
@@ -43,9 +50,12 @@ export default function TimedChallengeCard({ challenge, onRefresh }) {
         </View>
       </View>
 
-      <Pressable style={styles.button} onPress={() => setShowModal(true)}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => setShowModal(true)}
+      >
         <Text style={styles.buttonText}>Start</Text>
-      </Pressable>
+      </TouchableOpacity>
 
       <TimedChallengeModal
         show={showModal}

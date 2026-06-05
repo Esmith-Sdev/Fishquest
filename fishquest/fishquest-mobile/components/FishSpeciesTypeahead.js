@@ -4,7 +4,7 @@ import {
   View,
   Text,
   TextInput,
-  Pressable,
+  TouchableOpacity,
   StyleSheet,
   FlatList,
 } from "react-native";
@@ -77,7 +77,7 @@ export default function FishSpeciesTypeahead({
 
   return (
     <>
-      <Pressable
+      <TouchableOpacity
         disabled={disabled}
         style={[styles.fakeInput, disabled && styles.disabledInput]}
         onPress={openModal}
@@ -85,7 +85,7 @@ export default function FishSpeciesTypeahead({
         <Text style={styles.fakeInputText}>
           {value?.name || value?.label || query || placeholder}
         </Text>
-      </Pressable>
+      </TouchableOpacity>
 
       <Modal
         visible={open}
@@ -120,7 +120,7 @@ export default function FishSpeciesTypeahead({
               keyboardShouldPersistTaps="always"
               style={styles.resultsList}
               renderItem={({ item }) => (
-                <Pressable
+                <TouchableOpacity
                   style={styles.item}
                   onPress={() => handleSelect(item)}
                 >
@@ -131,7 +131,7 @@ export default function FishSpeciesTypeahead({
                       {[item.group, item.category].filter(Boolean).join(" • ")}
                     </Text>
                   )}
-                </Pressable>
+                </TouchableOpacity>
               )}
               ListEmptyComponent={
                 query.trim().length >= 2 ? (
@@ -142,9 +142,9 @@ export default function FishSpeciesTypeahead({
               }
             />
 
-            <Pressable style={styles.cancelButton} onPress={closeModal}>
+            <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
               <Text style={styles.cancelText}>Cancel</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>

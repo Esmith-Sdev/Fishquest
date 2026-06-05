@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Pressable,
   Image,
+  TouchableOpacity,
 } from "react-native";
 
 import { router } from "expo-router";
@@ -50,7 +51,7 @@ export default function ChallengeCard({ challenge }) {
           />
         </View>
       </View>
-      <Pressable
+      <TouchableOpacity
         style={styles.button}
         onPress={() =>
           router.push({
@@ -64,7 +65,7 @@ export default function ChallengeCard({ challenge }) {
         }
       >
         <Text style={styles.buttonText}>LOG</Text>
-      </Pressable>
+      </TouchableOpacity>
     </Wrapper>
   );
 }

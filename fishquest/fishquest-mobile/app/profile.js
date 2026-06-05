@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   Image,
   Alert,
   ScrollView,
@@ -144,10 +144,10 @@ export default function Profile() {
               <View style={styles.profileImageContainer}>
                 <Image
                   style={styles.profileImage}
-                  source={require("../assets/characters/Male Basic/Male-Character-template-1.png")}
+                  source={require("../assets/characters/MaleBasic/Male-Character-template-1.png")}
                 />
               </View>
-              <Pressable
+              <TouchableOpacity
                 style={styles.orangeButton}
                 onPress={() =>
                   Alert.alert(
@@ -157,7 +157,7 @@ export default function Profile() {
                 }
               >
                 <Text style={styles.buttonText}>Customize</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
             <View style={styles.statsColumn}>
               <Text style={styles.title}>Stats</Text>
@@ -205,17 +205,17 @@ export default function Profile() {
                 <View style={styles.centerState}>
                   <Text style={styles.stateText}>No Buddies Found</Text>
 
-                  <Pressable
+                  <TouchableOpacity
                     style={styles.orangeButton}
                     onPress={() => setOpenAddBuddyModal(true)}
                   >
                     <Text style={styles.buttonText}>Add Buddy</Text>
-                  </Pressable>
+                  </TouchableOpacity>
                 </View>
               }
               renderItem={({ item }) => {
                 return (
-                  <Pressable
+                  <TouchableOpacity
                     style={styles.card}
                     onPress={() =>
                       router.push({
@@ -239,17 +239,17 @@ export default function Profile() {
                         source={require("../assets/characters/MaleBasic/Male-Character-template-1.png")}
                       />
                     </View>
-                  </Pressable>
+                  </TouchableOpacity>
                 );
               }}
             />
             {users.length > 0 && (
-              <Pressable
+              <TouchableOpacity
                 style={styles.orangeButton}
                 onPress={() => router.push("/buddies")}
               >
                 <Text style={styles.buttonText}>View All Buddies</Text>
-              </Pressable>
+              </TouchableOpacity>
             )}
           </View>
 
@@ -257,7 +257,7 @@ export default function Profile() {
             <Text style={styles.title}>Tips/Tricks</Text>
             <View style={styles.tipsContainer}>
               <View style={styles.tipsColumn}>
-                <Pressable
+                <TouchableOpacity
                   style={styles.blueButton}
                   onPress={() =>
                     Alert.alert(
@@ -267,8 +267,8 @@ export default function Profile() {
                   }
                 >
                   <Text style={styles.buttonText}>Popular Rig Setups</Text>
-                </Pressable>
-                <Pressable
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={styles.blueButton}
                   onPress={() =>
                     Alert.alert(
@@ -280,8 +280,8 @@ export default function Profile() {
                   <Text style={styles.buttonText}>
                     Fishing Different Species
                   </Text>
-                </Pressable>
-                <Pressable
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={styles.blueButton}
                   onPress={() =>
                     Alert.alert(
@@ -291,8 +291,8 @@ export default function Profile() {
                   }
                 >
                   <Text style={styles.buttonText}>Choosing the Right Rig</Text>
-                </Pressable>
-                <Pressable
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={styles.blueButton}
                   onPress={() =>
                     Alert.alert(
@@ -302,8 +302,8 @@ export default function Profile() {
                   }
                 >
                   <Text style={styles.buttonText}>Snag Preventers</Text>
-                </Pressable>
-                <Pressable
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={styles.blueButton}
                   onPress={() =>
                     Alert.alert(
@@ -315,7 +315,7 @@ export default function Profile() {
                   <Text style={styles.buttonText}>
                     How to Use Different Lures
                   </Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </View>
           </View>

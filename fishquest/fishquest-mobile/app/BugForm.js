@@ -3,10 +3,11 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   Image,
   Alert,
- Keyboard } from "react-native";
+  Keyboard,
+} from "react-native";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -219,7 +220,7 @@ export default function BugForm() {
             >
               <View style={styles.platformToggle}>
                 {["Android", "IOS"].map((text) => (
-                  <Pressable
+                  <TouchableOpacity
                     key={text}
                     onPress={() => {
                       Keyboard.dismiss();
@@ -238,19 +239,22 @@ export default function BugForm() {
                     >
                       {text}
                     </Text>
-                  </Pressable>
+                  </TouchableOpacity>
                 ))}
               </View>
             </View>
           </View>
           {files.length === 0 ? (
-            <Pressable style={styles.uploadImageContainer} onPress={pickImages}>
+            <TouchableOpacity
+              style={styles.uploadImageContainer}
+              onPress={pickImages}
+            >
               <Ionicons name="camera" size={50} color="#000" />
 
-              <Pressable style={styles.blueButton} onPress={pickImages}>
+              <TouchableOpacity style={styles.blueButton} onPress={pickImages}>
                 <Text style={styles.buttonText}>Upload Images</Text>
-              </Pressable>
-            </Pressable>
+              </TouchableOpacity>
+            </TouchableOpacity>
           ) : (
             <View style={styles.imageGrid}>
               {files.map((file, i) => (
@@ -259,29 +263,32 @@ export default function BugForm() {
                     source={getImageSource(file)}
                     style={styles.gridImage}
                   />
-                  <Pressable
+                  <TouchableOpacity
                     style={styles.removeImageBtn}
                     onPress={() => handleRemoveImage(i)}
                   >
                     <Ionicons name="close" size={16} color="#fff" />
-                  </Pressable>
+                  </TouchableOpacity>
                 </View>
               ))}
               {!isGridFull && (
-                <Pressable style={styles.largeSquare} onPress={pickImages}>
+                <TouchableOpacity
+                  style={styles.largeSquare}
+                  onPress={pickImages}
+                >
                   <Text style={styles.addImageText}>Add Image</Text>
                   <Ionicons
                     name="add-circle"
                     size={46}
                     color={COLORS.primary}
                   />
-                </Pressable>
+                </TouchableOpacity>
               )}
             </View>
           )}
-          <Pressable onPress={handleSubmit} style={styles.orangeButton}>
+          <TouchableOpacity onPress={handleSubmit} style={styles.orangeButton}>
             <Text style={styles.buttonText}>Submit</Text>
-          </Pressable>
+          </TouchableOpacity>
         </KeyboardAwareScrollView>
       </View>
     </SafeAreaView>

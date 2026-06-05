@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { View, Text, Modal, StyleSheet, Pressable, Image } from "react-native";
+import {
+  View,
+  Text,
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { COLORS } from "../constants/theme";
@@ -69,21 +76,21 @@ export default function ForecastModal({ visible, onClose }) {
       animationType="fade"
       onRequestClose={onClose}
     >
-      <Pressable onPress={onClose} style={styles.overlay}>
-        <Pressable
+      <TouchableOpacity onPress={onClose} style={styles.overlay}>
+        <TouchableOpacity
           onPress={(e) => e.stopPropagation()}
           style={styles.modalCard}
         >
           <View style={styles.header}>
             <Text style={styles.title}>Fishing Forecast</Text>
             <View style={{ position: "absolute", right: -10, top: -10 }}>
-              <Pressable onPress={onClose} style={styles.button}>
+              <TouchableOpacity onPress={onClose} style={styles.button}>
                 <MaterialIcons
                   name="cancel"
                   size={30}
                   color={COLORS.secondary}
                 />
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </View>
           {loading ? (
@@ -110,8 +117,8 @@ export default function ForecastModal({ visible, onClose }) {
               </Text>
             </View>
           )}
-        </Pressable>
-      </Pressable>
+        </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
   );
 }
@@ -161,7 +168,8 @@ const styles = StyleSheet.create({
     fontFamily: "Jua",
     paddingBottom: 15,
   },
-  weatherImage: {
+
+  weatherImage: {
     width: 90,
     height: 90,
     resizeMode: "contain",
