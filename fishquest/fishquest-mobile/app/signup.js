@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import { VideoView, useVideoPlayer } from "expo-video";
+
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
@@ -20,29 +20,29 @@ import LoadingIndicator from "../components/LoadingIndicator";
 import { signup } from "../api/auth";
 import * as SecureStore from "expo-secure-store";
 import * as Location from "expo-location";
-import OtherFeaturesVideo from "../assets/videos/OTHER-FEATURES.mp4";
-import CreateRigVideo from "../assets/videos/CREATE-RIG.mp4";
-import CreateLogVideo from "../assets/videos/CREATE-LOG.mp4";
+import ChallengesImage from "../assets/images/challenges-screenshot.png";
+import TackleboxImage from "../assets/images/tacklebox-screenshot.png";
+import LogsImage from "../assets/images/log-screenshot.png";
 export default function SignUp() {
   const { login } = useAuth();
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [videoIndex, setVideoIndex] = useState(0);
-  const videos = [
+  const [imageIndex, setImageIndex] = useState(0);
+  const images = [
     {
       title: "Create Rigs",
-      source: CreateRigVideo,
+      source: TackleboxImage,
     },
     {
       title: "Log Catches",
-      source: CreateLogVideo,
+      source: LogsImage,
     },
     {
-      title: "Other Features",
-      source: OtherFeaturesVideo,
+      title: "Complete Challenges",
+      source: ChallengesImage,
     },
   ];
-  const currentVideo = videos[videoIndex];
+  const currentImage = images[imageIndex];
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -53,11 +53,7 @@ export default function SignUp() {
     notificationsEnabled: false,
     locationEnabled: false,
   });
-  const player = useVideoPlayer(currentVideo.source, (player) => {
-    player.loop = true;
-    player.muted = true;
-    player.play();
-  });
+
   if (loading) {
     return (
       <GradientBackground>
@@ -176,17 +172,11 @@ export default function SignUp() {
                 resizeMode="contain"
               />
               <Text style={styles.header}>Welcome To Fish Quest!</Text>
-              <View style={styles.videoColumn}>
-                <Text style={styles.videoSubHeader}>{currentVideo.title}</Text>
-                <View style={styles.videoContainer}>
-                  <View style={styles.videoClip}>
-                    <VideoView
-                      nativeControls={false}
-                      player={player}
-                      style={styles.video}
-                      allowsFullscreen={false}
-                      allowsPictureInPicture={false}
-                    />
+              <View style={styles.imageColumn}>
+                <Text style={styles.imageSubHeader}>{currentImage.title}</Text>
+                <View style={styles.imageContainer}>
+                  <View style={styles.imageClip}>
+                    <Image source={currentImage.source} style={styles.image} />
                   </View>
                 </View>
               </View>
@@ -199,14 +189,14 @@ export default function SignUp() {
                   paddingBottom: 20,
                 }}
               >
-                {videos.map((_, i) => (
+                {images.map((_, i) => (
                   <TouchableOpacity
                     key={i}
                     hitSlop={10}
-                    onPress={() => setVideoIndex(i)}
+                    onPress={() => setImageIndex(i)}
                     style={[
                       styles.sliderButton,
-                      videoIndex === i && styles.sliderButtonActive,
+                      imageIndex === i && styles.sliderButtonActive,
                     ]}
                   />
                 ))}
@@ -451,7 +441,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
   },
-  videoSubHeader: {
+  imageSubHeader: {
     color: "#fff",
     fontSize: 18,
     textAlign: "center",
@@ -499,25 +489,25 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: "flex-start",
   },
-  videoColumn: {
+  imageColumn: {
     flexDirection: "column",
     display: "flex",
     paddingBottom: 20,
   },
-  videoClip: {
+  imageClip: {
     flex: 1,
     borderRadius: 15,
     overflow: "hidden",
   },
-  videoContainer: {
-    width: 400,
+  imageContainer: {
+    width: 200,
     height: 400,
     overflow: "hidden",
     marginTop: 12,
     borderRadius: 20,
     padding: 4,
   },
-  video: {
+  image: {
     width: "100%",
     height: "100%",
   },
